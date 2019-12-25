@@ -1,0 +1,13 @@
+logs:
+  - name: root
+    level: INFO
+    appenders: 
+      - type: FileLogAppender
+        file: /home/zhuyh/mnt/Code/GraduationDesign/zhuyh/logs/LogRoot.txt
+        # - type: StdoutAppender
+  - name: system
+    level: DEBUG
+    appenders: 
+      - type: FileLogAppender
+        file: /home/zhuyh/mnt/Code/GraduationDesign/zhuyh/logs/LogSystem.txt
+      - type: StdoutAppender
