@@ -7,6 +7,7 @@ void test_co()
   LOG_ROOT_INFO() << "co middle";
   co_yield;
   LOG_ROOT_INFO() << "co end";
+  co_yield;
 }
 
 int main()
@@ -20,6 +21,7 @@ int main()
     LOG_ROOT_INFO() << "B";
     co_yield;
     LOG_ROOT_INFO() << "C";
+    co_yield;
   };
   return 0;
 }

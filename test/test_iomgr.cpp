@@ -33,7 +33,7 @@ void test_co()
   //LOG_ROOT_INFO() << "test mid";
   for(int i=0;i<200000;i++)
     co_yield;
-  //LOG_ROOT_INFO() << "END";
+  LOG_ROOT_INFO() << "END";
 }
 
 void test_thread()
