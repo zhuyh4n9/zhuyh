@@ -368,3 +368,523 @@
 2019-12-26 09:49:19	system	[DEBUG]	0	Main(17590)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
 2019-12-26 09:49:19	system	[DEBUG]	0	Main(17590)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
 2019-12-26 09:49:19	system	[DEBUG]	0	Main(17590)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:60(~IOManager)	IOManager Destroyed
+2019-12-26 09:59:44	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:33(Scheduler)	Root Scheduler Created!
+2019-12-26 09:59:44	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:54(IOManager)	IOManager : IOManager Created!
+2019-12-26 09:59:51	system	[DEBUG]	0	IOManager(18605)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:286(run)	IOManager : IOManager stopped!
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:87(stop)	Scheduler Stopped
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 09:59:51	system	[DEBUG]	0	Main(18603)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:60(~IOManager)	IOManager Destroyed
+2019-12-26 10:00:25	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:33(Scheduler)	Root Scheduler Created!
+2019-12-26 10:00:25	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:54(IOManager)	IOManager : IOManager Created!
+2019-12-26 10:00:30	system	[DEBUG]	0	IOManager(18685)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:286(run)	IOManager : IOManager stopped!
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:87(stop)	Scheduler Stopped
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:30	system	[DEBUG]	0	Main(18684)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:60(~IOManager)	IOManager Destroyed
+2019-12-26 10:00:38	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:33(Scheduler)	Root Scheduler Created!
+2019-12-26 10:00:38	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:54(IOManager)	IOManager : IOManager Created!
+2019-12-26 10:00:44	system	[DEBUG]	0	IOManager(18724)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:286(run)	IOManager : IOManager stopped!
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:87(stop)	Scheduler Stopped
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:44	system	[DEBUG]	0	Main(18723)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:60(~IOManager)	IOManager Destroyed
+2019-12-26 10:00:48	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:33(Scheduler)	Root Scheduler Created!
+2019-12-26 10:00:48	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:54(IOManager)	IOManager : IOManager Created!
+2019-12-26 10:00:54	system	[DEBUG]	0	IOManager(18758)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:286(run)	IOManager : IOManager stopped!
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:87(stop)	Scheduler Stopped
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:00:54	system	[DEBUG]	0	Main(18757)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:60(~IOManager)	IOManager Destroyed
+2019-12-26 10:01:12	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:33(Scheduler)	Root Scheduler Created!
+2019-12-26 10:01:12	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:54(IOManager)	IOManager : IOManager Created!
+2019-12-26 10:01:17	system	[DEBUG]	0	IOManager(18797)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:286(run)	IOManager : IOManager stopped!
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:87(stop)	Scheduler Stopped
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:01:17	system	[DEBUG]	0	Main(18796)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:60(~IOManager)	IOManager Destroyed
+2019-12-26 10:10:34	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:33(Scheduler)	Root Scheduler Created!
+2019-12-26 10:10:34	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:54(IOManager)	IOManager : IOManager Created!
+2019-12-26 10:10:39	system	[DEBUG]	0	IOManager(19590)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:286(run)	IOManager : IOManager stopped!
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:87(stop)	Scheduler Stopped
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:10:40	system	[DEBUG]	0	Main(19589)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:60(~IOManager)	IOManager Destroyed
+2019-12-26 10:11:33	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:33(Scheduler)	Root Scheduler Created!
+2019-12-26 10:11:33	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:54(IOManager)	IOManager : IOManager Created!
+2019-12-26 10:11:38	system	[DEBUG]	0	IOManager(19719)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:286(run)	IOManager : IOManager stopped!
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:87(stop)	Scheduler Stopped
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:11:39	system	[DEBUG]	0	Main(19718)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:60(~IOManager)	IOManager Destroyed
+2019-12-26 10:12:09	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:33(Scheduler)	Root Scheduler Created!
+2019-12-26 10:12:09	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:54(IOManager)	IOManager : IOManager Created!
+2019-12-26 10:12:15	system	[DEBUG]	0	IOManager(19872)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:286(run)	IOManager : IOManager stopped!
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:87(stop)	Scheduler Stopped
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:15	system	[DEBUG]	0	Main(19871)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:60(~IOManager)	IOManager Destroyed
+2019-12-26 10:12:50	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:33(Scheduler)	Root Scheduler Created!
+2019-12-26 10:12:50	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:54(IOManager)	IOManager : IOManager Created!
+2019-12-26 10:12:57	system	[DEBUG]	0	IOManager(19971)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:286(run)	IOManager : IOManager stopped!
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:87(stop)	Scheduler Stopped
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:12:57	system	[DEBUG]	0	Main(19970)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:60(~IOManager)	IOManager Destroyed
+2019-12-26 10:13:03	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:33(Scheduler)	Root Scheduler Created!
+2019-12-26 10:13:03	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:54(IOManager)	IOManager : IOManager Created!
+2019-12-26 10:13:09	system	[DEBUG]	0	IOManager(20014)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:286(run)	IOManager : IOManager stopped!
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:87(stop)	Scheduler Stopped
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:09	system	[DEBUG]	0	Main(20013)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:60(~IOManager)	IOManager Destroyed
+2019-12-26 10:13:42	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:33(Scheduler)	Root Scheduler Created!
+2019-12-26 10:13:42	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:54(IOManager)	IOManager : IOManager Created!
+2019-12-26 10:13:47	system	[DEBUG]	0	IOManager(20092)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:286(run)	IOManager : IOManager stopped!
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:87(stop)	Scheduler Stopped
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer Destroy
+2019-12-26 10:13:47	system	[DEBUG]	0	Main(20091)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:60(~IOManager)	IOManager Destroyed
+2019-12-26 10:14:52	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:33(Scheduler)	Root Scheduler Created!
+2019-12-26 10:14:52	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:54(IOManager)	IOManager : IOManager Created!
+2019-12-26 10:14:57	system	[DEBUG]	0	IOManager(20202)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:286(run)	IOManager : IOManager stopped!
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:87(stop)	Scheduler Stopped
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_0  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_1  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_2  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_3  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_4  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_5  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_6  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_7  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_8  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_9  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_10  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_11  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_12  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_13  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_14  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_15  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_16  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_17  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_18  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_19  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_20  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_21  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_22  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_23  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_24  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_25  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_26  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_27  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_28  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_29  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_30  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_31  Destroyed
+2019-12-26 10:14:58	system	[DEBUG]	0	Main(20201)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:60(~IOManager)	IOManager Destroyed
+2019-12-26 10:17:13	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:33(Scheduler)	Root Scheduler Created!
+2019-12-26 10:17:13	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:54(IOManager)	IOManager : IOManager Created!
+2019-12-26 10:17:18	system	[DEBUG]	0	IOManager(20448)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:286(run)	IOManager : IOManager stopped!
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:88(stop)	Scheduler Stopped
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:41(~Scheduler)	Scheduler : root Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_0  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_1  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_2  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_3  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_4  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_5  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_6  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_7  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_8  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_9  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_10  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_11  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_12  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_13  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_14  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_15  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_16  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_17  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_18  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_19  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_20  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_21  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_22  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_23  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_24  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_25  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_26  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_27  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_28  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_29  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_30  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_31  Destroyed
+2019-12-26 10:17:19	system	[DEBUG]	0	Main(20447)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:77(~IOManager)	IOManager : IOManager  Destroyed
+2019-12-26 10:20:25	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:33(Scheduler)	Root Scheduler Created!
+2019-12-26 10:20:25	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:54(IOManager)	IOManager : IOManager Created!
+2019-12-26 10:20:30	system	[DEBUG]	0	IOManager(20726)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:286(run)	IOManager : IOManager stopped!
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:88(stop)	Scheduler Stopped
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Scheduler.cpp:41(~Scheduler)	Scheduler : root Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_0  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_1  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_2  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_3  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_4  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_5  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_6  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_7  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_8  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_9  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_10  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_11  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_12  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_13  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_14  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_15  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_16  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_17  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_18  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_19  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_20  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_21  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_22  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_23  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_24  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_25  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_26  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_27  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_28  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_29  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_30  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/Processer.cpp:54(~Processer)	Processer : root_processer_31  Destroyed
+2019-12-26 10:20:31	system	[DEBUG]	0	Main(20725)	/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/src/scheduler/IOManager.cpp:77(~IOManager)	IOManager : IOManager  Destroyed

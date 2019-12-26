@@ -57,7 +57,6 @@ namespace zhuyh
   {
     if(!_stopping)
       stop();
-    LOG_DEBUG(sys_log) << "IOManager Destroyed";
     if(_epfd >= 0)
       {
 	close(_epfd);
@@ -75,6 +74,7 @@ namespace zhuyh
       }
     _eventMap.clear();
     _thread->join();
+    LOG_DEBUG(sys_log) << "IOManager : "<<_name<<"  Destroyed";
   }
   void IOManager::notify()
   {

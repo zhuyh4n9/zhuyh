@@ -38,6 +38,7 @@ namespace zhuyh
   {
     if(!_stopping)
       stop();
+    LOG_DEBUG(sys_log) << "Scheduler : "<<_name<<" Destroyed";
   }
   int Scheduler::getHold()
   {

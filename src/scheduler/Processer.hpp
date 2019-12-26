@@ -45,7 +45,7 @@ namespace zhuyh
     Processer(const std::string name = "",Scheduler* scheduler = nullptr);
     ~Processer();
     //TODO:需要线程安全
-    using Deque = TSQueue<Fiber::ptr>;
+    using Deque = NonbTSQueue<Fiber::ptr>;
     //向该processer添加一个任务
     bool addTask(Task::ptr task);
     bool addTask(Task::ptr* task);

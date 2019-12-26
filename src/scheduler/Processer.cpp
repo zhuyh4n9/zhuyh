@@ -51,7 +51,7 @@ namespace zhuyh
 	close(_notifyFd[1]);
 	_notifyFd[1] = -1;
       }
-    LOG_DEBUG(sys_log) << "Processer Destroy";
+    LOG_DEBUG(sys_log) << "Processer : "<<_name<<"  Destroyed";
   }
   
   void Processer::start()
