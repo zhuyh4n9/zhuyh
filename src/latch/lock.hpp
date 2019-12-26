@@ -150,7 +150,7 @@ namespace zhuyh
   
   //TODO:去出调试选项
 #define XX(Name,LockBase,lockName1)			\
-  Name(LockBase& lk)	\
+  Name(LockBase& lk)					\
     :_lk(lk)						\
   {							\
     lockName1();					\

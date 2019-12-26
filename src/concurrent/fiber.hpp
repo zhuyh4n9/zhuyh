@@ -43,7 +43,7 @@ namespace zhuyh
 	TERM,
 	EXCEPT
       };
-    std::string getState(State S)
+    static std::string getState(State S)
     {
 #define XX(NAME)				\
       if(S == NAME ) return #NAME;
