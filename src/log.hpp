@@ -308,7 +308,7 @@ namespace zhuyh
       f_formatter = formatter;
     }
   protected:
-    SpinLock lk;
+    Mutex lk;
     Formatter::ptr f_formatter;
   };
   
@@ -356,7 +356,7 @@ namespace zhuyh
   private:
     //打印调用栈的最低级别
     LogLevel::Level _btLevel = LogLevel::ERROR;
-    SpinLock lk;
+    Mutex lk;
     std::list<Appender::ptr> l_appenders;
     std::string s_name;
     LogLevel::Level l_loglevel;

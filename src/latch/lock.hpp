@@ -110,6 +110,11 @@ namespace zhuyh
     Semaphore s_mx;
   };
 
+  class IdleLock : public ILock
+  {
+    void lock() {}
+    void unlock() {}
+  };
   class RWLock : public IRWLock
   {
   public:
@@ -145,10 +150,9 @@ namespace zhuyh
   
   //TODO:去出调试选项
 #define XX(Name,LockBase,lockName1)			\
-  Name(LockBase& lk,bool tag = 0,std::string name = "")	\
+  Name(LockBase& lk)	\
     :_lk(lk)						\
   {							\
-    _tag =tag,_name=name;				\
     lockName1();					\
   }							\
   ~Name()						\
@@ -159,17 +163,12 @@ namespace zhuyh
   {							\
     isLocked = true;					\
     _lk.lockName1();					\
-    if(_tag)  std::cout<<_name<<" LOCK"<<std::endl;	\
   }							\
   void unlock()						\
   {							\
     isLocked = false;					\
     _lk.unlock();					\
-    if(_tag)  std::cout<<_name<<"UNLOCK"<<std::endl;	\
-  }							\
-private:						\
- bool _tag;						\
- std::string _name;
+  }							
 
   class LockGuard : private UnCopyable
   {

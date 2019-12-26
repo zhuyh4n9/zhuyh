@@ -31,9 +31,9 @@ void test_co()
   //LOG_ROOT_INFO() << "Enter test";
   
   //LOG_ROOT_INFO() << "test mid";
-  for(int i=0;i<1000;i++);
+  for(int i=0;i<2000;i++)
       co_yield;
-  //LOG_ROOT_INFO() << "END";
+  LOG_ROOT_INFO() << "END";
 }
 
 void test_thread()
@@ -58,7 +58,7 @@ int main()
   */
   //auto scheduler = Scheduler::getThis();
   //TEST test[400];
-  for(int i =0 ;i<1000;i++)
+  for(int i =0 ;i<100000;i++)
     {
       /*
       int rt=pipe(test[i].fd);
