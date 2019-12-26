@@ -13,11 +13,5 @@ namespace zhuyh
     }
   };
   static struct _SchedulerInit __scheduler_initer;
-  
-  void Co(Fiber::CbType cb)
-  {
-    Scheduler* _scheduler = Scheduler::getThis();
-    _scheduler -> addNewTask(Task::ptr(new Task(cb)));
-  }
 
 }

@@ -66,7 +66,7 @@ int main()
       scheduler->addReadEvent(test[i].fd[0],Task::ptr(new Task(std::bind(&TEST::funcRead,&test[i]))) );
       scheduler->addWriteEvent(test[i].fd[1],Task::ptr(new Task(std::bind(&TEST::funcWrite,&test[i]))) );
       */
-      co(test_co);
+      co test_co;
       //
     }
 

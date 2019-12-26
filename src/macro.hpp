@@ -7,13 +7,12 @@
 #include "concurrent/fiber.hpp"
 
 #ifndef co_yield
-
-
 #define co_yield zhuyh::Fiber::YieldToReady()
-
 #define co_yield_to_hold zhuyh::Fiber::YieldToHold()
+#endif
 
-#define co zhuyh::Co
+#ifndef co
+#define co zhuyh::__co()-
 #endif
 
 #define ASSERT(x)						\

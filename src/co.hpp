@@ -8,5 +8,16 @@
 
 namespace zhuyh
 {
-  void Co(Fiber::CbType cb);
-};
+  struct __co
+  {
+    typedef std::function<void()> CbType;
+    __co() {}
+    inline __co& operator-(CbType cb)
+    {
+      Scheduler::getThis()->addNewTask(Task::ptr(new Task(cb)));
+      return *this;
+    }
+   
+  };
+  
+}
