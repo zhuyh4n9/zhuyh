@@ -23,7 +23,10 @@ namespace zhuyh
     _timerSet.erase(timer);
   }
 
-  //  std::list<Timer> list
+  std::list<Timer> listExpiredTimer()
+  {
+    return std::list<Timer>();
+  }
   IOManager::IOManager(const std::string& name,Scheduler* scheduler )
   {
     _epfd = epoll_create(1);

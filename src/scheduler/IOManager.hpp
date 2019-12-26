@@ -15,27 +15,6 @@
 
 namespace zhuyh
 {
-  //TODO:假的Scheduler
-  /*
-  class Scheduler : public std::enable_shared_from_this<Scheduler>
-  {
-  public:
-    typedef std::shared_ptr<Scheduler> ptr;
-    void balance() {}
-    void addTask(std::shared_ptr<Task> task)
-    {
-      if(task->cb == nullptr)
-	return;
-      task->cb();
-    }
-    static Scheduler::ptr getThis()
-    {
-      static Scheduler::ptr t(new Scheduler());
-      return t;
-    }
-  };
-  */
-
   struct Timer
   {
     Timer() { memset(&_timer,0,sizeof(_timer));}
