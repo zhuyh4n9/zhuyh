@@ -26,9 +26,12 @@
         co_yield;
         LOG_ROOT_INFO() << "Coroutine is about to exit";
     };
-    IO事件 - 目前只支持通过获取根调度器添加IO事件
-        zhuyh::Scheduler::getThis()  -> addWriteEvent(fd,Task::ptr)
-        zhuyh::Scheduler::getThis()  -> addReadEvent(fd,Task::ptr)
-    定时器 - 正在开发
-    协程信号量 - 待开发
+    IO事件管理器 
+        - 目前只支持通过获取根调度器添加IO事件
+            zhuyh::Scheduler::getThis()  -> addWriteEvent(fd,Task::ptr)
+            zhuyh::Scheduler::getThis()  -> addReadEvent(fd,Task::ptr)
+    基于timerfd的异步定时器 
+        - 正在开发
+    协程信号量
+         - 待开发
 ```
