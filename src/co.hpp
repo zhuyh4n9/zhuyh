@@ -12,7 +12,7 @@ namespace zhuyh
   {
     typedef std::function<void()> CbType;
     __co() {}
-    inline __co& operator-(CbType cb)
+    inline __co& operator=(CbType cb)
     {
       Scheduler::getThis()->addNewTask(Task::ptr(new Task(cb)));
       return *this;

@@ -12,7 +12,7 @@
 #endif
 
 #ifndef co
-#define co zhuyh::__co()-
+#define co zhuyh::__co()=
 #endif
 
 #define ASSERT(x)						\
