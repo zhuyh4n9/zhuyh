@@ -1,13 +1,15 @@
+/*
+ * Not Finished Yet
+ */
+
 #pragma once
 
 #include <unistd.h>
-#include <sys/timerfd.h>
 #include "../concurrent/Thread.hpp"
 #include "../concurrent/fiber.hpp"
 #include "../latch/lock.hpp"
 #include "Scheduler.hpp"
 #include <sys/epoll.h>
-#include <unordered_map>
 #include <memory>
 #include <set>
 #include <list>
@@ -15,80 +17,6 @@
 
 namespace zhuyh
 {
-  //基于timerfd
-  struct Timer
-  {
-    Timer() { memset(&_timer,0,sizeof(_timer));}
-    Timer(time_t sec,long msec,long usec = 0,long nsec)
-    {
-#define XX(secName1,secName2)	  \
-      secName1 = secName2 / 1000; \
-      secName2 = secName2 % 1000;
-      
-      XX(usec,nsec);
-      XX(msec,usec);
-      XX(sec,msec);
-
-#undef XXX
-      
-      _timer.tv_sec = sec;
-      _timer.tv_msec = msec;
-      _timer.tv_usec = usec;
-      
-    }
-
-    ~Timer()
-    {
-      if(_tfd != -1)
-	{
-	  close(_tfd);
-	  _tfd = -1;
-	}	    
-    }
-
-    Timer(const Timer& timer) { _timer = timer._timer;}
-    Timer(const timespec& timer) { _timer = timer; }
-    
-    bool operator<(const Timer& o) const
-    {
-      if(_timer.tv_sec == o._timer.tv_sec)
-	return _timer.tv_nsec < o._timer.tv_sec;
-      return _timer.tv_sec < o._timer.tv_sec;
-    }
-    
-    bool operator>(const Timer& o) const
-    {
-      if(_timer.tv_sec == o._timer.tv_sec)
-	return _timer.tv_nsec > o._timer.tv_sec;
-      return _timer.tv_sec > o._timer.tv_sec;
-    }
-    
-    bool operator==(const Timer& o) const
-    {
-      return _timer.tv_sec == o._timer.tv_sec
-	&&  _timer.tv_nsec == o._timer.tv_sec;
-    }
-    mutable SpinLock mx;
-    int _tfd = -1;    
-    struct timespec _timer;
-  };
-
-  class TimerManager
-  {
-  public:
-    virtual void addTimer(Timer&& timer);
-    virtual void addTimer(Timer timer);
-    virtual void removeTimer(const Timer& timer) ;
-  private:
-    std::set<Timer> _timerSet;
-  protected:
-    //当前时间
-    std::list<Timer> listExpiredTimer();
-    //指定时间
-    std::list<Timer> listExpiredTimer(time_t sec,long msec,long usec = 0);
-    std::list<Timer> listExpiredTimer(Timer timer);
-    mutable SpinLock _mx;
-  };
   
   class Scheduler;
   struct Task;

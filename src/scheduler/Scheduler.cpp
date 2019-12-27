@@ -45,7 +45,8 @@ namespace zhuyh
     if(_ioMgr == nullptr) return 0;
     return _ioMgr -> _holdCount;
   }
-  //线程不安全
+  //由于进入Main函数之前,根调度器就已经创建并且运行,
+  //因此用户单独创建IOManager可行,但是没有意义
   void Scheduler::start()
   {
     ASSERT(_stop == true);

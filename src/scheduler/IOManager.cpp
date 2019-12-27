@@ -5,28 +5,6 @@ namespace zhuyh
 { 
   static Logger::ptr sys_log = GET_LOGGER("system");
 
-  void TimerManager::addTimer(Timer&& timer)
-  {
-    LockGuard lg(_mx);
-    _timerSet.insert(timer);
-  }
-
-  void TimerManager::addTimer(Timer timer)
-  {
-    LockGuard lg(_mx);
-    _timerSet.insert(timer);
-  }
-  
-  void TimerManager::removeTimer(const Timer& timer)
-  {
-    LockGuard lg(_mx);
-    _timerSet.erase(timer);
-  }
-
-  std::list<Timer> listExpiredTimer()
-  {
-    return std::list<Timer>();
-  }
   IOManager::IOManager(const std::string& name,Scheduler* scheduler )
   {
     _epfd = epoll_create(1);
@@ -56,6 +34,7 @@ namespace zhuyh
     _thread.reset(new Thread(std::bind(&IOManager::run,this),_name));
     LOG_DEBUG(sys_log) << "IOManager : "<< _name <<" Created!";
   }
+  
   IOManager::~IOManager()
   {
     if(!_stopping)
@@ -79,11 +58,13 @@ namespace zhuyh
     _thread->join();
     LOG_DEBUG(sys_log) << "IOManager : "<<_name<<"  Destroyed";
   }
+  
   void IOManager::notify()
   {
     int rt = write(_notifyFd[1],"",1);
     ASSERT(rt >= 0);
   }
+  
   int IOManager::addEvent(int fd,Task::ptr task,EventType type)
   {
     ASSERT( type == READ  || type == WRITE);
