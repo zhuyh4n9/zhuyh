@@ -58,7 +58,7 @@ int main()
   */
   //auto scheduler = Scheduler::getThis();
   //TEST test[400];
-  for(int i =0 ;i<1000;i++)
+  for(int i =0 ;i<1000000;i++)
     {
       /*
       int rt=pipe(test[i].fd);
@@ -68,12 +68,12 @@ int main()
       */
       //co test_co;
       co [](){
-	for(int i=0;i<200000;i++)
+	for(int i=0;i<0;i++)
 	  {
 	    //LOG_ROOT_INFO() << "END";
 	    co_yield;
 	  }
-	//LOG_ROOT_INFO() << "END";
+	LOG_ROOT_INFO() << "END";
       };
       //
     }

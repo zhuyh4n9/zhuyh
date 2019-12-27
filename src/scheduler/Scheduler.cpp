@@ -125,8 +125,8 @@ namespace zhuyh
   //根据负载创建新执行器
   void Scheduler::addTask(std::shared_ptr<Task> task)
   {
-    //Processer::ptr p = getMinPayLoad();
-    Processer::ptr p = _pcsQue[rand()%_currentThread];
+    Processer::ptr p = getMinPayLoad();
+    //Processer::ptr p = _pcsQue[rand()%_currentThread];
     p->addTask(task);
   }
   void Scheduler::addTask(CbType cb)

@@ -15,19 +15,26 @@
 
 namespace zhuyh
 {
+  //基于timerfd
   struct Timer
   {
     Timer() { memset(&_timer,0,sizeof(_timer));}
-    Timer(time_t sec,long msec,long usec = 0)
+    Timer(time_t sec,long msec,long usec = 0,long nsec)
     {
-      msec += usec % 1000;
-      usec = usec % 1000;
+#define XX(secName1,secName2)	  \
+      secName1 = secName2 / 1000; \
+      secName2 = secName2 % 1000;
       
-      sec += msec % 1000;
-      msec = msec % 1000;
+      XX(usec,nsec);
+      XX(msec,usec);
+      XX(sec,msec);
+
+#undef XXX
       
       _timer.tv_sec = sec;
-      _timer.tv_nsec = msec;
+      _timer.tv_msec = msec;
+      _timer.tv_usec = usec;
+      
     }
 
     ~Timer()
