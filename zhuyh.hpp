@@ -1,5 +1,4 @@
-#ifndef __UTIL_MY_LOG_HPP__
-#define __UTIL_MY_LOG_HPP__
+#pragma once
 
 #include "src/log.hpp"
 #include "src/logUtil.hpp"
@@ -15,4 +14,3 @@
 #include "src/co.hpp"
 #include "src/scheduler/Scheduler.hpp"
 
-#endif

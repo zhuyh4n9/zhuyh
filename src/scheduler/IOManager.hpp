@@ -14,13 +14,14 @@
 #include <set>
 #include <list>
 #include <string.h>
+#include <unordered_map>
 
 namespace zhuyh
 {
   
   class Scheduler;
   struct Task;
-  class IOManager : public TimerManager
+  class IOManager
   {
   public:
     friend class Scheduler;
