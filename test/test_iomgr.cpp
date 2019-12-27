@@ -31,9 +31,9 @@ void test_co()
   //LOG_ROOT_INFO() << "Enter test";
   
   //LOG_ROOT_INFO() << "test mid";
-  for(int i=0;i<200000;i++)
-    co_yield;
-  LOG_ROOT_INFO() << "END";
+  //for(int i=0;i<2000;i++)
+  //co_yield;
+  //LOG_ROOT_INFO() << "END";
 }
 
 void test_thread()
@@ -66,7 +66,15 @@ int main()
       scheduler->addReadEvent(test[i].fd[0],Task::ptr(new Task(std::bind(&TEST::funcRead,&test[i]))) );
       scheduler->addWriteEvent(test[i].fd[1],Task::ptr(new Task(std::bind(&TEST::funcWrite,&test[i]))) );
       */
-      co test_co;
+      //co test_co;
+      co [](){
+	for(int i=0;i<200000;i++)
+	  {
+	    //LOG_ROOT_INFO() << "END";
+	    co_yield;
+	  }
+	//LOG_ROOT_INFO() << "END";
+      };
       //
     }
 

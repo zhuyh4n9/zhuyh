@@ -92,8 +92,7 @@ namespace zhuyh
   void Scheduler::addNewTask(std::shared_ptr<Task> task)
   {
     if(_stopping == true) return;
-    Processer::ptr p = getMinPayLoad();
-    p->addTask(task);
+    addTask(task);
   }
   
   int Scheduler::addReadEvent(int fd,std::shared_ptr<Task> task)
@@ -111,6 +110,7 @@ namespace zhuyh
   int Scheduler::balance(Processer::ptr prc)
   {
     Processer::ptr _prc = getMaxPayLoad();
+    //Processer::ptr _prc = _pcsQue[rand()%_currentThread];
     //LOG_INFO(sys_log) << "HERE";
     //同一个线程
     if(_prc->_thread.get() == Thread::getThis() ) return 0;
@@ -125,8 +125,8 @@ namespace zhuyh
   //根据负载创建新执行器
   void Scheduler::addTask(std::shared_ptr<Task> task)
   {
-    Processer::ptr p = getMinPayLoad();
-    //Processer::ptr p = _pcsQue[rand()%_currentThread];
+    //Processer::ptr p = getMinPayLoad();
+    Processer::ptr p = _pcsQue[rand()%_currentThread];
     p->addTask(task);
   }
   void Scheduler::addTask(CbType cb)
