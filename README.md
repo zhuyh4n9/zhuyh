@@ -36,7 +36,7 @@
             zhuyh::Scheduler::getThis()  -> addReadEvent(fd,Task::ptr);
     基于timerfd的异步定时器 
        - 目前只支持单次计时,不支持循环计时
-            zhuyh::Scheduler::getThis(Timer::ptr(new Timer(sec,msec,usec,nsec)),call_back,type);
+            zhuyh::Scheduler::getThis() -> addTimer(Timer::ptr(new Timer(sec,msec,usec,nsec)),call_back,type);
     协程信号量
          - 待开发
 ```
