@@ -25,6 +25,7 @@ namespace zhuyh
   {
   public:
     friend class IOManager;
+    friend class Processer;
     typedef std::shared_ptr<Scheduler> ptr;
     typedef std::function<void()> CbType;
     //用户创建调度器
@@ -70,7 +71,6 @@ namespace zhuyh
     std::shared_ptr<Processer> getMaxPayLoad();
     //放任务时使用
     std::shared_ptr<Processer> getMinPayLoad();
-    int _holdFiberCount = 0;
     //当前线程数
     int _currentThread = 0;
     int _activeThread = 0;
@@ -79,6 +79,7 @@ namespace zhuyh
     int _maxThread = 20;
     //执行器平均任务大于次值则开启新线程
     int _limitPayLoad = 20;
+    std::atomic<int> totalTask;
     //static Mutex _addTaskmx;
     //static SpinLock _getThismx;
     //用于协程信号量
@@ -88,6 +89,8 @@ namespace zhuyh
     std::atomic<bool> _stopping {false};
     std::atomic<bool> _stop {true};
     std::string _name = "Scheduler";
+    //
+    static std::atomic<int> count;
   };
   
 }

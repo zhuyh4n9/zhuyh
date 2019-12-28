@@ -173,24 +173,49 @@ namespace zhuyh
       }
     return _prc;
   }
-  
-#define XX(T)								\
-  int Scheduler::addTimer(Timer::ptr timer,T cb,			\
-			  Timer::TimerType type )			\
-  {									\
-    if(_ioMgr != nullptr)						\
-      return _ioMgr->addTimer(timer,cb,type);				\
-    return -1;								\
-  }									\
-  int Scheduler::addTimer(Timer::ptr* timer,T cb,			\
-			  Timer::TimerType type)			\
-  {									\
-    if(_ioMgr != nullptr)						\
-      return _ioMgr->addTimer(timer,cb,type);				\
-    return -1;								\
+  std::atomic<int> Scheduler::count{0};
+  int Scheduler::addTimer(Timer::ptr timer,Fiber::ptr cb,			
+			  Timer::TimerType type )			
+  {
+    if(_ioMgr != nullptr)
+      {
+	int rt=_ioMgr->addTimer(timer,cb,type);				
+	if(rt >= 0)
+	  co_yield_to_hold;
+	return rt;							
+      }
+    return -1;								
+  }								       
+  int Scheduler::addTimer(Timer::ptr* timer,Fiber::ptr cb,			
+			  Timer::TimerType type)			
+  {								
+    if(_ioMgr != nullptr)
+      {
+	int rt=_ioMgr->addTimer(timer,cb,type);			
+	if(rt >= 0)						
+	  co_yield_to_hold;					
+	return rt;						
+      }								       
+    return -1;								
   }
   
-    XX(std::function<void()>);
-    XX(Fiber::ptr);
-#undef XX
+  int Scheduler::addTimer(Timer::ptr timer,std::function<void()> cb,
+			  Timer::TimerType type )			
+  {									
+    if(_ioMgr != nullptr)
+      {
+	return _ioMgr->addTimer(timer,cb,type);
+      }
+    return -1;								
+  }
+  
+  int Scheduler::addTimer(Timer::ptr* timer,std::function<void()> cb,
+			  Timer::TimerType type)			
+  {								
+    if(_ioMgr != nullptr)
+      {
+	return _ioMgr->addTimer(timer,cb,type);
+      }								       
+    return -1;								
+  }  
 }

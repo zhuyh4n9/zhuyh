@@ -89,44 +89,46 @@ namespace zhuyh
     int _epfd = -1;
     Scheduler* _scheduler;
     // fd --> event
-    std::unordered_map<int,FdEvent::ptr> _eventMap;
+    std::unordered_map<int,FdEvent*> _eventMap;
     mutable RWLock _lk;
     int _notifyFd[2];
     Thread::ptr _thread = nullptr;
     std::string _name;
     std::atomic<bool> _stopping{false};
     std::atomic<int> _holdCount{0};
-    FdEvent::ptr _notifyEvent;
+    FdEvent* _notifyEvent;
   };  
   
   template<class T>
   int IOManager::addTimer(Timer::ptr timer,T cb,
 			  Timer::TimerType type) 
-  {
-    
-    if(timer == nullptr) return -1;
+  { 
+    if(timer == nullptr) ASSERT(0);
     if(type == Timer::LOOP)
       timer->setLoop();
-    int tfd = timer->getTimerFd();
-    ASSERT(tfd >= 0);
     struct epoll_event ev;
     static Logger::ptr sys_log = GET_LOGGER("system");
-    RDLockGuard lg(_lk);
-    FdEvent::ptr& epEv = _eventMap[tfd];
+    //TODO:改成std::vector来提高性能
+    WRLockGuard lg(_lk);
+    int tfd = timer->getTimerFd();
+    ASSERT(tfd >= 0);
+    FdEvent*& epEv = _eventMap[tfd];
     if(epEv == nullptr)
       {
-	lg.unlock();
-	WRLockGuard t(_lk);
-	epEv.reset(new FdEvent(tfd,NONE));
+	epEv = new FdEvent(tfd,NONE);
       }
-    else
+    else if(epEv->timer != nullptr)
       {
+	ASSERT(false);
+	LOG_INFO(sys_log) << "ERROR";
 	return -1;
       }
+    ASSERT(epEv->event == NONE);
+    lg.unlock();
     LockGuard lg2(epEv->lk);
     //定时器一定是一个读时间
     ev.events = EPOLLIN | EPOLLET;
-    ev.data.ptr = epEv.get();
+    ev.data.ptr = epEv;
     int rt = epoll_ctl(_epfd,EPOLL_CTL_ADD,tfd,&ev);
     if(rt < 0)
       {
@@ -140,6 +142,7 @@ namespace zhuyh
     epEv -> event = (EventType)(epEv->event | READ);
     timer->start();
     ++_holdCount;
+    //LOG_INFO(sys_log) << "ADD";
     return 0;
   }
   template<class T>

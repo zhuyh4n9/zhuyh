@@ -5,7 +5,7 @@ namespace zhuyh
 {
   thread_local Fiber::ptr __main_fiber = nullptr;
   static Logger::ptr sys_log  = GET_LOGGER("system");
-  
+  std::atomic<int> Task::id{0};
   Processer::Processer(const std::string name,Scheduler* scheduler )
     :_name(name)
   {
@@ -51,7 +51,7 @@ namespace zhuyh
 	close(_notifyFd[1]);
 	_notifyFd[1] = -1;
       }
-    LOG_DEBUG(sys_log) << "Processer : "<<_name<<"  Destroyed";
+    LOG_INFO(sys_log) << "Processer : "<<_name<<"  Destroyed";
   }
   
   void Processer::start()
@@ -83,6 +83,7 @@ namespace zhuyh
     //是回调函数
     else if(task->cb)
       {
+	++(_scheduler->totalTask);
 	Fiber::ptr fiber = nullptr;
 	fiber.reset(new Fiber(task->cb));
 	fiber->setState(Fiber::READY);
@@ -153,6 +154,7 @@ namespace zhuyh
     //LOG_INFO(sys_log) << "RUN";
     while(1)
       {
+	//LOG_INFO(sys_log) << "total " << _scheduler->totalTask;
 	Fiber::ptr fiber;
 	while(_readyTask.try_pop_back(fiber))
 	  {
@@ -168,12 +170,14 @@ namespace zhuyh
 	    else if(fiber->getState() == Fiber::HOLD)
 	      {
 		--_payLoad;
+		//LOG_INFO(sys_log) << "HOLD TASK";
 		//_holdTask.push_front(std::move(fiber));
 	      }
 	    else if(fiber->getState() == Fiber::TERM
 		    || fiber->getState() == Fiber::EXCEPT)
 	      {
 		--_payLoad;
+		--(_scheduler->totalTask);
 		fiber.reset();
 	      }
 	    else
@@ -192,8 +196,11 @@ namespace zhuyh
 	if(_stopping)
 	  {
 	    //TODO:改为调度器holdCount
-	    if( _readyTask.empty() && _scheduler->getHold() <= 0)
+	    if(_scheduler->totalTask <= 0
+	       && _readyTask.empty()
+	       && _scheduler->getHold() <= 0)
 	      {
+		//LOG_INFO(sys_log) << "EXIT PROCESS";
 		//退出run函数
 		return;
 	      }
@@ -230,8 +237,11 @@ namespace zhuyh
 	if(_stopping)
 	  {
 	    //TODO:改为调度器holdCount
-	    if( _readyTask.empty() && _scheduler -> getHold() <=0 )
+	    if(_scheduler->totalTask <= 0
+	       && _readyTask.empty()
+	       && _scheduler->getHold() <= 0)
 	      {
+		//LOG_INFO(sys_log) << "EXIT PROCESS";
 		//退出run函数
 		return;
 	      }

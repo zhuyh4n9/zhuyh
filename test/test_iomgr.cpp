@@ -39,9 +39,9 @@ void test_co()
 {
   //LOG_ROOT_INFO() << "Enter test";
   //LOG_ROOT_INFO() << "test mid";
-  //for(int i=0;i<2000;i++)
-  co_yield;
-  //LOG_ROOT_INFO() << "END";
+  for(int i=0;i<200000;i++)
+    co_yield;
+  LOG_ROOT_INFO() << "DONE";
 }
 
 void test_thread()
@@ -55,28 +55,30 @@ void test_thread()
 }
 int main()
 {
-   auto scheduler = Scheduler::getThis();
-  TEST* test = new TEST[5];
-  for(int i =0 ;i<5;++i)
+  auto scheduler = Scheduler::getThis();
+  TEST* test = new TEST[200];
+  for(int i =0 ;i<200;++i)
     {
       int rt=pipe(test[i].fd);
       
       ASSERT2(rt >= 0,strerror(errno));
       scheduler->addReadEvent(test[i].fd[0],
-      Task::ptr(new Task(std::bind(&TEST::funcRead,&test[i]))) );
+			      Task::ptr(new Task(std::bind(&TEST::funcRead,&test[i]))) );
       scheduler->addWriteEvent(test[i].fd[1],
 			       Task::ptr(new Task(std::bind(&TEST::funcWrite,&test[i]))) );
-      scheduler->addTimer(Timer::ptr(new Timer(1)),Alarm);
-      /*
-      //co test_co;
+      if(scheduler->addTimer(Timer::ptr(new Timer(2)),Alarm) < 0)
+	{
+	  LOG_ROOT_ERROR() << "Failed";
+	}
+      
+      co test_co;
       co [](){
+	//for(int i=0;i<1000;i++) co_yield;
 	Scheduler* scheduler = Scheduler::getThis();
 	scheduler->addTimer(Timer::ptr(new Timer(1)),Fiber::getThis());
-	
+	LOG_ROOT_INFO() << "back to coroutine";
       };
-      */
     }
-
   //Scheduler::getThis()->stop();
   return 0;
 }

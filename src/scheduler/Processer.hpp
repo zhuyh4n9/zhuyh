@@ -1,5 +1,6 @@
 #pragma once
 
+#include <atomic>
 #include "Scheduler.hpp"
 #include "../concurrent/fiber.hpp"
 #include "../concurrent/Thread.hpp"
@@ -13,6 +14,7 @@ namespace zhuyh
 {
   struct Task
   {
+    
     typedef std::shared_ptr<Task> ptr;
     Fiber::ptr fiber = nullptr;
     Fiber::CbType cb = nullptr;
@@ -20,19 +22,31 @@ namespace zhuyh
     bool finTag = false;
     Task(Fiber::ptr f)
       :fiber(f)
-    {}
+    {
+      _id = ++id;
+    }
     Task(Fiber::ptr* f)
     {
+      _id = ++id;
       fiber.swap(*f);
     }
     Task(Fiber::CbType c)
       :cb(c)
-    {}
+    {
+      _id = ++id;
+    }
     Task(Fiber::CbType* c)
     {
+      _id = ++id;
       cb.swap(*c);
     }
-    Task() {}
+    static std::atomic<int> id;
+    int _id;
+    Task(){}
+    ~Task()
+    {
+      //LOG_ROOT_INFO() << "Destroying id : "<<_id;
+    }
   };
   class Scheduler;
   //必须在堆上分配
