@@ -48,10 +48,17 @@ namespace zhuyh
     //获取根管理器,需要在进入main函数前进行一次初始化
     static Scheduler* getThis();
     int getHold();
-    int addTimer(Timer::ptr timer,std::function<void()> cb,
-		  Timer::TimerType type = Timer::SINGLE);
-    int addTimer(Timer::ptr* timer,std::function<void()> cb,
-		 Timer::TimerType type = Timer::SINGLE);
+    
+#define XX(T1,T2)						\
+    int addTimer(T1 timer,T2 cb,				\
+		 Timer::TimerType type = Timer::SINGLE)
+    
+    XX(Timer::ptr,std::function<void()>);
+    XX(Timer::ptr*,std::function<void()>);
+    XX(Timer::ptr,Fiber::ptr);
+    XX(Timer::ptr*,Fiber::ptr);;
+
+#undef XX
   private:
     //需要线程安全,供IOManager使用
     void addTask(std::shared_ptr<Task> task);

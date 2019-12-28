@@ -173,18 +173,24 @@ namespace zhuyh
       }
     return _prc;
   }
-  int Scheduler::addTimer(Timer::ptr timer,std::function<void()> cb,
-		 Timer::TimerType type )
-   {
-     if(_ioMgr != nullptr)
-       return _ioMgr->addTimer(timer,cb,type);
-     return -1;
-   }
-  int Scheduler:: addTimer(Timer::ptr* timer,std::function<void()> cb,
-		Timer::TimerType type )
-  {
-    if(_ioMgr != nullptr)
-      return _ioMgr->addTimer(timer,cb,type);
-    return -1;
+  
+#define XX(T)								\
+  int Scheduler::addTimer(Timer::ptr timer,T cb,			\
+			  Timer::TimerType type )			\
+  {									\
+    if(_ioMgr != nullptr)						\
+      return _ioMgr->addTimer(timer,cb,type);				\
+    return -1;								\
+  }									\
+  int Scheduler::addTimer(Timer::ptr* timer,T cb,			\
+			  Timer::TimerType type)			\
+  {									\
+    if(_ioMgr != nullptr)						\
+      return _ioMgr->addTimer(timer,cb,type);				\
+    return -1;								\
   }
+  
+    XX(std::function<void()>);
+    XX(Fiber::ptr);
+#undef XX
 }

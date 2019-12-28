@@ -377,56 +377,6 @@ namespace zhuyh
   }
 
   //Timer是一个读事件
-  int IOManager::addTimer(Timer::ptr timer,std::function<void()> cb,
-			   Timer::TimerType type) 
-  {
-    if(timer == nullptr) return -1;
-    if(type == Timer::LOOP)
-      timer->setLoop();
-    int tfd = timer->getTimerFd();
-    ASSERT(tfd >= 0);
-    struct epoll_event ev;
-    
-    RDLockGuard lg(_lk);
-    FdEvent::ptr& epEv = _eventMap[tfd];
-    if(epEv == nullptr)
-      {
-	lg.unlock();
-	WRLockGuard t(_lk);
-	epEv.reset(new FdEvent(tfd,NONE));
-      }
-    else
-      {
-	return -1;
-      }
-    LockGuard lg2(epEv->lk);
-    //定时器一定是一个读时间
-    ev.events = EPOLLIN | EPOLLET;
-    ev.data.ptr = epEv.get();
-    int rt = epoll_ctl(_epfd,EPOLL_CTL_ADD,tfd,&ev);
-    if(rt < 0)
-      {
-	LOG_ERROR(sys_log) << "Failed to add timer";
-	return -1;
-      }
-    
-    //LOG_INFO(sys_log) << "add a timer";
-    epEv -> timer = timer;
-    epEv -> rdtask.reset(new Task(cb));
-    epEv -> event = (EventType)(epEv->event | READ);
-    timer->start();
-    ++_holdCount;
-    return 0;
-  }
-
-  int IOManager::addTimer(Timer::ptr* timer,std::function<void()> cb,
-			   Timer::TimerType type)
-  {
-    if(timer == nullptr) return -1;
-    Timer::ptr t;
-    t.swap(*timer);
-    return addTimer(t,cb,type);
-  }
   int IOManager::delTimer(int fd)
   {
     RDLockGuard lg(_lk);
@@ -448,5 +398,5 @@ namespace zhuyh
     --_holdCount;
     return 0;
   }
-    
+  
 };

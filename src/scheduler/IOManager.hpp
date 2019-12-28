@@ -14,12 +14,13 @@
 #include <string.h>
 #include "../logUtil.hpp"
 #include "TimerManager.hpp"
-
+#include "../macro.hpp"
 namespace zhuyh
 {
+  //static Logger::ptr sys_log = GET_LOGGER("system");
   class Scheduler;
   struct Task;
-  class IOManager final : public TimerManager
+  class IOManager final
   {
   public:
     friend class Scheduler;
@@ -73,12 +74,13 @@ namespace zhuyh
     void setScheduler(Scheduler* scheduler);
     //触发一个事件
     int triggerEvent(FdEvent* epEv,EventType type);
-    
-    int addTimer(Timer::ptr* timer,std::function<void()> cb,
-		 Timer::TimerType type = Timer::SINGLE) override;
-    int addTimer(Timer::ptr timer,std::function<void()> cb,
-		 Timer::TimerType type = Timer::SINGLE) override;
-    int delTimer(int fd) override;
+    template<class T>
+    int addTimer(Timer::ptr* timer,T cb,
+		 Timer::TimerType type = Timer::SINGLE);
+    template<class T>
+    int addTimer(Timer::ptr timer,T cb,
+	     Timer::TimerType type = Timer::SINGLE);
+    int delTimer(int fd);
     
   private:
     
@@ -95,6 +97,58 @@ namespace zhuyh
     std::atomic<bool> _stopping{false};
     std::atomic<int> _holdCount{0};
     FdEvent::ptr _notifyEvent;
-  };
+  };  
   
+  template<class T>
+  int IOManager::addTimer(Timer::ptr timer,T cb,
+			  Timer::TimerType type) 
+  {
+    
+    if(timer == nullptr) return -1;
+    if(type == Timer::LOOP)
+      timer->setLoop();
+    int tfd = timer->getTimerFd();
+    ASSERT(tfd >= 0);
+    struct epoll_event ev;
+    static Logger::ptr sys_log = GET_LOGGER("system");
+    RDLockGuard lg(_lk);
+    FdEvent::ptr& epEv = _eventMap[tfd];
+    if(epEv == nullptr)
+      {
+	lg.unlock();
+	WRLockGuard t(_lk);
+	epEv.reset(new FdEvent(tfd,NONE));
+      }
+    else
+      {
+	return -1;
+      }
+    LockGuard lg2(epEv->lk);
+    //定时器一定是一个读时间
+    ev.events = EPOLLIN | EPOLLET;
+    ev.data.ptr = epEv.get();
+    int rt = epoll_ctl(_epfd,EPOLL_CTL_ADD,tfd,&ev);
+    if(rt < 0)
+      {
+	LOG_ERROR(sys_log) << "Failed to add timer";
+	return -1;
+      }
+    
+    //LOG_INFO(sys_log) << "add a timer";
+    epEv -> timer = timer;
+    epEv -> rdtask.reset(new Task(cb));
+    epEv -> event = (EventType)(epEv->event | READ);
+    timer->start();
+    ++_holdCount;
+    return 0;
+  }
+  template<class T>
+  int IOManager::addTimer(Timer::ptr* timer,T cb,
+			  Timer::TimerType type)
+  {
+    if(timer == nullptr) return -1;
+    Timer::ptr t;
+    t.swap(*timer);
+    return addTimer(t,cb,type);
+  }
 }

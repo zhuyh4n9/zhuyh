@@ -37,6 +37,7 @@
     基于timerfd的异步定时器 
        - 目前只支持单次计时,不支持循环计时
             zhuyh::Scheduler::getThis() -> addTimer(Timer::ptr(new Timer(sec,msec,usec,nsec)),call_back,type);
+        - BUG : 在协程中使用异步计时器会出现问题(程序core掉/一直阻塞)
     协程信号量
          - 待开发
 ```

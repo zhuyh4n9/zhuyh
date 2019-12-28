@@ -55,44 +55,29 @@ void test_thread()
 }
 int main()
 {
-  //  test_co();
-  /*
-    int fd = socket(AF_INET,SOCK_STREAM,0);
-    struct sockaddr_in addr;
-    memset(&addr,0,sizeof(addr));
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons(80);
-    addr.sin_addr.s_addr = inet_addr("183.232.231.174");
-  */
-  //LOG_ROOT_ERROR() << "test error";
-  auto scheduler = Scheduler::getThis();
-  TEST* test = new TEST[300];
-  for(int i =0 ;i<300;++i)
+   auto scheduler = Scheduler::getThis();
+  TEST* test = new TEST[5];
+  for(int i =0 ;i<5;++i)
     {
       int rt=pipe(test[i].fd);
       
       ASSERT2(rt >= 0,strerror(errno));
       scheduler->addReadEvent(test[i].fd[0],
-			      Task::ptr(new Task(std::bind(&TEST::funcRead,&test[i]))) );
+      Task::ptr(new Task(std::bind(&TEST::funcRead,&test[i]))) );
       scheduler->addWriteEvent(test[i].fd[1],
 			       Task::ptr(new Task(std::bind(&TEST::funcWrite,&test[i]))) );
-      scheduler->addTimer(Timer::ptr(new Timer(2)),Alarm);
+      scheduler->addTimer(Timer::ptr(new Timer(1)),Alarm);
       /*
       //co test_co;
       co [](){
-	for(int i=0;i<0;i++)
-	  {
-	    //LOG_ROOT_INFO() << "END";
-	    co_yield;
-	  }
-	//LOG_ROOT_INFO() << "END";
+	Scheduler* scheduler = Scheduler::getThis();
+	scheduler->addTimer(Timer::ptr(new Timer(1)),Fiber::getThis());
+	
       };
       */
     }
 
-  //connect(fd,(struct sockaddr*)&addr,sizeof(addr));
   //Scheduler::getThis()->stop();
-  //LOG_ROOT_DEBUG() <<"MAIN EXIT";
   return 0;
 }
 
