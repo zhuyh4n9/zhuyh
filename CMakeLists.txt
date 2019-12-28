@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 ENABLE_LANGUAGE(ASM)
 project(zhuyh)
 set(CMAKE_CXX_FLAGS
-  "$ENV{CXXFLAGS} -rdynamic -O2  -std=c++11 -Wall -Werror -Wno-unused-function")
+  "$ENV{CXXFLAGS} -rdynamic -O0 -g  -std=c++11 -Wall -Werror -Wno-unused-function")
 
 set(LIB_SRC
   src/log.cpp
@@ -18,7 +18,8 @@ set(LIB_SRC
   src/scheduler/Processer.cpp
   src/scheduler/IOManager.cpp
   src/scheduler/Scheduler.cpp
-  src/co.cpp)
+  src/co.cpp
+  src/scheduler/TimerManager.cpp)
 
 set(LIBS yaml-cpp pthread)
 add_library(zhuyh SHARED ${LIB_SRC})
@@ -53,6 +54,9 @@ target_link_libraries(test_iomgr zhuyh  ${LIBS})
 
 add_executable(test_co test/test_co.cpp)
 target_link_libraries(test_co zhuyh  ${LIBS})
+
+add_executable(test_timer test/test_timer.cpp)
+target_link_libraries(test_timer zhuyh  ${LIBS})
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)

@@ -9,6 +9,7 @@
 #include <functional>
 #include "../logUtil.hpp"
 #include "../log.hpp"
+#include "TimerManager.hpp"
 
 namespace zhuyh
 {
@@ -20,7 +21,7 @@ namespace zhuyh
   class IOManager;
   class Processer;
   struct Task;
-  class Scheduler : public std::enable_shared_from_this<Scheduler>
+  class Scheduler final : public std::enable_shared_from_this<Scheduler>
   {
   public:
     friend class IOManager;
@@ -47,6 +48,10 @@ namespace zhuyh
     //获取根管理器,需要在进入main函数前进行一次初始化
     static Scheduler* getThis();
     int getHold();
+    int addTimer(Timer::ptr timer,std::function<void()> cb,
+		  Timer::TimerType type = Timer::SINGLE);
+    int addTimer(Timer::ptr* timer,std::function<void()> cb,
+		 Timer::TimerType type = Timer::SINGLE);
   private:
     //需要线程安全,供IOManager使用
     void addTask(std::shared_ptr<Task> task);

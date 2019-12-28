@@ -1,27 +1,25 @@
-/*
- * Not Finished Yet
- */
-
 #pragma once
 
 #include <unistd.h>
+#include <sys/timerfd.h>
 #include "../concurrent/Thread.hpp"
 #include "../concurrent/fiber.hpp"
 #include "../latch/lock.hpp"
 #include "Scheduler.hpp"
 #include <sys/epoll.h>
+#include <unordered_map>
 #include <memory>
 #include <set>
 #include <list>
 #include <string.h>
-#include <unordered_map>
+#include "../logUtil.hpp"
+#include "TimerManager.hpp"
 
 namespace zhuyh
 {
-  
   class Scheduler;
   struct Task;
-  class IOManager
+  class IOManager final : public TimerManager
   {
   public:
     friend class Scheduler;
@@ -31,21 +29,23 @@ namespace zhuyh
 	READ = EPOLLIN,
 	WRITE = EPOLLOUT
       };
-    struct EpollEvent 
+    struct FdEvent final
     {
-      Mutex lk;
-      typedef std::shared_ptr<EpollEvent> ptr;
-      int fd;
-      //bool isTimer = false;
-      EventType event = NONE;
-      std::shared_ptr<Task> rdtask = nullptr;
-      std::shared_ptr<Task> wrtask = nullptr;
-      EpollEvent(int _fd,EventType _event)
+      
+      typedef std::shared_ptr<FdEvent> ptr;
+      FdEvent(int _fd,EventType _event)
       {
 	fd = _fd;
 	event = _event;
       }
-      EpollEvent() {}
+      FdEvent() {}
+    public:
+      Mutex lk;
+      int fd;
+      Timer::ptr timer = nullptr;
+      EventType event = NONE;
+      std::shared_ptr<Task> rdtask = nullptr;
+      std::shared_ptr<Task> wrtask = nullptr;
     };
     typedef std::shared_ptr<IOManager> ptr;
     IOManager(const std::string& name = "",Scheduler* scheduler = nullptr);
@@ -71,23 +71,30 @@ namespace zhuyh
     //设置/获取调度器
     Scheduler* getScheduler();
     void setScheduler(Scheduler* scheduler);
-          //触发一个事件
-    int triggerEvent(EpollEvent::ptr epEv,EventType type);
-    int triggerEvent(EpollEvent* epEv,EventType type);
+    //触发一个事件
+    int triggerEvent(FdEvent* epEv,EventType type);
+    
+    int addTimer(Timer::ptr* timer,std::function<void()> cb,
+		 Timer::TimerType type = Timer::SINGLE) override;
+    int addTimer(Timer::ptr timer,std::function<void()> cb,
+		 Timer::TimerType type = Timer::SINGLE) override;
+    int delTimer(int fd) override;
+    
   private:
+    
     void notify();
     //epoll句柄
     int _epfd = -1;
     Scheduler* _scheduler;
     // fd --> event
-    std::unordered_map<int,EpollEvent::ptr> _eventMap;
+    std::unordered_map<int,FdEvent::ptr> _eventMap;
     mutable RWLock _lk;
     int _notifyFd[2];
     Thread::ptr _thread = nullptr;
     std::string _name;
     std::atomic<bool> _stopping{false};
     std::atomic<int> _holdCount{0};
-    EpollEvent::ptr _notifyEvent;
+    FdEvent::ptr _notifyEvent;
   };
   
 }

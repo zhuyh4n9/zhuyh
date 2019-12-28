@@ -172,5 +172,19 @@ namespace zhuyh
 	  _prc = _prc->_payLoad < _pcsQue[i]->_payLoad ? _prc : _pcsQue[i];
       }
     return _prc;
-  }  
+  }
+  int Scheduler::addTimer(Timer::ptr timer,std::function<void()> cb,
+		 Timer::TimerType type )
+   {
+     if(_ioMgr != nullptr)
+       return _ioMgr->addTimer(timer,cb,type);
+     return -1;
+   }
+  int Scheduler:: addTimer(Timer::ptr* timer,std::function<void()> cb,
+		Timer::TimerType type )
+  {
+    if(_ioMgr != nullptr)
+      return _ioMgr->addTimer(timer,cb,type);
+    return -1;
+  }
 }

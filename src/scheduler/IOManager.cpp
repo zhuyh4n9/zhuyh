@@ -25,7 +25,7 @@ namespace zhuyh
     setNonb(_notifyFd[0]);
     setNonb(_notifyFd[1]);
     struct epoll_event ev;
-    _notifyEvent.reset(new EpollEvent());
+    _notifyEvent.reset(new FdEvent());
     _notifyEvent->fd = _notifyFd[0];
     ev.events = EPOLLIN | EPOLLET;
     ev.data.ptr = _notifyEvent.get();
@@ -34,11 +34,11 @@ namespace zhuyh
     _thread.reset(new Thread(std::bind(&IOManager::run,this),_name));
     LOG_DEBUG(sys_log) << "IOManager : "<< _name <<" Created!";
   }
-  
   IOManager::~IOManager()
   {
     if(!_stopping)
       stop();
+    LOG_DEBUG(sys_log) << "IOManager Destroyed";
     if(_epfd >= 0)
       {
 	close(_epfd);
@@ -56,32 +56,25 @@ namespace zhuyh
       }
     _eventMap.clear();
     _thread->join();
-    LOG_DEBUG(sys_log) << "IOManager : "<<_name<<"  Destroyed";
   }
-  
   void IOManager::notify()
   {
     int rt = write(_notifyFd[1],"",1);
     ASSERT(rt >= 0);
   }
-  
+  //增加一个addEvent对外界使用,该方法变为私有
   int IOManager::addEvent(int fd,Task::ptr task,EventType type)
   {
     ASSERT( type == READ  || type == WRITE);
     RDLockGuard lg(_lk);
-    if(getStopping())
-      {
-	LOG_WARN(sys_log) << "IOManager : "<< _name << "is about to stop";
-	return -1;
-      }
     struct epoll_event ev;
-    EpollEvent::ptr& epEv = _eventMap[fd];
+    FdEvent::ptr& epEv = _eventMap[fd];
     if(epEv == nullptr)
       {
 	//	LOG_DEBUG(sys_log) << "HERE4";
 	lg.unlock();
 	WRLockGuard t(_lk);
-	epEv.reset(new EpollEvent(fd,NONE));
+	epEv.reset(new FdEvent(fd,NONE));
       }
     else
       {
@@ -105,7 +98,6 @@ namespace zhuyh
 	return false;
       }
     ev.events = epEv->event | EPOLLET | type;
-    //???
     ev.data.ptr = epEv.get();
     rt = 0;
     rt = epoll_ctl(_epfd,op,fd,&ev);
@@ -140,7 +132,7 @@ namespace zhuyh
     ASSERT(type == READ || type == WRITE);
     struct epoll_event ev;
     RDLockGuard lg(_lk);
-    EpollEvent::ptr epEv = _eventMap[fd];
+    FdEvent::ptr epEv = _eventMap[fd];
     if(epEv == nullptr) return -1;
     lg.unlock();
     //LOG_INFO(sys_log) << "HERE";
@@ -180,7 +172,7 @@ namespace zhuyh
     ASSERT( type != NONE);
     ASSERT(type == READ || type == WRITE);
     struct epoll_event ev;
-    EpollEvent::ptr epEv;
+    FdEvent::ptr epEv;
     RDLockGuard lg(_lk);
     epEv = _eventMap[fd];
     if(epEv == nullptr)
@@ -206,14 +198,14 @@ namespace zhuyh
 	LOG_ERROR(sys_log) << "epoll_ctl error";
 	return -1;
       }
-    triggerEvent(epEv,type);
+    triggerEvent(epEv.get(),type);
     --_holdCount;
     return 0;
   }
 
   int IOManager::cancleAll(int fd)
   {
-    EpollEvent::ptr epEv;
+    FdEvent::ptr epEv;
     RDLockGuard lg(_lk);
     epEv = _eventMap[fd];
     if(epEv == nullptr )
@@ -222,7 +214,7 @@ namespace zhuyh
 	return -1;
       }
     lg.unlock();
-
+    
     LockGuard lg2(epEv->lk);
     if(epEv->event == NONE) return false;
     int rt = epoll_ctl(_epfd,EPOLL_CTL_DEL,fd,nullptr);
@@ -234,12 +226,12 @@ namespace zhuyh
     
     if(epEv->event & READ)
       {
-	triggerEvent(epEv,READ);
+	triggerEvent(epEv.get(),READ);
 	--_holdCount;
       }
     if(epEv->event & WRITE)
       {
-        triggerEvent(epEv,WRITE);
+        triggerEvent(epEv.get(),WRITE);
 	--_holdCount;
       }
     return 0;
@@ -272,7 +264,9 @@ namespace zhuyh
 	  }
 	int rt = 0;
 	do{
+	  //LOG_INFO(sys_log) << "Here";
 	  rt = epoll_wait(_epfd,&*events.begin(),MaxEvent,MaxTimeOut);
+	  //LOG_INFO(sys_log) << "Here2";
 	  //被中断打断
 	  if(rt<0 && errno == EINTR)
 	    {
@@ -283,16 +277,14 @@ namespace zhuyh
 	    {
 	      break;
 	    }
+
 	}while(1);
-	//TODO:需要处理计时器
-	
 	for(int i=0;i<rt;i++)
 	  {
 	    struct epoll_event& ev = events[i];
-	    
-	    EpollEvent* epEv = (EpollEvent*)ev.data.ptr;
-	    int real_event = NONE;
+	    FdEvent* epEv = (FdEvent*)ev.data.ptr;
 	    if(epEv->fd == _notifyFd[0]) continue;
+	    int real_event = NONE;
 	    LockGuard lg(epEv->lk);
 	    if(ev.events & READ )
 	      {
@@ -305,27 +297,33 @@ namespace zhuyh
 	    if( (real_event & epEv->event) == NONE) continue;
 	    
 	    EventType tevent = (EventType)(~real_event & epEv->event);
-	    int op = tevent == NONE ? EPOLL_CTL_DEL : EPOLL_CTL_MOD;
-	    ev.events = tevent | EPOLLET;
-	    int rt2 = epoll_ctl(_epfd,op,epEv->fd,&ev);
-	    if(rt2)
+	    if(epEv->timer != nullptr && epEv->timer->getTimerType() == Timer::LOOP)
+	      ;
+	    else
 	      {
-		LOG_ERROR(sys_log) << "epoll_ctl error";
-		continue;
+		int op = (tevent == NONE) ? EPOLL_CTL_DEL : EPOLL_CTL_MOD;
+		ev.events = tevent | EPOLLET;
+		int rt2 = epoll_ctl(_epfd,op,epEv->fd,&ev);
+		if(rt2)
+		  {
+		    LOG_ERROR(sys_log) << "epoll_ctl error";
+		    continue;
+		  }
 	      }
 	    //	    epEv->event = tevent;
 	    if(real_event & READ)
 	      {
 		//LOG_DEBUG(sys_log) << "Triggled Read Event";
 		triggerEvent(epEv,READ);
-		epEv->rdtask.reset();
-		--_holdCount;
+		if(!(epEv->timer != nullptr && epEv->timer->getTimerType() == Timer::LOOP))
+		  {
+		    --_holdCount;
+		  }
 	      }
 	    if(real_event & WRITE)
 	      {
 		//LOG_DEBUG(sys_log) << "Triggled Write Event";
 		triggerEvent(epEv,WRITE);
-		epEv->wrtask.reset();
 		--_holdCount;
 	      }
 	  }
@@ -346,38 +344,109 @@ namespace zhuyh
     _scheduler = scheduler;
   }
 
-  int IOManager::triggerEvent(EpollEvent::ptr epEv,EventType type)
-  {
-    ASSERT( type == READ  || type == WRITE);
-    ASSERT(type & epEv->event);
-    //交给调度器
-    if(type & READ)
-      {
-	_scheduler->addTask(epEv->rdtask);
-      }
-    else if(type & WRITE)
-      {
-	_scheduler->addTask(epEv->wrtask);
-      }
-    epEv->event =(EventType)(epEv-> event & ~type);
-    return 0;
-  }
-  
-  int IOManager::triggerEvent(EpollEvent* epEv,EventType type)
+  int IOManager::triggerEvent(FdEvent* epEv,EventType type)
   {
     ASSERT( type == READ  || type == WRITE);
     ASSERT(type & epEv->event);
     //epEv->event =(EventType)(epEv-> event & ~type);
     if(type & READ)
       {
-	_scheduler->addTask(epEv->rdtask);
+	Task::ptr task = epEv->rdtask;
+	//目的是关闭fd
+	if(epEv->timer != nullptr)
+	  {
+	    char c;
+	    read(epEv->fd,&c,1);
+	    
+	    if(epEv->timer->getTimerType() == Timer::SINGLE)
+	      epEv->timer.reset();
+	  }
+	else
+	  epEv->rdtask.reset();
+	_scheduler->addTask(task);
       }
     else if(type & WRITE)
       {
-	_scheduler->addTask(epEv->wrtask);
+	Task::ptr task = epEv->wrtask;
+	ASSERT(epEv->timer == nullptr);
+	epEv->wrtask.reset();
+	_scheduler->addTask(task);
       }
     epEv->event =(EventType)(epEv-> event & ~type);
     return 0;
   }
-  
+
+  //Timer是一个读事件
+  int IOManager::addTimer(Timer::ptr timer,std::function<void()> cb,
+			   Timer::TimerType type) 
+  {
+    if(timer == nullptr) return -1;
+    if(type == Timer::LOOP)
+      timer->setLoop();
+    int tfd = timer->getTimerFd();
+    ASSERT(tfd >= 0);
+    struct epoll_event ev;
+    
+    RDLockGuard lg(_lk);
+    FdEvent::ptr& epEv = _eventMap[tfd];
+    if(epEv == nullptr)
+      {
+	lg.unlock();
+	WRLockGuard t(_lk);
+	epEv.reset(new FdEvent(tfd,NONE));
+      }
+    else
+      {
+	return -1;
+      }
+    LockGuard lg2(epEv->lk);
+    //定时器一定是一个读时间
+    ev.events = EPOLLIN | EPOLLET;
+    ev.data.ptr = epEv.get();
+    int rt = epoll_ctl(_epfd,EPOLL_CTL_ADD,tfd,&ev);
+    if(rt < 0)
+      {
+	LOG_ERROR(sys_log) << "Failed to add timer";
+	return -1;
+      }
+    
+    //LOG_INFO(sys_log) << "add a timer";
+    epEv -> timer = timer;
+    epEv -> rdtask.reset(new Task(cb));
+    epEv -> event = (EventType)(epEv->event | READ);
+    timer->start();
+    ++_holdCount;
+    return 0;
+  }
+
+  int IOManager::addTimer(Timer::ptr* timer,std::function<void()> cb,
+			   Timer::TimerType type)
+  {
+    if(timer == nullptr) return -1;
+    Timer::ptr t;
+    t.swap(*timer);
+    return addTimer(t,cb,type);
+  }
+  int IOManager::delTimer(int fd)
+  {
+    RDLockGuard lg(_lk);
+    FdEvent::ptr epEv = _eventMap[fd];
+    if(epEv == nullptr) return -1;
+    if(epEv-> timer == nullptr) return -1;
+    lg.unlock();
+    
+    LockGuard lg2(epEv->lk);
+    ASSERT(epEv->event == READ);
+    int rt = epoll_ctl(_epfd,EPOLL_CTL_DEL,fd,nullptr);
+    if(rt)
+      {
+	LOG_ERROR(sys_log) << "epoll ctl error : "<<strerror(errno);
+	return -1;
+      }
+    epEv->event = NONE;
+    epEv->timer.reset();
+    --_holdCount;
+    return 0;
+  }
+    
 };

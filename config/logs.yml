@@ -4,7 +4,7 @@ logs:
     appenders: 
       - type: FileLogAppender
         file: /home/zhuyh/mnt/Code/GraduationDesign/zhuyh/logs/LogRoot.txt
-        #      - type: StdoutAppender
+      - type: StdoutAppender
   - name: system
     level: INFO
     appenders: 
