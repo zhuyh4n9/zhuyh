@@ -55,9 +55,7 @@ namespace zhuyh
 		 Timer::TimerType type = Timer::SINGLE)
     
     XX(Timer::ptr,std::function<void()>);
-    XX(Timer::ptr*,std::function<void()>);
     XX(Timer::ptr,Fiber::ptr);
-    XX(Timer::ptr*,Fiber::ptr);;
 
 #undef XX
   private:

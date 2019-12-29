@@ -60,7 +60,7 @@ namespace zhuyh
     //std::cout<<_stackSize<<std::endl;
     LOG_ROOT_INFO() << "Creating Fiber";
     _ctx = make_fcontext((char*)_stack+_stackSize,_stackSize,Fiber::run);
-    LOG_INFO(sys_log) << "Fiber ADDRESS : "<<_ctx;
+    //LOG_INFO(sys_log) << "Fiber ADDRESS : "<<_ctx;
     if(StackTrait::protectStack(_stack,_stackSize,pages) )
       {
 	_pagesProtect = pages;
@@ -181,12 +181,31 @@ namespace zhuyh
     cur->_state = READY;
     cur->swapOut();
   }
-
+  
+  void Fiber::YieldToSwitch()
+  {
+    Fiber::ptr cur = getThis();
+    if(cur == _main_fiber() ) return;
+    ASSERT(cur!=nullptr);
+    setThis(_main_fiber().get());
+    cur->_state = SWITCHING;
+    if(jump_fcontext(&(cur->_ctx),_main_fiber()->_ctx,0))
+      {
+	ASSERT2(false,"jump_fcontext error");
+      }
+  }
+  
   void Fiber::YieldToHold()
   {
     Fiber::ptr cur = getThis();
+    if(cur == _main_fiber() ) return;
+    ASSERT(cur!=nullptr);
+    setThis(_main_fiber().get());
     cur->_state = HOLD;
-    cur->swapOut();
+    if(jump_fcontext(&(cur->_ctx),_main_fiber()->_ctx,0))
+      {
+	ASSERT2(false,"jump_fcontext error");
+      }
   }
 
   uint64_t Fiber::totalFibers()

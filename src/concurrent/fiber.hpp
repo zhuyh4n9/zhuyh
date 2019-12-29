@@ -41,6 +41,7 @@ namespace zhuyh
 	INIT,
 	READY,
 	HOLD,
+	SWITCHING, //用于HOLD过渡,防止jump_fcontext被执行多次
 	EXEC,
 	TERM,
 	EXCEPT
@@ -55,6 +56,7 @@ namespace zhuyh
       XX(EXEC);
       XX(TERM);
       XX(EXCEPT);
+      XX(SWITCHING);
 #undef    XX
       return "UNKNOWN";
     }
@@ -73,6 +75,7 @@ namespace zhuyh
     static void YieldToReady();
     //协程切换至后台并且设置为HOLD状态
     static void YieldToHold();
+    static void YieldToSwitch();
     //获取总协程数
     static uint64_t totalFibers();
     //执行函数

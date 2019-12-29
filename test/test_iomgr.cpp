@@ -66,23 +66,24 @@ int main()
       
       ASSERT2(rt >= 0,strerror(errno));
       scheduler->addReadEvent(test[i].fd[0],
-      			      Task::ptr(new Task(std::bind(&TEST::funcRead,&test[i]))) );
+       			      Task::ptr(new Task(std::bind(&TEST::funcRead,&test[i]))) );
       scheduler->addWriteEvent(test[i].fd[1],
-      			       Task::ptr(new Task(std::bind(&TEST::funcWrite,&test[i]))) );
+       			       Task::ptr(new Task(std::bind(&TEST::funcWrite,&test[i]))) );
+      rt = 0;
       if((rt=scheduler->addTimer(Timer::ptr(new Timer(1)),Alarm) < 0))
-      	{
+       	{
       	  LOG_ROOT_ERROR() << "Failed : rt = "<<rt;
       	}
-
+      
       co test_co;
-      co test_co;
+      //co test_co;
       co [](){
        
-	//for(int i=0;i<1000;i++) co_yield;
-	Scheduler* scheduler = Scheduler::getThis();
-	scheduler->addTimer(Timer::ptr(new Timer(0,60,0,1)),Fiber::getThis());
-	//for(int i=0;i<1000;i++);
-	LOG_ROOT_INFO() << "back to coroutine";
+      	//for(int i=0;i<1000;i++) co_yield;
+      	Scheduler* scheduler = Scheduler::getThis();
+      	scheduler->addTimer(Timer::ptr(new Timer(0,0,0,1)),Fiber::getThis());
+      	//for(int i=0;i<1000;i++);
+      	LOG_ROOT_INFO() << "back to coroutine";
       };
       //LOG_ROOT_ERROR() <<" ADD TIMER : "<<i;
     }

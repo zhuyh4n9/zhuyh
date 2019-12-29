@@ -51,7 +51,7 @@ namespace zhuyh
 	close(_notifyFd[1]);
 	_notifyFd[1] = -1;
       }
-    std::cout<<"~Processer\n";
+    //std::cout<<"~Processer\n";
     LOG_INFO(sys_log) << "Processer : "<<_name<<"  Destroyed";
   }
   
@@ -77,10 +77,10 @@ namespace zhuyh
       {
 	if(task->cb){
 	  ASSERT(task -> fiber == nullptr);
-	  std::cout<<_scheduler<<std::endl;
+	  //d::cout<<_scheduler<<std::endl;
 	  ASSERT(_scheduler != nullptr);
 	  ++(_scheduler->totalTask);
-	  LOG_INFO(sys_log)<< "Cb ADDED : "<<(_scheduler->totalTask)<<std::endl;
+	  //LOG_INFO(sys_log)<< "Cb ADDED : "<<(_scheduler->totalTask)<<std::endl;
 	}
 	/*
 	else
@@ -194,6 +194,11 @@ namespace zhuyh
 	    if(fiber->getState() == Fiber::READY)
 	      {
 		_readyTask.push_front(task);
+	      }
+	    else if(fiber->getState() == Fiber::SWITCHING)
+	      {
+		fiber->_state = Fiber::HOLD;
+		--_payLoad;
 	      }
 	    else if(fiber->getState() == Fiber::HOLD)
 	      {

@@ -141,7 +141,7 @@ namespace zhuyh
     epEv -> rdtask.reset(new Task(cb));
     LOG_INFO(sys_log) << "ADD TIMER";
     epEv -> event = (EventType)(epEv->event | READ);
-    timer->start();
+    //timer->start();
     ++_holdCount;
     //LOG_INFO(sys_log) << "ADD";
     return 0;

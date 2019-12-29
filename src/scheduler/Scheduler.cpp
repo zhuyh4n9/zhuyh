@@ -192,56 +192,23 @@ namespace zhuyh
 	int rt=_ioMgr->addTimer(timer,cb,type);			
 	if(rt >= 0)
 	  {
-	    co_yield_to_hold;
+	    timer->start();
+	    Fiber::YieldToSwitch();
 	  }
 	return rt;							
       }
     return -1;								
   }								       
-  int Scheduler::addTimer(Timer::ptr* timer,Fiber::ptr cb,			
-			  Timer::TimerType type)			
-  {
-    
-    if(_ioMgr != nullptr)
-      {
-	if((*timer)->isZero()) return 0;
-	int rt=_ioMgr->addTimer(timer,cb,type);			
-	if(rt >= 0)
-	  {
-	    //(*timer)->start();
-	    co_yield_to_hold;
-	  }
-	return rt;						
-      }								       
-    return -1;								
-  }
   
   int Scheduler::addTimer(Timer::ptr timer,std::function<void()> cb,
-			  Timer::TimerType type )			
-  {									
-    if(_ioMgr != nullptr)
-      {
-	if(timer->isZero()) return 0;
-	int rt = _ioMgr->addTimer(timer,cb,type);
-	if(rt >= 0)
-	  {
-	    
-	  }
-	return rt;
-      }
-    return -1;								
-  }
-  
-  int Scheduler::addTimer(Timer::ptr* timer,std::function<void()> cb,
 			  Timer::TimerType type)			
   {								
     if(_ioMgr != nullptr)
       {
-	if((*timer)->isZero()) return 0;
 	int rt = _ioMgr->addTimer(timer,cb,type);
 	if(rt >= 0)
 	  {
-	    
+	    timer->start();
 	  }
 	return rt;
       }								       
