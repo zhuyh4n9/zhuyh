@@ -49,7 +49,7 @@ namespace zhuyh
   //因此用户单独创建IOManager可行,但是没有意义
   void Scheduler::start()
   {
-    ASSERT(_stop == true);
+    if(_stop == false) return;
     ASSERT(_minThread > 0 && _maxThread > 0);
     ASSERT(_maxThread >= _minThread);
     ASSERT(_limitPayLoad > 0 );
@@ -67,7 +67,7 @@ namespace zhuyh
       {
 	_pcsQue[i]->start();
       }
-    //LOG_DEBUG(sys_log) << "Scheduler Created!";
+    LOG_DEBUG(sys_log) << "Scheduler Created!";
     _stop = false;
   }
   

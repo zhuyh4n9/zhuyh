@@ -74,7 +74,7 @@ namespace zhuyh
     void lock() override
     {
       while(std::atomic_flag_test_and_set_explicit(&a_flag,std::memory_order_acquire))
-	    ;
+	;
     }
 
       //清除flag标记
@@ -166,9 +166,12 @@ namespace zhuyh
   }							\
   void unlock()						\
   {							\
-    isLocked = false;					\
-    _lk.unlock();					\
-  }							
+    if(isLocked == true)				\
+      {							\
+	isLocked = false;				\
+	_lk.unlock();					\
+      }							\
+  }
 
   class LockGuard : private UnCopyable
   {

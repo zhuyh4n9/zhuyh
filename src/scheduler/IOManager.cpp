@@ -32,7 +32,7 @@ namespace zhuyh
     rt = epoll_ctl(_epfd,EPOLL_CTL_ADD,_notifyFd[0],&ev);
     ASSERT(rt >= 0);
     _thread.reset(new Thread(std::bind(&IOManager::run,this),_name));
-    LOG_DEBUG(sys_log) << "IOManager : "<< _name <<" Created!";
+    LOG_INFO(sys_log) << "IOManager : "<< _name <<" Created!";
   }
   IOManager::~IOManager()
   {
@@ -73,6 +73,7 @@ namespace zhuyh
   {
     ASSERT( type == READ  || type == WRITE);
     WRLockGuard lg(_lk);
+    LOG_INFO(sys_log) << "START ADD EVENT";
     struct epoll_event ev;
     FdEvent*& epEv = _eventMap[fd];
     if(epEv == nullptr)

@@ -59,7 +59,7 @@ int main()
   TEST* test = new TEST[100];
   LOG_ROOT_INFO() << "Entering";
   //Scheduler* scheduler = Scheduler::getThis();
-  scheduler->start();
+  //scheduler->start();
   for(int i =0 ;i<100;++i)
     {
       int rt=pipe(test[i].fd);

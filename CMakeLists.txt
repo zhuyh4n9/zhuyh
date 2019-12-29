@@ -50,7 +50,7 @@ add_executable(test_processer test/test_processer.cpp)
 target_link_libraries(test_processer zhuyh  ${LIBS})
 
 add_executable(test_iomgr test/test_iomgr.cpp )
-target_link_libraries(test_iomgr libzhuyh  ${LIBS})
+target_link_libraries(test_iomgr zhuyh  ${LIBS})
 
 add_executable(test_co test/test_co.cpp)
 target_link_libraries(test_co zhuyh  ${LIBS})
