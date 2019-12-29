@@ -51,6 +51,7 @@ namespace zhuyh
 	close(_notifyFd[1]);
 	_notifyFd[1] = -1;
       }
+    std::cout<<"~Processer\n";
     LOG_INFO(sys_log) << "Processer : "<<_name<<"  Destroyed";
   }
   
@@ -64,7 +65,7 @@ namespace zhuyh
       {
 	LOG_ERROR(sys_log) << e.what();
       }
-    //LOG_INFO(sys_log) << "Processer Started!";
+    LOG_INFO(sys_log) << "Processer Started!";
   }
   //只有主协程取任务执行是是从队列尾部取出
   //向就绪队列添加任务
@@ -72,29 +73,33 @@ namespace zhuyh
   {
     
     if(task == nullptr) return false;
-    else if(task->fiber)
+    if(task->cb || task -> fiber)
       {
-	task->fiber->setState(Fiber::READY);
-	_readyTask.push_front(std::move(task->fiber));
+	if(task->cb){
+	  ASSERT(task -> fiber == nullptr);
+	  std::cout<<_scheduler<<std::endl;
+	  ASSERT(_scheduler != nullptr);
+	  ++(_scheduler->totalTask);
+	  LOG_INFO(sys_log)<< "Cb ADDED : "<<(_scheduler->totalTask)<<std::endl;
+	}
+	/*
+	else
+	  {
+	    ASSERT2(task->fiber->getState() == Fiber::READY
+		    || task->fiber->getState() == Fiber::HOLD,
+		    Fiber::getState(task->fiber->getState()));
+		    
+	  }
+	*/
+    _readyTask.push_front(task);
 	++_payLoad;
 	notify();
 	return true;
       }
-    //是回调函数
-    else if(task->cb)
-      {
-	++(_scheduler->totalTask);
-	Fiber::ptr fiber = nullptr;
-	fiber.reset(new Fiber(task->cb));
-	fiber->setState(Fiber::READY);
-	_readyTask.push_front(std::move(fiber));
-	++_payLoad;
-	notify();
-	return true;
-      }
+    ASSERT(false);
     return false;
   }
-
+  
   //swap操作将会使得*t变为空
   bool Processer::addTask(Task::ptr* t)
   {
@@ -105,16 +110,16 @@ namespace zhuyh
   }
   
   //working steal算法
-  std::list<Fiber::ptr> Processer::steal(int k)
+  std::list<Task::ptr> Processer::steal(int k)
   {
-    std::list<Fiber::ptr> tasks;
+    std::list<Task::ptr> tasks;
     if(_readyTask.try_popk_front(k,tasks) == false);
       //LOG_INFO(sys_log) << "Failed to Steal Fibers";
     else
       _payLoad -= tasks.size();
     return tasks;
   }
-  bool Processer::store(std::list<Fiber::ptr>& tasks)
+  bool Processer::store(std::list<Task::ptr>& tasks)
   {
     _readyTask.pushk_front(tasks);
     _payLoad += tasks.size();
@@ -155,17 +160,40 @@ namespace zhuyh
     while(1)
       {
 	//LOG_INFO(sys_log) << "total " << _scheduler->totalTask;
-	Fiber::ptr fiber;
-	while(_readyTask.try_pop_back(fiber))
+	Task::ptr task;
+	while(_readyTask.try_pop_back(task))
 	  {
+	    // LOG_INFO(sys_log) << " totalTask : "<<_scheduler->totalTask
+	    // 		      << " holdCount : "<< _scheduler-> getHold();
+	    ASSERT(task != nullptr);
+	    //LOG_INFO(sys_log) << "Pick up a task";
+	    if(task->fiber)
+	      {
+		task->fiber -> setState(Fiber::READY);
+	      }
+	    //是回调函数则创建一个协程
+	    else if(task->cb)
+	      {
+		task->fiber.reset(new Fiber(task->cb));
+		task->fiber->setState(Fiber::READY);
+		task->cb = nullptr;
+	      }
+	    else
+	      {
+		ASSERT(false);
+	      }
+	    Fiber::ptr& fiber = task->fiber;
 	    ASSERT(fiber != nullptr);
-	    ASSERT(fiber->getState() == Fiber::READY);
+	    ASSERT(fiber->_stack != nullptr);
+	    ASSERT2(fiber->getState() == Fiber::READY,Fiber::getState(fiber->getState()));
+	    //LOG_INFO(sys_log) << "SWAPIN";
 	    fiber->swapIn();
+	    //LOG_INFO(sys_log) << "SWAPOUT";
 	    ASSERT(fiber->getState() != Fiber::INIT);
 	    //加入就绪
 	    if(fiber->getState() == Fiber::READY)
 	      {
-		_readyTask.push_front(std::move(fiber));
+		_readyTask.push_front(task);
 	      }
 	    else if(fiber->getState() == Fiber::HOLD)
 	      {
@@ -176,13 +204,14 @@ namespace zhuyh
 	    else if(fiber->getState() == Fiber::TERM
 		    || fiber->getState() == Fiber::EXCEPT)
 	      {
+		//LOG_INFO(sys_log) <<"DOOMED";
 		--_payLoad;
 		--(_scheduler->totalTask);
 		fiber.reset();
 	      }
 	    else
 	      {
-		ASSERT(false);
+		ASSERT2(false,Fiber::getState(fiber->getState()));
 	      }
 	  }
 	//TOD:偷协程

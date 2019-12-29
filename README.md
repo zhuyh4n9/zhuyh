@@ -13,7 +13,7 @@
 ```
 ## 协程模块
 - 目前的问题:
-    1.创建协程性能较差(1s只能创建20万个协程,未来尝试使用内存池优化)\
+    1.创建协程性能较差(1s只能创建20万个协程,未来尝试使用内存池优化)
 ```C++
     创建调度器 
         目前还不允许用户创建调度器,只可以使用根调度器
@@ -36,8 +36,10 @@
             zhuyh::Scheduler::getThis()  -> addReadEvent(fd,Task::ptr);
     基于timerfd的异步定时器 
        - 目前只支持单次计时,不支持循环计时
+         - 回调函数
             zhuyh::Scheduler::getThis() -> addTimer(Timer::ptr(new Timer(sec,msec,usec,nsec)),call_back,type);
-        - BUG : 在协程中使用异步计时器会出现问题(程序core掉/一直阻塞)
+         - 协程(只可以传自己)
+            zhuyh::Scheduler::getThis() -> addTimer(Timer::ptr(new Timer(sec,msec,usec,nsec)),Fiber::getThis(),type)
     协程信号量
          - 待开发
 ```

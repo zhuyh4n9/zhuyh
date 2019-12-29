@@ -15,7 +15,7 @@ namespace zhuyh
   //static thread_local Fiber::ptr _threadFiber = nullptr;
   //默认协程栈大小
   static ConfigVar<size_t>::ptr __fiber_stack_size =
-    Config::lookUp<size_t>("fiber.stack_size",64*1024,"__stack_size");
+    Config::lookUp<size_t>("fiber.stack_size",128*1024,"__stack_size");
   class MallocAlloc
   {
   public:
@@ -58,7 +58,9 @@ namespace zhuyh
     _stack = Allocator::alloc(_stackSize);
     ASSERT2(_stack != nullptr,"Out of Memory");
     //std::cout<<_stackSize<<std::endl;
+    LOG_ROOT_INFO() << "Creating Fiber";
     _ctx = make_fcontext((char*)_stack+_stackSize,_stackSize,Fiber::run);
+    LOG_INFO(sys_log) << "Fiber ADDRESS : "<<_ctx;
     if(StackTrait::protectStack(_stack,_stackSize,pages) )
       {
 	_pagesProtect = pages;
@@ -67,7 +69,7 @@ namespace zhuyh
 
   Fiber::~Fiber()
   {
-    LOG_ROOT_DEBUG() << "Fiber ID : "<<_fid<<" Destroyed!";
+    LOG_ROOT_INFO() << "Fiber ID : "<<_fid<<" Destroyed!";
     --__fiber_count;
     if(_state == INIT)
       {
@@ -76,7 +78,6 @@ namespace zhuyh
       }
     if(_stack)
       {
-	
 	ASSERT2(_state == TERM || _state == INIT
 		|| _state == EXCEPT,getState(_state));
 	//使用了栈保护且不是主协程

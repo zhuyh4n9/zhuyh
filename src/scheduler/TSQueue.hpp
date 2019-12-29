@@ -148,14 +148,14 @@ namespace zhuyh
     }
 
     //单个压入
-    void push_back(Type&& v)
+    void push_back(const Type& v)
     {
       LockGuard lg(mx);
       //if(_limit != -1 && (int)deq.size() >= _limit ) return;
       deq.push_back(v);
       nput.notify();
     }
-    void push_front(Type&& v)
+    void push_front(const Type& v)
     {
       LockGuard lg(mx);
       //if(_limit != -1 && (int)deq.size() >= _limit ) return;
@@ -259,13 +259,13 @@ namespace zhuyh
     }
 
     //单个压入
-    void push_back(Type&& v)
+    void push_back(const Type& v)
     {
       LockGuard lg(mx);
       //if(_limit != -1 && (int)deq.size() >= _limit ) return;
       deq.push_back(v);
     }
-    void push_front(Type&& v)
+    void push_front(const Type& v)
     {
       LockGuard lg(mx);
       //if(_limit != -1 && (int)deq.size() >= _limit ) return;

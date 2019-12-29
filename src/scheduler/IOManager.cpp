@@ -252,21 +252,24 @@ namespace zhuyh
   void IOManager::run()
   {
     Fiber::getThis();
-    const int MaxEvent = 256;
-    std::vector<struct epoll_event> events(256);
+    const int MaxEvent = 1000;
+    struct epoll_event* events = new epoll_event[1000];
     //毫秒
     const int MaxTimeOut = 500;
     while(1)
       {
+	LOG_INFO(sys_log) << "Holding : " << _holdCount
+			  << " Total  : " << _scheduler->totalTask;
 	if(isStopping())
 	  {
 	    LOG_INFO(sys_log) << "IOManager : " << _name << " stopped!";
+	    delete [] events;
 	    break;
 	  }
 	int rt = 0;
 	do{
 	  //LOG_INFO(sys_log) << "Here";
-	  rt = epoll_wait(_epfd,&*events.begin(),MaxEvent,MaxTimeOut);
+	  rt = epoll_wait(_epfd,events,MaxEvent,MaxTimeOut);
 	  //LOG_INFO(sys_log) << "Here2";
 	  //被中断打断
 	  if(rt<0 && errno == EINTR)
@@ -278,7 +281,6 @@ namespace zhuyh
 	    {
 	      break;
 	    }
-
 	}while(1);
 	for(int i=0;i<rt;i++)
 	  {
@@ -299,7 +301,9 @@ namespace zhuyh
 	    
 	    EventType tevent = (EventType)(~real_event & epEv->event);
 	    if(epEv->timer != nullptr && epEv->timer->getTimerType() == Timer::LOOP)
-	      ;
+	      {
+		ASSERT(false);
+	      }
 	    else
 	      {
 		int op = (tevent == NONE) ? EPOLL_CTL_DEL : EPOLL_CTL_MOD;
@@ -316,10 +320,7 @@ namespace zhuyh
 	      {
 		//LOG_DEBUG(sys_log) << "Triggled Read Event";
 		triggerEvent(epEv,READ);
-		if(!(epEv->timer != nullptr && epEv->timer->getTimerType() == Timer::LOOP))
-		  {
-		    --_holdCount;
-		  }
+		--_holdCount;
 	      }
 	    if(real_event & WRITE)
 	      {
@@ -350,31 +351,38 @@ namespace zhuyh
     ASSERT( type == READ  || type == WRITE);
     ASSERT(type & epEv->event);
     //LOG_INFO(sys_log) << "Triggle Event";
-    //epEv->event =(EventType)(epEv-> event & ~type);
+    epEv->event =(EventType)(epEv-> event & ~type);
     if(type & READ)
       {
-	Task::ptr task = epEv->rdtask;
+	ASSERT(epEv->rdtask != nullptr);
+	if(epEv->rdtask->fiber)
+	  while(epEv->rdtask->fiber->_state != Fiber::HOLD)
+	    {
+	      LOG_INFO(sys_log)<<"LOOOOOOOOOOOOOOOOOOPINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG";
+	    }
 	//目的是关闭fd
 	if(epEv->timer != nullptr)
 	  {
 	    if(epEv->timer->getTimerType() == Timer::SINGLE)
 	      epEv->timer.reset();
 	  }
-	epEv->rdtask.reset();
+	Task::ptr task = nullptr;
+	task.swap(epEv->rdtask);
 	_scheduler->addTask(task);
       }
     else if(type & WRITE)
       {
-	Task::ptr task = epEv->wrtask;
+	if(epEv->wrtask->fiber)
+	  while(epEv->wrtask->fiber->_state != Fiber::HOLD);
+	Task::ptr task = nullptr;
+	task.swap(epEv->wrtask);
 	ASSERT(epEv->timer == nullptr);
-	epEv->wrtask.reset();
 	_scheduler->addTask(task);
       }
-    epEv->event =(EventType)(epEv-> event & ~type);
+
     return 0;
   }
 
-  //Timer是一个读事件
   int IOManager::delTimer(int fd)
   {
     WRLockGuard lg(_lk);

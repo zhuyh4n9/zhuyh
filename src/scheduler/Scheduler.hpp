@@ -63,8 +63,11 @@ namespace zhuyh
   private:
     //需要线程安全,供IOManager使用
     void addTask(std::shared_ptr<Task> task);
+    void addTask(std::shared_ptr<Task>* task);
     void addTask(CbType cb);
+  public:
     void addTask(Fiber::ptr fiber);
+  private:
     //按照配置文件创建调度器
     Scheduler();
     //偷任务时使用

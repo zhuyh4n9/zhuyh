@@ -38,7 +38,7 @@ namespace zhuyh
 #undef XX
       //LOG_ROOT_INFO() << sec << " "<<_timer.tv_nsec;
       _timer.tv_sec = sec;
-      _timer.tv_nsec = nsec + usec*1000L + msec*1000L;
+      _timer.tv_nsec = nsec + usec*1000L + msec*1000000L;
       create();
     }
     
@@ -56,7 +56,10 @@ namespace zhuyh
     {
       _type  = LOOP;
     }
-    
+    bool isZero()
+    {
+      return _timer.tv_sec == 0 && _timer.tv_nsec == 0;
+    }
     TimerType getTimerType() const
     {
       return _type;

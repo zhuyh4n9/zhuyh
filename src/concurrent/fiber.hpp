@@ -32,6 +32,8 @@ namespace zhuyh
   public:
     //Processer会使用到swapIn方法,因此为该类的友元
     friend class Processer;
+    friend class Scheduler;
+    friend class IOManager;
     typedef std::function<void()> CbType;
     typedef std::shared_ptr<Fiber> ptr;
     enum State
@@ -43,7 +45,7 @@ namespace zhuyh
 	TERM,
 	EXCEPT
       };
-    static std::string getState(State S)
+    static std::string getState(int S)
     {
 #define XX(NAME)				\
       if(S == NAME ) return #NAME;
@@ -61,7 +63,7 @@ namespace zhuyh
     ~Fiber();
     //重置协程回调函数,必须在INIT/TERM状态才能执行
     void reset(CbType cb);
-    State getState() const { return _state; }
+    int getState() const { return _state; }
     void setState(State state) { _state = state; }
   public:
     static void setThis(Fiber* fiber);
@@ -99,9 +101,11 @@ namespace zhuyh
     //上下文
     context _ctx;
     //协程状态
-    State _state = INIT;
+    std::atomic<int> _state {INIT};
+  public:
     //协程栈
     char* _stack = nullptr;
+  private:
     //是否是主协程
     bool isMain = false;
     //栈大小

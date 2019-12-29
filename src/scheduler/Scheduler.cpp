@@ -38,7 +38,7 @@ namespace zhuyh
   {
     if(!_stopping)
       stop();
-    LOG_DEBUG(sys_log) << "Scheduler : "<<_name<<" Destroyed";
+    LOG_INFO(sys_log) << "Scheduler : "<<_name<<" Destroyed";
   }
   int Scheduler::getHold()
   {
@@ -92,7 +92,11 @@ namespace zhuyh
 
   void Scheduler::addNewTask(std::shared_ptr<Task> task)
   {
-    if(_stopping == true) return;
+    if(_stopping == true)
+      {
+	ASSERT(false);
+	return;
+      }
     addTask(task);
   }
   
@@ -115,11 +119,11 @@ namespace zhuyh
     //LOG_INFO(sys_log) << "HERE";
     //同一个线程
     if(_prc->_thread.get() == Thread::getThis() ) return 0;
-    std::list<Fiber::ptr> fibers;
+    std::list<Task::ptr> tasks;
     //偷取协程
-    fibers = _prc->steal(_prc->_payLoad / 2);
-    int sz = fibers.size();
-    prc->store(fibers);
+    tasks = _prc->steal(_prc->_payLoad / 2);
+    int sz = tasks.size();
+    prc->store(tasks);
     return sz;
   }
 
@@ -138,7 +142,12 @@ namespace zhuyh
   {
     addTask(std::shared_ptr<Task>(new Task(fiber)));
   }
-
+  void Scheduler::addTask(std::shared_ptr<Task>* task)
+  {
+    Task::ptr t = nullptr;
+    t.swap(*task);
+    addTask(t);
+  }
   Scheduler* Scheduler::getThis()
   {
     static Scheduler::ptr _scheduler(new Scheduler());
@@ -179,21 +188,29 @@ namespace zhuyh
   {
     if(_ioMgr != nullptr)
       {
-	int rt=_ioMgr->addTimer(timer,cb,type);				
+	if(timer->isZero()) return 0;
+	int rt=_ioMgr->addTimer(timer,cb,type);			
 	if(rt >= 0)
-	  co_yield_to_hold;
+	  {
+	    co_yield_to_hold;
+	  }
 	return rt;							
       }
     return -1;								
   }								       
   int Scheduler::addTimer(Timer::ptr* timer,Fiber::ptr cb,			
 			  Timer::TimerType type)			
-  {								
+  {
+    
     if(_ioMgr != nullptr)
       {
+	if((*timer)->isZero()) return 0;
 	int rt=_ioMgr->addTimer(timer,cb,type);			
-	if(rt >= 0)						
-	  co_yield_to_hold;					
+	if(rt >= 0)
+	  {
+	    //(*timer)->start();
+	    co_yield_to_hold;
+	  }
 	return rt;						
       }								       
     return -1;								
@@ -204,7 +221,13 @@ namespace zhuyh
   {									
     if(_ioMgr != nullptr)
       {
-	return _ioMgr->addTimer(timer,cb,type);
+	if(timer->isZero()) return 0;
+	int rt = _ioMgr->addTimer(timer,cb,type);
+	if(rt >= 0)
+	  {
+	    
+	  }
+	return rt;
       }
     return -1;								
   }
@@ -214,7 +237,13 @@ namespace zhuyh
   {								
     if(_ioMgr != nullptr)
       {
-	return _ioMgr->addTimer(timer,cb,type);
+	if((*timer)->isZero()) return 0;
+	int rt = _ioMgr->addTimer(timer,cb,type);
+	if(rt >= 0)
+	  {
+	    
+	  }
+	return rt;
       }								       
     return -1;								
   }  

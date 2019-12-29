@@ -123,7 +123,7 @@ namespace zhuyh
 	LOG_INFO(sys_log) << "ERROR";
 	return -1;
       }
-    ASSERT(epEv->event == NONE);
+    ASSERT2(epEv->event == NONE,std::to_string(int(epEv->event)));
     lg.unlock();
     LockGuard lg2(epEv->lk);
     //定时器一定是一个读时间
@@ -139,6 +139,7 @@ namespace zhuyh
     //LOG_INFO(sys_log) << "add a timer";
     epEv -> timer = timer;
     epEv -> rdtask.reset(new Task(cb));
+    LOG_INFO(sys_log) << "ADD TIMER";
     epEv -> event = (EventType)(epEv->event | READ);
     timer->start();
     ++_holdCount;

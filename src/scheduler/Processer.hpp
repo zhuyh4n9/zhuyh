@@ -59,7 +59,7 @@ namespace zhuyh
     Processer(const std::string name = "",Scheduler* scheduler = nullptr);
     ~Processer();
     //TODO:需要线程安全
-    using Deque = NonbTSQueue<Fiber::ptr>;
+    using Deque = NonbTSQueue<Task::ptr>;
     //向该processer添加一个任务
     bool addTask(Task::ptr task);
     bool addTask(Task::ptr* task);
@@ -79,9 +79,9 @@ namespace zhuyh
     static void setMainFiber(Fiber::ptr);
   private:
     //偷取k个协程
-    std::list<Fiber::ptr> steal(int k);
+    std::list<Task::ptr> steal(int k);
     //放入k个协程
-    bool store(std::list<Fiber::ptr>& tasks);
+    bool store(std::list<Task::ptr>& tasks);
     //将线程从epoll_wait中唤醒
     int notify();
   protected:

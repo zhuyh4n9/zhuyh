@@ -1,5 +1,6 @@
 #include "TimerManager.hpp"
 #include "../logUtil.hpp"
+#include "../macro.hpp"
 
 namespace zhuyh
 {
@@ -24,31 +25,13 @@ namespace zhuyh
   //开启计时
   int Timer::start()
   {
-    if(_tfd == -1)
-      {
-	try
-	  {	
-	    _tfd = create();
-	  }
-	catch(std::exception& e)
-	  {
-	    LOG_ERROR(sys_log) << e.what();
-	    return -1;
-	  }
-      }
+    ASSERT(_tfd!=-1);
     //LOG_INFO(sys_log)<<"starting _tfd = " << _tfd;
     struct timespec tm  = getCurrentTimer()._timer;
     struct itimerspec new_timer;
     bzero(&new_timer,sizeof(new_timer));
     new_timer.it_value.tv_sec = tm.tv_sec + _timer.tv_sec;
-    new_timer.it_value.tv_nsec = tm.tv_nsec + _timer.tv_nsec;
-    //循环定时
-    if(_type == LOOP)
-      {
-	new_timer.it_interval.tv_sec = _timer.tv_sec;
-	new_timer.it_interval.tv_nsec = _timer.tv_nsec;
-      }
-    
+    new_timer.it_value.tv_nsec = tm.tv_nsec + _timer.tv_nsec;    
     if(timerfd_settime(_tfd,TFD_TIMER_ABSTIME,&new_timer,nullptr) < 0)
       {
 	LOG_ERROR(sys_log) << "timerfd_create : "<<strerror(errno);

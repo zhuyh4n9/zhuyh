@@ -23,7 +23,7 @@ set(LIB_SRC
 
 set(LIBS yaml-cpp pthread)
 add_library(zhuyh SHARED ${LIB_SRC})
-
+add_library(libzhuyh STATIC ${LIB_SRC})
 
 #add_executable(logtest test/logtest.cpp)
 #target_link_libraries(logtest zhuyh ${LIBS})
@@ -49,14 +49,14 @@ add_library(zhuyh SHARED ${LIB_SRC})
 add_executable(test_processer test/test_processer.cpp)
 target_link_libraries(test_processer zhuyh  ${LIBS})
 
-add_executable(test_iomgr test/test_iomgr.cpp)
-target_link_libraries(test_iomgr zhuyh  ${LIBS})
+add_executable(test_iomgr test/test_iomgr.cpp )
+target_link_libraries(test_iomgr libzhuyh  ${LIBS})
 
 add_executable(test_co test/test_co.cpp)
 target_link_libraries(test_co zhuyh  ${LIBS})
 
 add_executable(test_timer test/test_timer.cpp)
-target_link_libraries(test_timer zhuyh  ${LIBS})
+target_link_libraries(test_timer zhuyh ${LIBS})
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
