@@ -31,10 +31,12 @@
         LOG_ROOT_INFO() << "Coroutine is about to exit";
     };
     IO事件管理器 
+        - 为了避免jump_fcontext被同时执行两次,IO事件在加入时会先变为SWITCHING状态,切换到主协程后变为HOLD
         - 目前只支持通过获取根调度器添加IO事件
             zhuyh::Scheduler::getThis()  -> addWriteEvent(fd,Task::ptr);
             zhuyh::Scheduler::getThis()  -> addReadEvent(fd,Task::ptr);
-    基于timerfd的异步定时器 
+    基于timerfd的异步定时器
+       - 支持纳秒级定时器
        - 目前只支持单次计时,不支持循环计时
          - 回调函数
             zhuyh::Scheduler::getThis() -> addTimer(Timer::ptr(new Timer(sec,msec,usec,nsec)),call_back,type);
