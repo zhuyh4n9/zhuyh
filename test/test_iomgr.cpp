@@ -39,7 +39,7 @@ void test_co()
 {
   //LOG_ROOT_INFO() << "Enter test";
   //LOG_ROOT_INFO() << "test mid";
-  for(int i=0;i<200;i++)
+  for(int i=0;i<20000;++i)
     co_yield;
   LOG_ROOT_INFO() << "DONE";
 }
@@ -79,11 +79,17 @@ int main()
       //co test_co;
       co [](){
        
-      	//for(int i=0;i<1000;i++) co_yield;
+      	for(int i=0;i<1000;i++) co_yield;
       	Scheduler* scheduler = Scheduler::getThis();
       	scheduler->addTimer(Timer::ptr(new Timer(0,0,0,1)),Fiber::getThis());
-      	//for(int i=0;i<1000;i++);
-      	LOG_ROOT_INFO() << "back to coroutine";
+	LOG_ROOT_INFO() << "back to coroutine 1";
+	scheduler->addTimer(Timer::ptr(new Timer(0,999,999,999)),Fiber::getThis());
+	LOG_ROOT_INFO() << "back to coroutine 2";
+	scheduler->addTimer(Timer::ptr(new Timer(0,0,20,1)),Fiber::getThis());
+	LOG_ROOT_INFO() << "back to coroutine 3";
+	scheduler->addTimer(Timer::ptr(new Timer(1,0,0,1)),Fiber::getThis());
+      	for(int i=0;i<1000;i++) co_yield;
+      	LOG_ROOT_INFO() << "back to coroutine 4";
       };
       //LOG_ROOT_ERROR() <<" ADD TIMER : "<<i;
     }

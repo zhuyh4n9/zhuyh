@@ -102,7 +102,8 @@ namespace zhuyh
   template<class T>
   int IOManager::addTimer(Timer::ptr timer,T cb,
 			  Timer::TimerType type) 
-  { 
+  {
+    LOG_ROOT_INFO() << "adding1";
     if(timer == nullptr) ASSERT(0);
     if(type == Timer::LOOP)
       timer->setLoop();
@@ -132,17 +133,27 @@ namespace zhuyh
     int rt = epoll_ctl(_epfd,EPOLL_CTL_ADD,tfd,&ev);
     if(rt < 0)
       {
+	timer.reset();
+	ASSERT(false);
 	LOG_ERROR(sys_log) << "Failed to add timer";
 	return -1;
       }
-    
     //LOG_INFO(sys_log) << "add a timer";
     epEv -> timer = timer;
     epEv -> rdtask.reset(new Task(cb));
-    LOG_INFO(sys_log) << "ADD TIMER";
+    //LOG_INFO(sys_log) << "ADD TIMER";
     epEv -> event = (EventType)(epEv->event | READ);
-    //timer->start();
+    try
+      {
+	timer->start();
+      }
+    catch(std::exception& e)
+      {
+	LOG_ERROR(sys_log) << e.what();
+	return -1;
+      }
     ++_holdCount;
+    LOG_ROOT_INFO() << "adding3";
     //LOG_INFO(sys_log) << "ADD";
     return 0;
   }

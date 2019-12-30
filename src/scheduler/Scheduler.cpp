@@ -192,9 +192,9 @@ namespace zhuyh
 	int rt=_ioMgr->addTimer(timer,cb,type);			
 	if(rt >= 0)
 	  {
-	    timer->start();
 	    Fiber::YieldToSwitch();
 	  }
+	ASSERT(rt >=0);
 	return rt;							
       }
     return -1;								
@@ -206,10 +206,7 @@ namespace zhuyh
     if(_ioMgr != nullptr)
       {
 	int rt = _ioMgr->addTimer(timer,cb,type);
-	if(rt >= 0)
-	  {
-	    timer->start();
-	  }
+	ASSERT(rt >= 0);
 	return rt;
       }								       
     return -1;								
