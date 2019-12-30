@@ -103,7 +103,7 @@ namespace zhuyh
   int IOManager::addTimer(Timer::ptr timer,T cb,
 			  Timer::TimerType type) 
   {
-    LOG_ROOT_INFO() << "adding1";
+    //LOG_ROOT_INFO() << "adding1";
     if(timer == nullptr) ASSERT(0);
     if(type == Timer::LOOP)
       timer->setLoop();
@@ -121,7 +121,6 @@ namespace zhuyh
     else if(epEv->timer != nullptr)
       {
 	ASSERT(false);
-	LOG_INFO(sys_log) << "ERROR";
 	return -1;
       }
     ASSERT2(epEv->event == NONE,std::to_string(int(epEv->event)));
@@ -153,7 +152,7 @@ namespace zhuyh
 	return -1;
       }
     ++_holdCount;
-    LOG_ROOT_INFO() << "adding3";
+    //LOG_ROOT_INFO() << "adding3";
     //LOG_INFO(sys_log) << "ADD";
     return 0;
   }

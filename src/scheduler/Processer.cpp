@@ -52,7 +52,7 @@ namespace zhuyh
 	_notifyFd[1] = -1;
       }
     //std::cout<<"~Processer\n";
-    LOG_INFO(sys_log) << "Processer : "<<_name<<"  Destroyed";
+    LOG_INFO(sys_log) << "Processer : "<<_name<<"  Destroyed, worked = :"<<worked;
   }
   
   void Processer::start()
@@ -91,7 +91,7 @@ namespace zhuyh
 		    
 	  }
 	*/
-    _readyTask.push_front(task);
+	_readyTask.push_front(task);
 	++_payLoad;
 	notify();
 	return true;
@@ -167,11 +167,11 @@ namespace zhuyh
 	    // 		      << " holdCount : "<< _scheduler-> getHold();
 	    ASSERT(task != nullptr);
 	    //LOG_INFO(sys_log) << "Pick up a task";
+	    worked++;
 	    if(task->fiber)
 	      {
 		task->fiber -> setState(Fiber::READY);
 	      }
-	    //是回调函数则创建一个协程
 	    else if(task->cb)
 	      {
 		task->fiber.reset(new Fiber(task->cb));
@@ -204,7 +204,6 @@ namespace zhuyh
 	      {
 		--_payLoad;
 		//LOG_INFO(sys_log) << "HOLD TASK";
-		//_holdTask.push_front(std::move(fiber));
 	      }
 	    else if(fiber->getState() == Fiber::TERM
 		    || fiber->getState() == Fiber::EXCEPT)
@@ -220,22 +219,18 @@ namespace zhuyh
 	      }
 	  }
 	//TOD:偷协程
-	//LOG_INFO(sys_log) << shared_from_this() ;
 	if(_scheduler->balance(shared_from_this()) > 0)
 	  {
 	    //LOG_INFO(sys_log) << "STOLED";
 	    continue;
 	  }
-	//偷不了则尝试是否可以立即退出
 	if(_stopping)
 	  {
-	    //TODO:改为调度器holdCount
 	    if(_scheduler->totalTask <= 0
 	       && _readyTask.empty()
 	       && _scheduler->getHold() <= 0)
 	      {
 		//LOG_INFO(sys_log) << "EXIT PROCESS";
-		//退出run函数
 		return;
 	      }
 	  }
@@ -283,17 +278,6 @@ namespace zhuyh
       }
   }
   
-  void Processer::idle()
-  {
-    LOG_INFO(sys_log) << "Enter Idle Fiber";
-    while(!isStopping())
-      {
-	LOG_DEBUG(sys_log) << " Do Nothing";
-	Fiber::YieldToReady();
-      }
-    LOG_INFO(sys_log) << "Idle Fiber Stopped";
-  }
-  
   Fiber::ptr Processer::getMainFiber()
   {
     return __main_fiber;
@@ -302,6 +286,5 @@ namespace zhuyh
   void Processer::setMainFiber(Fiber::ptr fiber)
   {
     __main_fiber = fiber;
-  }
-  
+  }  
 }

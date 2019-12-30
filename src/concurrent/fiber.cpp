@@ -58,7 +58,7 @@ namespace zhuyh
     _stack = Allocator::alloc(_stackSize);
     ASSERT2(_stack != nullptr,"Out of Memory");
     //std::cout<<_stackSize<<std::endl;
-    LOG_ROOT_INFO() << "Creating Fiber";
+    //LOG_ROOT_INFO() << "Creating Fiber";
     _ctx = make_fcontext((char*)_stack+_stackSize,_stackSize,Fiber::run);
     //LOG_INFO(sys_log) << "Fiber ADDRESS : "<<_ctx;
     if(StackTrait::protectStack(_stack,_stackSize,pages) )

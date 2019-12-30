@@ -185,15 +185,12 @@ namespace zhuyh
     int _limit = -1;
   };
   
-  template<class Type>
+  template<class Type,class MutexType = SpinLock>
   class NonbTSQueue
   {
-     public:
-    NonbTSQueue(int limit = -1)
-      :_limit(limit)
+  public:
+    NonbTSQueue()
     {}
-    //非阻塞方法
-    //批量弹出
     bool try_popk_front(int k,std::list<Type>& c)
     {
       LockGuard lg(mx);
@@ -218,7 +215,6 @@ namespace zhuyh
 	}
       return true;
     }
-    //单个弹出
     bool try_pop_back(Type& v)
     {
       LockGuard lg(mx);
@@ -282,15 +278,14 @@ namespace zhuyh
       LockGuard lg(mx);
       deq.clear();
     }
-    void setLimit(int limit)
+    bool size()
     {
       LockGuard lg(mx);
-      _limit = limit;
+      return deq.size();
     }
   private:
     std::deque<Type> deq;
-    mutable SpinLock mx;
-    int _limit = -1;
+    mutable MutexType mx;
   };
   
 }

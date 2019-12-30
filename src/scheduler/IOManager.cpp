@@ -73,9 +73,9 @@ namespace zhuyh
   {
     ASSERT( type == READ  || type == WRITE);
     WRLockGuard lg(_lk);
-    LOG_INFO(sys_log) << "START ADD EVENT";
     struct epoll_event ev;
     FdEvent*& epEv = _eventMap[fd];
+    LOG_INFO(sys_log) << "fd = "<<fd;
     if(epEv == nullptr)
       {
 	//	LOG_DEBUG(sys_log) << "HERE4";

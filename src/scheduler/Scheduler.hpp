@@ -26,6 +26,7 @@ namespace zhuyh
   public:
     friend class IOManager;
     friend class Processer;
+    friend class CoSemaphore;
     typedef std::shared_ptr<Scheduler> ptr;
     typedef std::function<void()> CbType;
     //用户创建调度器
@@ -63,6 +64,8 @@ namespace zhuyh
     void addTask(std::shared_ptr<Task> task);
     void addTask(std::shared_ptr<Task>* task);
     void addTask(CbType cb);
+    void addHold();
+    void delHold();
   public:
     void addTask(Fiber::ptr fiber);
   private:

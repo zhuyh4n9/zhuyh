@@ -84,9 +84,6 @@ namespace zhuyh
     bool store(std::list<Task::ptr>& tasks);
     //将线程从epoll_wait中唤醒
     int notify();
-  protected:
-    void null() {} 
-    virtual void idle();
   private:
     //Fiber::ptr _idleFiber = nullptr;
     //Fiber::ptr _nxtTask = nullptr;
@@ -104,6 +101,9 @@ namespace zhuyh
     std::atomic<bool> _stopping {false};
     mutable Mutex mx;
     Scheduler* _scheduler;
+
+    //DEBUG
+    int worked{0};
   };
   
 }

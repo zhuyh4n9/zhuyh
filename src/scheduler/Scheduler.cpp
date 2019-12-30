@@ -36,8 +36,8 @@ namespace zhuyh
   //TODO : to be fixed
   Scheduler::~Scheduler()
   {
-    if(!_stopping)
-      stop();
+    //要求必须显式退出
+    ASSERT(_stopping == true);
     LOG_INFO(sys_log) << "Scheduler : "<<_name<<" Destroyed";
   }
   int Scheduler::getHold()
@@ -74,6 +74,7 @@ namespace zhuyh
   //线程不安全
   void Scheduler::stop()
   {
+    if(_stopping == true ) return;
     ASSERT(_stopping == false);
     _stopping = true;
     //先告诉IO管理器,使其不再接收新的连接
@@ -126,7 +127,14 @@ namespace zhuyh
     prc->store(tasks);
     return sz;
   }
-
+  void Scheduler::addHold()
+  {
+    ++(_ioMgr->_holdCount);
+  }
+  void Scheduler::delHold()
+  {
+    --(_ioMgr->_holdCount);
+  }
   //根据负载创建新执行器
   void Scheduler::addTask(std::shared_ptr<Task> task)
   {
@@ -202,7 +210,7 @@ namespace zhuyh
   
   int Scheduler::addTimer(Timer::ptr timer,std::function<void()> cb,
 			  Timer::TimerType type)			
-  {								
+  {
     if(_ioMgr != nullptr)
       {
 	int rt = _ioMgr->addTimer(timer,cb,type);

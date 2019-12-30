@@ -34,6 +34,7 @@ namespace zhuyh
     friend class Processer;
     friend class Scheduler;
     friend class IOManager;
+    friend class CoSemaphore;
     typedef std::function<void()> CbType;
     typedef std::shared_ptr<Fiber> ptr;
     enum State

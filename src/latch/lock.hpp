@@ -9,7 +9,6 @@
 
 namespace zhuyh
 {
-
   class Semaphore : public UnCopyable
   {
   public:
@@ -199,5 +198,6 @@ namespace zhuyh
     IRWLock& _lk;
   };
 #undef XX
+  
 }
 
