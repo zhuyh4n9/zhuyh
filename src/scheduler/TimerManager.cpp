@@ -8,7 +8,7 @@ namespace zhuyh
   Timer Timer::getCurrentTimer()
   {
     struct timespec timer;
-    clock_gettime(CLOCK_REALTIME,&timer);
+    clock_gettime(CLOCK_MONOTONIC,&timer);
     return Timer(timer);
   }
   int Timer::create()
@@ -17,22 +17,35 @@ namespace zhuyh
       {
 	//不确定timer_create是否线程安全,因此加一个自旋锁
 	//LockGuard lg(_mx);
-	_tfd = timerfd_create(CLOCK_REALTIME,TFD_NONBLOCK);
+	_tfd = timerfd_create(CLOCK_MONOTONIC,TFD_NONBLOCK);
 	//ASSERT2(_tfd >= 0,strerror(errno));
-	if(_tfd < 0 ) throw std::logic_error("failed to create timerfd");
+	if(_tfd < 0 ) throw std::logic_error(std::string("failed to create timerfd : ")
+					     +strerror(errno));
       }
     return _tfd;
   }
   //开启计时
   int Timer::start()
   {
-    ASSERT(_tfd!=-1);
+    //
     if(_tfd == -1)
       {
-	
+	try
+	  {
+	    create();
+	  }
+	catch (std::exception& e)
+	  {
+	    throw(e.what());
+	  }
       }
+    ASSERT(_tfd!=-1);
     //LOG_INFO(sys_log)<<"starting _tfd = " << _tfd;
-    struct timespec tm  = getCurrentTimer()._timer;
+    struct timespec tm;
+    if(clock_gettime(CLOCK_MONOTONIC,&tm)<0)
+      {
+	throw std::logic_error(strerror(errno));
+      }
     struct itimerspec new_timer;
     bzero(&new_timer,sizeof(new_timer));
     //防止纳秒超过10亿

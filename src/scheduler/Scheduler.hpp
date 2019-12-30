@@ -50,13 +50,8 @@ namespace zhuyh
     //获取根管理器,需要在进入main函数前进行一次初始化
     static Scheduler* getThis();
     int getHold();
-    
-#define XX(T1,T2)						\
-    int addTimer(T1 timer,T2 cb,				\
-		 Timer::TimerType type = Timer::SINGLE)
-    
-    XX(Timer::ptr,std::function<void()>);
-    XX(Timer::ptr,Fiber::ptr);
+    int addTimer(Timer::ptr timer,std::function<void()> cb = nullptr,
+		 Timer::TimerType type = Timer::SINGLE);
 
 #undef XX
   private:
@@ -93,8 +88,6 @@ namespace zhuyh
     std::atomic<bool> _stopping {false};
     std::atomic<bool> _stop {true};
     std::string _name = "Scheduler";
-    //
-    static std::atomic<int> count;
   };
   
 }

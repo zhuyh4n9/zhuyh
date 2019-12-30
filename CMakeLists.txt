@@ -19,7 +19,8 @@ set(LIB_SRC
   src/scheduler/IOManager.cpp
   src/scheduler/Scheduler.cpp
   src/co.cpp
-  src/scheduler/TimerManager.cpp)
+  src/scheduler/TimerManager.cpp
+  src/latch/coLock.cpp)
 
 set(LIBS yaml-cpp pthread)
 add_library(zhuyh SHARED ${LIB_SRC})

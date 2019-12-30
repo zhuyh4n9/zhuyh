@@ -110,13 +110,9 @@ namespace zhuyh
     //协程栈
     char* _stack = nullptr;
   private:
-    //是否是主协程
     bool isMain = false;
-    //栈大小
     size_t _stackSize = 0;
-    //保护的页的数量
     size_t _pagesProtect = 0;
-    //静态"成员变量"
     static uint32_t& _fiber_local_not_term()
     {
       static thread_local uint32_t __fiber_local_not_term{0};

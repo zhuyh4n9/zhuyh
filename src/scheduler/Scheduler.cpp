@@ -190,32 +190,32 @@ namespace zhuyh
       }
     return _prc;
   }
-  std::atomic<int> Scheduler::count{0};
-  int Scheduler::addTimer(Timer::ptr timer,Fiber::ptr cb,			
-			  Timer::TimerType type )			
-  {
-    if(_ioMgr != nullptr)
-      {
-	if(timer->isZero()) return 0;
-	int rt=_ioMgr->addTimer(timer,cb,type);			
-	if(rt >= 0)
-	  {
-	    Fiber::YieldToSwitch();
-	  }
-	ASSERT(rt >=0);
-	return rt;							
-      }
-    return -1;								
-  }								       
   
   int Scheduler::addTimer(Timer::ptr timer,std::function<void()> cb,
 			  Timer::TimerType type)			
   {
     if(_ioMgr != nullptr)
       {
-	int rt = _ioMgr->addTimer(timer,cb,type);
-	ASSERT(rt >= 0);
-	return rt;
+	int rt = 0;
+	if(cb == nullptr)
+	  {
+	    //主协程只能添加回调函数
+	    if(Fiber::getThis() == Fiber::getMain()) return -1;
+	    if(timer->isZero()) return 0;
+	    rt = _ioMgr->addTimer(timer,Fiber::getThis(),type);			
+	    if(rt >= 0)
+	      {
+		Fiber::YieldToSwitch();
+	      }
+	    ASSERT(rt >=0);
+	    return rt;
+	  }
+	else
+	  {
+	    rt = _ioMgr->addTimer(timer,cb,type);
+	    ASSERT(rt >= 0);
+	    return rt;
+	  }
       }								       
     return -1;								
   }  

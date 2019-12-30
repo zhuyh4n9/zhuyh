@@ -1,7 +1,7 @@
 # C++多线程多协程HTTP代理服务器 -- 开发中
 ## 开发工具
-  - 编辑器:emacs
-  - 编译工具 g++ 7.4.0 , cmake 3.10.2 , make 4.1
+  - 编辑器   : emacs
+  - 编译工具 : g++ 7.4.0 , cmake 3.10.2 , make 4.1
 ## 日志模块
 ```C++
     使用根日志
@@ -39,9 +39,18 @@
        - 支持纳秒级定时器
        - 目前只支持单次计时,不支持循环计时
          - 回调函数
-            zhuyh::Scheduler::getThis() -> addTimer(Timer::ptr(new Timer(sec,msec,usec,nsec)),call_back,type);
-         - 协程(只可以传自己)
-            zhuyh::Scheduler::getThis() -> addTimer(Timer::ptr(new Timer(sec,msec,usec,nsec)),Fiber::getThis(),type)
+            zhuyh::Scheduler::getThis() -> addTimer(Timer::ptr(new Timer(sec,msec,usec,nsec)),call_back);
+         - 协程
+            zhuyh::Scheduler::getThis() -> addTimer(Timer::ptr(new Timer(sec,msec,usec,nsec));
     协程信号量
-         - 待开发
+         创建一个协程信号量
+           CoSemaphore a(val) ;
+         支持的方法有:
+           a.wait();  
+           a.notify();
+           a.tryWait();
+         如果使用协程信号量,需要显式关闭调度器 : Scheduler::getThis() -> stop();
+
 ```
+
+## HOOK -- 待开发

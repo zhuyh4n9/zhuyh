@@ -34,7 +34,7 @@ namespace zhuyh
       XX(usec,nsec);
       XX(msec,usec);
       XX(sec,msec);
-
+      
 #undef XX
       //LOG_ROOT_INFO() << sec << " "<<_timer.tv_nsec;
       _timer.tv_sec = sec;
@@ -44,7 +44,7 @@ namespace zhuyh
     
     ~Timer()
     {
-      //LOG_ROOT_ERROR() << "timer destroyed _tfd = "<<_tfd;
+      // LOG_ROOT_INFO() << "timer destroyed _tfd = "<<_tfd;
       if(_tfd != -1)
 	{
 	  close(_tfd);

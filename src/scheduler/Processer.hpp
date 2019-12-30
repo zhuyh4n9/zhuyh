@@ -23,29 +23,24 @@ namespace zhuyh
     Task(Fiber::ptr f)
       :fiber(f)
     {
-      _id = ++id;
     }
     Task(Fiber::ptr* f)
     {
-      _id = ++id;
       fiber.swap(*f);
     }
     Task(Fiber::CbType c)
       :cb(c)
     {
-      _id = ++id;
     }
     Task(Fiber::CbType* c)
     {
-      _id = ++id;
       cb.swap(*c);
     }
     static std::atomic<int> id;
-    int _id;
     Task(){}
     ~Task()
     {
-      //LOG_ROOT_INFO() << "Destroying id : "<<_id;
+      // LOG_ROOT_INFO() << "Destroying id : "<<_id;
     }
   };
   class Scheduler;

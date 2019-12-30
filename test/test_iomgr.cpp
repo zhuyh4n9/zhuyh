@@ -14,8 +14,11 @@ struct TEST
     char c;
     int rt = read(fd[0],&c,1);
     ASSERT2(rt >= 0,std::to_string(fd[0]));
-    //close(fd[0]);
-    //close(fd[1]);
+    Scheduler* scheduler = Scheduler::getThis();
+    scheduler->addTimer(Timer::ptr(new Timer(0,800,20,1)));
+    LOG_ROOT_INFO() <<"Ding!";
+    close(fd[0]);
+    close(fd[1]);
   }
   
   void funcWrite()
@@ -35,18 +38,26 @@ void Alarm()
 {
   Scheduler* scheduler = Scheduler::getThis();
   LOG_ROOT_INFO() <<"Time up";
-  scheduler->addTimer(Timer::ptr(new Timer(0,500,20,1)),Fiber::getThis());
+  scheduler->addTimer(Timer::ptr(new Timer(0,500,20,1)));
   LOG_ROOT_INFO() <<"Time up";
 }
+int a = 0;
+zhuyh::CoSemaphore sem(1);
 void test_co()
 {
   //LOG_ROOT_INFO() << "Enter test";
   //LOG_ROOT_INFO() << "test mid";
   
-  for(int i=0;i<20000;++i)
-    co_yield;
+  for(int i=0;i<10;++i)
+    {
+      sem.wait();
+      a++;
+      LOG_ROOT_INFO() << "a = "<< a;
+      sem.notify();
+      co_yield;
+    }
   Scheduler* scheduler = Scheduler::getThis();
-  scheduler->addTimer(Timer::ptr(new Timer(0,500,20,1)),Fiber::getThis());
+  scheduler->addTimer(Timer::ptr(new Timer(0,500,20,1)));
   LOG_ROOT_INFO() << "DONE";
 }
 
@@ -62,12 +73,13 @@ void test_thread()
 int main()
 {
   auto scheduler = Scheduler::getThis();
-  TEST* test = new TEST[100];
+  TEST* test = new TEST[2000];
   LOG_ROOT_INFO() << "Entering";
   //Scheduler* scheduler = Scheduler::getThis();
   //scheduler->start();
-  for(int i =0 ;i<100;++i)
+  for(int i =0 ;i<200;++i)
     {
+      co test_co;
       int rt=pipe(test[i].fd);
       
       ASSERT2(rt >= 0,strerror(errno));
@@ -77,29 +89,29 @@ int main()
        			       Task::ptr(new Task(std::bind(&TEST::funcWrite,&test[i]))) );
       rt = 0;
       if((rt=scheduler->addTimer(Timer::ptr(new Timer(1)),Alarm) < 0))
-       	{
-      	  LOG_ROOT_ERROR() << "Failed : rt = "<<rt;
+	{
+       	  LOG_ROOT_ERROR() << "Failed : rt = "<<rt;
       	}
       
       co test_co;
       //co test_co;
       co [](){
        
-      	for(int i=0;i<1000;i++) co_yield;
-      	Scheduler* scheduler = Scheduler::getThis();
-      	scheduler->addTimer(Timer::ptr(new Timer(0,0,0,1)),Fiber::getThis());
-	LOG_ROOT_INFO() << "back to coroutine 1";
-	scheduler->addTimer(Timer::ptr(new Timer(0,999,999,999)),Fiber::getThis());
-	LOG_ROOT_INFO() << "back to coroutine 2";
-	scheduler->addTimer(Timer::ptr(new Timer(0,500,20,1)),Fiber::getThis());
-	LOG_ROOT_INFO() << "back to coroutine 3";
-	scheduler->addTimer(Timer::ptr(new Timer(1,700,0,1)),Fiber::getThis());
+	for(int i=0;i<1000;i++) co_yield;
+	Scheduler* scheduler = Scheduler::getThis();
+      	scheduler->addTimer(Timer::ptr(new Timer(0,0,0,1)));
+      	LOG_ROOT_INFO() << "back to coroutine 1";
+      	scheduler->addTimer(Timer::ptr(new Timer(0,999,999,999)));
+      	LOG_ROOT_INFO() << "back to coroutine 2";
+      	scheduler->addTimer(Timer::ptr(new Timer(0,500,20,1)));
+      	LOG_ROOT_INFO() << "back to coroutine 3";
+      	scheduler->addTimer(Timer::ptr(new Timer(1,700,0,1)));
       	for(int i=0;i<1000;i++) co_yield;
       	LOG_ROOT_INFO() << "back to coroutine 4";
       };
       //LOG_ROOT_ERROR() <<" ADD TIMER : "<<i;
     }
   LOG_ROOT_INFO() << "EXIT";
-  //Scheduler::getThis()->stop();
+  Scheduler::getThis()->stop();
   return 0;
 }
