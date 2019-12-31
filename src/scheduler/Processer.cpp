@@ -66,15 +66,21 @@ namespace zhuyh
 
   bool Processer::addTask(Task::ptr task)
   {
-    
+    ASSERT(_scheduler != nullptr);
     if(task == nullptr) return false;
     if(task->cb || task -> fiber)
       {
-	if(task->cb){
-	  ASSERT(task -> fiber == nullptr);
-	  ASSERT(_scheduler != nullptr);
-	  ++(_scheduler->totalTask);
-	}
+	if(task->cb)
+	  {
+	    ASSERT(task -> fiber == nullptr);
+	    ++(_scheduler->totalTask);
+	  }
+	else if(task->fiber->_state != Fiber::READY)
+	  {
+	    //如果是SWITCHING状态则自旋,不加入队列
+	    while(task->fiber->_state == Fiber::SWITCHING)
+	      ;
+	  }
 	/*
 	  else
 	  {

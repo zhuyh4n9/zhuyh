@@ -42,6 +42,8 @@
             zhuyh::Scheduler::getThis() -> addTimer(Timer::ptr(new Timer(sec,msec,usec,nsec)),call_back);
          - 协程
             zhuyh::Scheduler::getThis() -> addTimer(Timer::ptr(new Timer(sec,msec,usec,nsec));
+       - 缺陷 : 定时器占用资源过多，计划改为基于epoll_wait的timeout的定时器,减少系统资源的消耗
+          - 利用clock_gettime获取纳秒级的时间
     协程信号量
          创建一个协程信号量
            CoSemaphore a(val) ;

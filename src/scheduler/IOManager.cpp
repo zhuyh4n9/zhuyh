@@ -342,9 +342,6 @@ namespace zhuyh
     if(type & READ)
       {
 	ASSERT(epEv->rdtask != nullptr);
-	if(epEv->rdtask->fiber)
-	  while(epEv->rdtask->fiber->_state != Fiber::HOLD)
-	    ;
 	if(epEv->timer != nullptr)
 	  {
 	    if(epEv->timer->getTimerType() == Timer::SINGLE)
@@ -356,9 +353,6 @@ namespace zhuyh
       }
     else if(type & WRITE)
       {
-	if(epEv->wrtask->fiber)
-	  while(epEv->wrtask->fiber->_state != Fiber::HOLD)
-	    ;
 	Task::ptr task = nullptr;
 	task.swap(epEv->wrtask);
 	ASSERT(epEv->timer == nullptr);

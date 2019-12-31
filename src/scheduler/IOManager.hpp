@@ -137,10 +137,8 @@ namespace zhuyh
 	LOG_ERROR(sys_log) << "Failed to add timer";
 	return -1;
       }
-    //LOG_INFO(sys_log) << "add a timer";
     epEv -> timer = timer;
     epEv -> rdtask.reset(new Task(cb));
-    //LOG_INFO(sys_log) << "ADD TIMER";
     epEv -> event = (EventType)(epEv->event | READ);
     try
       {
