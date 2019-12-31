@@ -24,13 +24,10 @@ extern "C"
 
 namespace zhuyh
 {
-  //TODO:将来协程实现为boost.context
-    using context = fcontext_t;
-  //using context = ucontext_t;
+  using context = fcontext_t;
   class Fiber : public UnCopyable,public std::enable_shared_from_this<Fiber>
   {
   public:
-    //Processer会使用到swapIn方法,因此为该类的友元
     friend class Processer;
     friend class Scheduler;
     friend class IOManager;
@@ -61,7 +58,6 @@ namespace zhuyh
 #undef    XX
       return "UNKNOWN";
     }
-    //size为0则使用默认大小
     Fiber(CbType cb,size_t size = 0);
     ~Fiber();
     //重置协程回调函数,必须在INIT/TERM状态才能执行
@@ -74,8 +70,7 @@ namespace zhuyh
     
     //协程切换至后台并且设置为READY状态
     static void YieldToReady();
-    //协程切换至后台并且设置为HOLD状态
-    static void YieldToHold();
+    //当前协程切换至后台并且设置为SWITCH状态
     static void YieldToSwitch();
     //获取总协程数
     static uint64_t totalFibers();
@@ -100,9 +95,7 @@ namespace zhuyh
     static void setMain(Fiber* fiber) { _main_fiber().reset(fiber); }
   private:
     CbType _cb;
-    //协程ID
     uint32_t _fid = 0;
-    //上下文
     context _ctx;
     //协程状态
     std::atomic<int> _state {INIT};

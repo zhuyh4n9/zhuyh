@@ -9,12 +9,10 @@ namespace zhuyh
   Processer::Processer(const std::string name,Scheduler* scheduler )
     :_name(name)
   {
-    //LOG_INFO(sys_log) << "Creating Processer";
     if(scheduler == nullptr )
       _scheduler = Scheduler::getThis();
     else
       _scheduler = scheduler;
-    //创建管道和epoll对象,并且将管道读端放入epoll(ET模式)
     _epfd = epoll_create(1);
     ASSERT2(_epfd >=0 , "epoll_create error");
     int rt = pipe(_notifyFd);
@@ -29,7 +27,6 @@ namespace zhuyh
     ev.data.fd = _notifyFd[0];
     rt = epoll_ctl(_epfd,EPOLL_CTL_ADD,_notifyFd[0],&ev);
     ASSERT2(rt >= 0,"epoll_ctl error");
-    //LOG_INFO(sys_log) << "Processer created";
   }
 
   Processer::~Processer()
@@ -51,7 +48,6 @@ namespace zhuyh
 	close(_notifyFd[1]);
 	_notifyFd[1] = -1;
       }
-    //std::cout<<"~Processer\n";
     LOG_INFO(sys_log) << "Processer : "<<_name<<"  Destroyed, worked = :"<<worked;
   }
   
@@ -67,8 +63,7 @@ namespace zhuyh
       }
     LOG_INFO(sys_log) << "Processer Started!";
   }
-  //只有主协程取任务执行是是从队列尾部取出
-  //向就绪队列添加任务
+
   bool Processer::addTask(Task::ptr task)
   {
     
@@ -77,13 +72,11 @@ namespace zhuyh
       {
 	if(task->cb){
 	  ASSERT(task -> fiber == nullptr);
-	  //d::cout<<_scheduler<<std::endl;
 	  ASSERT(_scheduler != nullptr);
 	  ++(_scheduler->totalTask);
-	  //LOG_INFO(sys_log)<< "Cb ADDED : "<<(_scheduler->totalTask)<<std::endl;
 	}
 	/*
-	else
+	  else
 	  {
 	    ASSERT2(task->fiber->getState() == Fiber::READY
 		    || task->fiber->getState() == Fiber::HOLD,
@@ -109,13 +102,10 @@ namespace zhuyh
     return addTask(task);
   }
   
-  //working steal算法
   std::list<Task::ptr> Processer::steal(int k)
   {
     std::list<Task::ptr> tasks;
-    if(_readyTask.try_popk_front(k,tasks) == false);
-      //LOG_INFO(sys_log) << "Failed to Steal Fibers";
-    else
+    if(_readyTask.try_popk_front(k,tasks) == true)
       _payLoad -= tasks.size();
     return tasks;
   }
@@ -129,11 +119,9 @@ namespace zhuyh
   void Processer::stop()
   {
     _stopping = 1;
-    //唤醒epoll_wait
     notify();
   }
   
-  //向管道写端写一条空数据
   int Processer::notify()
   {
     //LOG_INFO(sys_log) << "Notifyed";
@@ -154,19 +142,15 @@ namespace zhuyh
   void Processer::run()
   {
     std::vector<struct epoll_event> evs(20);
-    //设置线程所在协程为主协程
     setMainFiber(Fiber::getThis());
-    //LOG_INFO(sys_log) << "RUN";
     while(1)
       {
-	//LOG_INFO(sys_log) << "total " << _scheduler->totalTask;
 	Task::ptr task;
 	while(_readyTask.try_pop_back(task))
 	  {
 	    // LOG_INFO(sys_log) << " totalTask : "<<_scheduler->totalTask
 	    // 		      << " holdCount : "<< _scheduler-> getHold();
 	    ASSERT(task != nullptr);
-	    //LOG_INFO(sys_log) << "Pick up a task";
 	    worked++;
 	    if(task->fiber)
 	      {
@@ -186,11 +170,8 @@ namespace zhuyh
 	    ASSERT(fiber != nullptr);
 	    ASSERT(fiber->_stack != nullptr);
 	    ASSERT2(fiber->getState() == Fiber::READY,Fiber::getState(fiber->getState()));
-	    //LOG_INFO(sys_log) << "SWAPIN";
 	    fiber->swapIn();
-	    //LOG_INFO(sys_log) << "SWAPOUT";
 	    ASSERT(fiber->getState() != Fiber::INIT);
-	    //加入就绪
 	    if(fiber->getState() == Fiber::READY)
 	      {
 		_readyTask.push_front(task);
@@ -203,12 +184,10 @@ namespace zhuyh
 	    else if(fiber->getState() == Fiber::HOLD)
 	      {
 		--_payLoad;
-		//LOG_INFO(sys_log) << "HOLD TASK";
 	      }
 	    else if(fiber->getState() == Fiber::TERM
 		    || fiber->getState() == Fiber::EXCEPT)
 	      {
-		//LOG_INFO(sys_log) <<"DOOMED";
 		--_payLoad;
 		--(_scheduler->totalTask);
 		fiber.reset();
@@ -234,7 +213,7 @@ namespace zhuyh
 		return;
 	      }
 	  }
-	static const int MaxTimeOut = 500;
+	static const int MaxTimeOut = 100;
 	int rt = 0;
 	while(1)
 	  {

@@ -194,19 +194,6 @@ namespace zhuyh
 	ASSERT2(false,"jump_fcontext error");
       }
   }
-  
-  void Fiber::YieldToHold()
-  {
-    Fiber::ptr cur = getThis();
-    if(cur == _main_fiber() ) return;
-    ASSERT(cur!=nullptr);
-    setThis(_main_fiber().get());
-    cur->_state = HOLD;
-    if(jump_fcontext(&(cur->_ctx),_main_fiber()->_ctx,0))
-      {
-	ASSERT2(false,"jump_fcontext error");
-      }
-  }
 
   uint64_t Fiber::totalFibers()
   {

@@ -25,7 +25,6 @@ struct TEST
   {
     LOG_ROOT_INFO() << "WRITE EVENT TRIGGERED!";
     int rt = write(fd[1],"a",1);
-    //std::cout<<"rt="<<rt<<" fd[1]="<<fd[1]<<std::endl;
     ASSERT2(rt >= 0,std::to_string(fd[1]));
   }
   ~TEST()
@@ -44,10 +43,7 @@ void Alarm()
 int a = 0;
 zhuyh::CoSemaphore sem(1);
 void test_co()
-{
-  //LOG_ROOT_INFO() << "Enter test";
-  //LOG_ROOT_INFO() << "test mid";
-  
+{ 
   for(int i=0;i<10;++i)
     {
       sem.wait();
@@ -77,7 +73,7 @@ int main()
   LOG_ROOT_INFO() << "Entering";
   //Scheduler* scheduler = Scheduler::getThis();
   //scheduler->start();
-  for(int i =0 ;i<200;++i)
+  for(int i =0 ;i<100;++i)
     {
       co test_co;
       int rt=pipe(test[i].fd);

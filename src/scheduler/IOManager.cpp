@@ -32,7 +32,7 @@ namespace zhuyh
     rt = epoll_ctl(_epfd,EPOLL_CTL_ADD,_notifyFd[0],&ev);
     ASSERT(rt >= 0);
     _thread.reset(new Thread(std::bind(&IOManager::run,this),_name));
-    LOG_INFO(sys_log) << "IOManager : "<< _name <<" Created!";
+    //LOG_INFO(sys_log) << "IOManager : "<< _name <<" Created!";
   }
   IOManager::~IOManager()
   {
@@ -68,7 +68,7 @@ namespace zhuyh
     int rt = write(_notifyFd[1],"",1);
     ASSERT(rt >= 0);
   }
-  //增加一个addEvent对外界使用,该方法变为私有
+
   int IOManager::addEvent(int fd,Task::ptr task,EventType type)
   {
     ASSERT( type == READ  || type == WRITE);
@@ -78,11 +78,9 @@ namespace zhuyh
     LOG_INFO(sys_log) << "fd = "<<fd;
     if(epEv == nullptr)
       {
-	//	LOG_DEBUG(sys_log) << "HERE4";
 	epEv = new FdEvent(fd,NONE);
       }
     lg.unlock();
-    //LOG_DEBUG(sys_log) << "HERE2";
     LockGuard lg2(epEv->lk);
     int rt = setNonb(fd);
     if(rt < 0)
@@ -90,9 +88,7 @@ namespace zhuyh
 	LOG_ERROR(sys_log) << "Failed to setNonb";
 	return -1;
       }
-    //LOG_DEBUG(sys_log) << "HERE3";
     auto op = epEv->event == NONE ? EPOLL_CTL_ADD : EPOLL_CTL_MOD;
-    //添加之前应该无改属性
     if(type & epEv->event)
       {
 	LOG_WARN(sys_log) << "type : " << type << " Exist"
@@ -110,18 +106,15 @@ namespace zhuyh
       }
     if(type & EventType::READ)
        {
-	 //无读事件
 	 ASSERT(epEv->rdtask == nullptr);
 	 epEv->rdtask = task;
 	 epEv->event = (EventType)(epEv->event | EventType::READ);
-	 //LOG_DEBUG(sys_log) << "ADD READ EVENT";
       }
     else  if(type & EventType::WRITE)
       {
 	ASSERT(epEv->wrtask == nullptr);
 	epEv->wrtask = task;
 	epEv->event = (EventType)(epEv->event | EventType::WRITE);
-	//LOG_DEBUG(sys_log) << "ADD WRITE EVENT";
       }
     ++_holdCount;
     return 0;
@@ -133,11 +126,15 @@ namespace zhuyh
     ASSERT( type != NONE);
     ASSERT(type == READ || type == WRITE);
     struct epoll_event ev;
-    RDLockGuard lg(_lk);
-    FdEvent* epEv = _eventMap[fd];
-    if(epEv == nullptr) return -1;
+    WRLockGuard lg(_lk);
+    FdEvent*& epEv = _eventMap[fd];
+    if(epEv == nullptr)
+      {
+	LOG_WARN(sys_log) << "Failed to del Event";
+	return -1;
+      }
     lg.unlock();
-    //LOG_INFO(sys_log) << "HERE";
+    
     LockGuard lg2(epEv->lk);
     if( (EventType)(type & epEv->event) == NONE )
       {
@@ -147,7 +144,6 @@ namespace zhuyh
     auto tevent = ~type & epEv->event;
     auto op =  tevent ? EPOLL_CTL_MOD : EPOLL_CTL_DEL;
     ev.events = tevent | EPOLLET;
-    //???
     ev.data.ptr = epEv;
     int rt = epoll_ctl(_epfd,op,fd,&ev);
     if(rt)
@@ -174,16 +170,15 @@ namespace zhuyh
     ASSERT( type != NONE);
     ASSERT(type == READ || type == WRITE);
     struct epoll_event ev;
-    FdEvent* epEv;
-    RDLockGuard lg(_lk);
-    epEv = _eventMap[fd];
+    WRLockGuard lg(_lk);
+    FdEvent*& epEv = _eventMap[fd];
     if(epEv == nullptr)
       {
 	LOG_WARN(sys_log) << "event does not exist";
 	return -1;
       }
     lg.unlock();
-    
+      
     LockGuard lg2(epEv->lk);
     if( (EventType)(epEv->event & type) == NONE )
       {
@@ -207,9 +202,8 @@ namespace zhuyh
 
   int IOManager::cancleAll(int fd)
   {
-    FdEvent* epEv;
-    RDLockGuard lg(_lk);
-    epEv = _eventMap[fd];
+    WRLockGuard lg(_lk);
+    FdEvent*& epEv = _eventMap[fd];
     if(epEv == nullptr )
       {
 	LOG_WARN(sys_log) << "event doesn't exist";
@@ -269,10 +263,7 @@ namespace zhuyh
 	  }
 	int rt = 0;
 	do{
-	  //LOG_INFO(sys_log) << "Here";
 	  rt = epoll_wait(_epfd,events,MaxEvent,MaxTimeOut);
-	  //LOG_INFO(sys_log) << "Here2";
-	  //被中断打断
 	  if(rt<0 && errno == EINTR)
 	    {
 	      LOG_INFO(sys_log) <<"EINTR";
@@ -316,16 +307,13 @@ namespace zhuyh
 		    continue;
 		  }
 	      }
-	    //	    epEv->event = tevent;
 	    if(real_event & READ)
 	      {
-		//LOG_DEBUG(sys_log) << "Triggled Read Event";
 		triggerEvent(epEv,READ);
 		--_holdCount;
 	      }
 	    if(real_event & WRITE)
 	      {
-		//LOG_DEBUG(sys_log) << "Triggled Write Event";
 		triggerEvent(epEv,WRITE);
 		--_holdCount;
 	      }
@@ -344,24 +332,19 @@ namespace zhuyh
 
   void IOManager::setScheduler(Scheduler* scheduler)
   {
-    _scheduler = scheduler;
   }
 
   int IOManager::triggerEvent(FdEvent* epEv,EventType type)
   {
     ASSERT( type == READ  || type == WRITE);
     ASSERT(type & epEv->event);
-    //LOG_INFO(sys_log) << "Triggle Event";
     epEv->event =(EventType)(epEv-> event & ~type);
     if(type & READ)
       {
 	ASSERT(epEv->rdtask != nullptr);
 	if(epEv->rdtask->fiber)
 	  while(epEv->rdtask->fiber->_state != Fiber::HOLD)
-	    {
-	      ;
-	    }
-	//目的是关闭fd
+	    ;
 	if(epEv->timer != nullptr)
 	  {
 	    if(epEv->timer->getTimerType() == Timer::SINGLE)
@@ -381,7 +364,6 @@ namespace zhuyh
 	ASSERT(epEv->timer == nullptr);
 	_scheduler->addTask(task);
       }
-
     return 0;
   }
   

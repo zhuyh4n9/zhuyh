@@ -36,7 +36,6 @@ namespace zhuyh
   //TODO : to be fixed
   Scheduler::~Scheduler()
   {
-    //要求必须显式退出
     ASSERT(_stopping == true);
     LOG_INFO(sys_log) << "Scheduler : "<<_name<<" Destroyed";
   }
@@ -46,7 +45,6 @@ namespace zhuyh
     return _ioMgr -> _holdCount;
   }
   //由于进入Main函数之前,根调度器就已经创建并且运行,
-  //因此用户单独创建IOManager可行,但是没有意义
   void Scheduler::start()
   {
     if(_stop == false) return;
@@ -116,9 +114,6 @@ namespace zhuyh
   int Scheduler::balance(Processer::ptr prc)
   {
     Processer::ptr _prc = getMaxPayLoad();
-    //Processer::ptr _prc = _pcsQue[rand()%_currentThread];
-    //LOG_INFO(sys_log) << "HERE";
-    //同一个线程
     if(_prc->_thread.get() == Thread::getThis() ) return 0;
     std::list<Task::ptr> tasks;
     //偷取协程
@@ -135,7 +130,7 @@ namespace zhuyh
   {
     --(_ioMgr->_holdCount);
   }
-  //根据负载创建新执行器
+  
   void Scheduler::addTask(std::shared_ptr<Task> task)
   {
     Processer::ptr p = getMinPayLoad();
