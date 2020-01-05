@@ -52,8 +52,14 @@
            a.notify();
            a.tryWait();
          如果使用协程信号量,需要显式关闭调度器 : Scheduler::getThis() -> stop();
-    Channel :
+    Channel 
+        计划利用协程信号量实现一套channel用于协程间的通信
 
 ```
 
-## HOOK -- 待开发
+## HOOK
+```C++
+目前hook的系统调用
+sleep
+usleep
+```
