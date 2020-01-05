@@ -28,6 +28,8 @@ extern "C"
   typedef int (*usleep_func)(useconds_t usec);
   extern usleep_func usleep_f;
 
-  // typedef int (*nanosleep_func)(const struct timespec *req, struct timespec *rem);
-  // nanosleep_func nanosleep_f;
+  typedef int (*nanosleep_func)(const struct timespec *req, struct timespec *rem);
+  extern nanosleep_func nanosleep_f;
+
+  typedef int (*socket_func)(int domain, int type, int protocol);
 }

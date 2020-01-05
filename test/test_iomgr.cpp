@@ -34,6 +34,7 @@ struct TEST
   }
 };
 
+
 void Alarm()
 {
   LOG_ROOT_INFO() <<"Time up";

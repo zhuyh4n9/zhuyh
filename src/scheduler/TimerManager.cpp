@@ -79,10 +79,9 @@ namespace zhuyh
     //LOG_ROOT_INFO() << "total : "<<_timers.size();
     if(_timers.empty() ) return res;
     auto t = Timer::ptr(new Timer());
-    std::set<Timer::ptr>::iterator pos = _timers.lower_bound(t);
-    while(pos!= _timers.end() && ( (*pos)->_nxtExpireTime == t->_nxtExpireTime) )
-      pos++;
-    //tms.insert(tms.begin(),_timers.begin(),pos);
+    std::set<Timer::ptr>::iterator pos = _timers.upper_bound(t);
+    // while(pos!= _timers.end() && ( (*pos)->_nxtExpireTime == t->_nxtExpireTime) )
+    //   pos++;
     for(auto it = _timers.begin();it != pos; it++)
       {
 	ASSERT((*it)->isCancled() != true);

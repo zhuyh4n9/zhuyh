@@ -8,6 +8,7 @@ extern "C"
 {
   sleep_func sleep_f;
   usleep_func usleep_f;
+  nanosleep_func nanosleep_f;
 }
 namespace zhuyh
 {
@@ -30,7 +31,8 @@ namespace zhuyh
   
 #define HOOK_FUNC()				\
   XX(sleep);					\
-  XX(usleep);					
+  XX(usleep);					\
+  XX(nanosleep);
 
   struct HookInit
   {
@@ -54,7 +56,10 @@ namespace zhuyh
 unsigned int sleep(unsigned int seconds)
 {
   if(zhuyh::Hook::isHookEnable() == false)
-    return sleep_f(seconds);
+    {
+      //LOG_ROOT_ERROR() << "USE ORIGIN";
+      return sleep_f(seconds);
+    }
   auto scheduler = zhuyh::Scheduler::getThis();
   ASSERT(scheduler != nullptr);
   scheduler->addTimer(zhuyh::Timer::ptr(new zhuyh::Timer((time_t)seconds)));
@@ -64,7 +69,10 @@ unsigned int sleep(unsigned int seconds)
 int usleep(useconds_t usec)
 {
   if(zhuyh::Hook::isHookEnable() == false)
-    return usleep_f(usec);
+    {
+      //LOG_ROOT_ERROR() << "USE ORIGIN";
+      return usleep_f(usec);
+    }
   auto scheduler = zhuyh::Scheduler::getThis();
   ASSERT(scheduler != nullptr);
   usec /= 1000;
@@ -72,3 +80,20 @@ int usleep(useconds_t usec)
   return 0;
 }
 
+int nanosleep(const struct timespec *req, struct timespec *rem)
+{
+  if(zhuyh::Hook::isHookEnable() == false)
+    return nanosleep_f(req,rem);
+  auto scheduler = zhuyh::Scheduler::getThis();
+  ASSERT(scheduler != nullptr);
+  time_t sec = req->tv_sec;
+  time_t nsec = req->tv_nsec;
+  if(nsec <0 || nsec > 1000000000 || sec < 0 || sec > 1000000000)
+    {
+      errno = EINTR;
+      return -1;
+    }
+  nsec /=1000000;
+  scheduler->addTimer(zhuyh::Timer::ptr(new zhuyh::Timer(sec,(time_t)nsec)));
+  return 0;
+}
