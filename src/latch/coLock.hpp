@@ -6,6 +6,9 @@
 #include "lock.hpp"
 #include "../scheduler/Scheduler.hpp"
 #include "../concurrent/fiber.hpp"
+#include "../macro.hpp"
+#include "../logUtil.hpp"
+
 namespace zhuyh
 {
   class CoSemaphore

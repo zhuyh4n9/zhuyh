@@ -1,14 +1,15 @@
 #pragma once
 
+#include "../concurrent/fiber.hpp"
 #include "TSQueue.hpp"
-#include "Processer.hpp"
-#include "IOManager.hpp"
 #include "../latch/lock.hpp"
 #include "../concurrent/Thread.hpp"
+#include <iostream>
+#include <fstream>
 #include <memory>
 #include <functional>
-#include "../logUtil.hpp"
-#include "../log.hpp"
+#include "Task.hpp"
+#include <vector>
 #include "TimerManager.hpp"
 
 namespace zhuyh
@@ -20,7 +21,7 @@ namespace zhuyh
   // Fiber::YieldToHold() --宏定义---> co_yield_to_hold
   class IOManager;
   class Processer;
-  struct Task;
+  class Timer;
   class Scheduler final : public std::enable_shared_from_this<Scheduler>
   {
   public:
@@ -50,8 +51,8 @@ namespace zhuyh
     //获取根管理器,需要在进入main函数前进行一次初始化
     static Scheduler* getThis();
     int getHold();
-    int addTimer(Timer::ptr timer,std::function<void()> cb = nullptr,
-		 Timer::TimerType type = Timer::SINGLE);
+    int addTimer(std::shared_ptr<Timer> timer,std::function<void()> cb = nullptr,
+		 Timer::TimerType type = Timer::TimerType::SINGLE);
 
 #undef XX
   private:

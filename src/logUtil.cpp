@@ -1,5 +1,7 @@
 #include"logUtil.hpp"
 #include<map>
+#include"macro.hpp"
+
 namespace zhuyh
 {
   //根日志默认级别为INFO
@@ -12,7 +14,20 @@ namespace zhuyh
     static Logger::ptr logger(new Logger(loglevel,fmt,logname) );
     return logger;
   }
-
+  
+  Logger::ptr ADD_LOGGER(const std::string& name,
+				 LogLevel::Level level,
+				 const std::string& fmt)
+  {
+    if(fmt.empty() || fmt == "")
+      {
+	return GET_LOG_MGR()->addLogger(name,level);
+      }
+    else
+      {
+	return GET_LOG_MGR()->addLogger(name,level,fmt);
+      }
+  }
   /*
    * 日志管理器
    */

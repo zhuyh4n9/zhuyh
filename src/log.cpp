@@ -11,6 +11,7 @@
 #include<map>
 #include<sstream>
 #include"util.hpp"
+#include"macro.hpp"
 
 namespace zhuyh
 {

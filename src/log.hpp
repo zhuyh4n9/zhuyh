@@ -1,6 +1,5 @@
 #pragma once
 
-#include "util.hpp"
 #include "config.hpp"
 #include <list>
 #include <vector>

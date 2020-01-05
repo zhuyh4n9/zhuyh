@@ -1,5 +1,7 @@
 #include "Thread.hpp"
 #include "../logUtil.hpp"
+#include "../macro.hpp"
+
 namespace zhuyh
 {
   //系统调用日志

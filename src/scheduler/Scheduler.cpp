@@ -1,4 +1,9 @@
 #include "Scheduler.hpp"
+#include "../config.hpp"
+#include "../macro.hpp"
+#include "../logUtil.hpp"
+#include "IOManager.hpp"
+#include "Processer.hpp"
 
 namespace zhuyh
 {
@@ -196,8 +201,7 @@ namespace zhuyh
 	  {
 	    //主协程只能添加回调函数
 	    if(Fiber::getThis() == Fiber::getMain()) return -1;
-	    if(timer->isZero()) return 0;
-	    rt = _ioMgr->addTimer(timer,Fiber::getThis(),type);			
+	    rt = _ioMgr->addTimer(timer,cb,type);			
 	    if(rt >= 0)
 	      {
 		Fiber::YieldToSwitch();

@@ -1,48 +1,15 @@
 #pragma once
 
 #include <atomic>
-#include "Scheduler.hpp"
 #include "../concurrent/fiber.hpp"
 #include "../concurrent/Thread.hpp"
-#include "../util.hpp"
-#include "../macro.hpp"
-#include "../logUtil.hpp"
 #include "../latch/lock.hpp"
-#include "../config.hpp"
 #include "TSQueue.hpp"
+#include "Task.hpp"
+#include "TimerManager.hpp"
+
 namespace zhuyh
 {
-  struct Task
-  {
-    
-    typedef std::shared_ptr<Task> ptr;
-    Fiber::ptr fiber = nullptr;
-    Fiber::CbType cb = nullptr;
-    bool stealable = true;
-    bool finTag = false;
-    Task(Fiber::ptr f)
-      :fiber(f)
-    {
-    }
-    Task(Fiber::ptr* f)
-    {
-      fiber.swap(*f);
-    }
-    Task(Fiber::CbType c)
-      :cb(c)
-    {
-    }
-    Task(Fiber::CbType* c)
-    {
-      cb.swap(*c);
-    }
-    static std::atomic<int> id;
-    Task(){}
-    ~Task()
-    {
-      // LOG_ROOT_INFO() << "Destroying id : "<<_id;
-    }
-  };
   class Scheduler;
   //必须在堆上分配
   class Processer : public std::enable_shared_from_this<Processer>

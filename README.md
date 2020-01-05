@@ -48,10 +48,11 @@
          创建一个协程信号量
            CoSemaphore a(val) ;
          支持的方法有:
-           a.wait();  
+		   a.wait();
            a.notify();
            a.tryWait();
          如果使用协程信号量,需要显式关闭调度器 : Scheduler::getThis() -> stop();
+    Channel :
 
 ```
 

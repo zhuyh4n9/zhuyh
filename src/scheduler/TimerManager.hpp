@@ -1,130 +1,133 @@
 #pragma once
 
-#include <unordered_map>
-#include <sys/timerfd.h>
-#include <sys/time.h>
+#include <set>
+#include <vector>
 #include "../latch/lock.hpp"
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <functional>
-#include "../logUtil.hpp"
-
+#include <list>
+/*
+ *时间均采用开机时间,不需要担心时间被推迟
+ */
 namespace zhuyh
 {
-  //基于timerfd
-  class Timer final
+  class Task;
+  class TimerManager;
+  class Timer final : public std::enable_shared_from_this<Timer>
   {
   public:
+    typedef std::function<void()> CbType;
     typedef std::shared_ptr<Timer> ptr;
+    friend class TimerManager;
     enum TimerType
       {
 	SINGLE, //单次计时
 	LOOP //循环计时
       };
-    Timer() { memset(&_timer,0,sizeof(_timer));}
-    Timer(time_t sec,long msec = 0,long usec = 0,long nsec = 0)
-    {
-      //LOG_ROOT_ERROR() << "Timer Create";
-#define XX(secName1,secName2)	  \
-      secName1 += secName2 / 1000; \
-      secName2 = secName2 % 1000;
-      
-      //确保不会溢出
-      XX(usec,nsec);
-      XX(msec,usec);
-      XX(sec,msec);
-      
-#undef XX
-      //LOG_ROOT_INFO() << sec << " "<<_timer.tv_nsec;
-      _timer.tv_sec = sec;
-      _timer.tv_nsec = nsec + usec*1000L + msec*1000000L;
-      create();
-    }
     
+    Timer(time_t sec = 0,time_t msec = 0,time_t usec = 0,time_t nsec = 0);
+    
+    Timer(uint64_t* msec)
+    {
+      _cancled = false;
+      _nxtExpireTime = *msec;
+    }
+    void setManager(TimerManager* manager);
     ~Timer()
     {
       // LOG_ROOT_INFO() << "timer destroyed _tfd = "<<_tfd;
-      if(_tfd != -1)
-	{
-	  close(_tfd);
-	  _tfd = -1;
-	}	    
-      
     }
-    void setLoop()
-    {
-      _type  = LOOP;
-    }
+    static uint64_t getCurrentTime();
     bool isZero()
     {
-      return _timer.tv_sec == 0 && _timer.tv_nsec == 0;
+      return _interval == 0;
     }
     TimerType getTimerType() const
     {
       return _type;
     }
     
-    Timer(const Timer& timer)
-    {
-      _timer = timer._timer;
-      _type = timer._type;
-    }
-    
-    Timer(const timespec& timer)
-    {
-      _timer = timer;
-    }
-    
     bool operator<(const Timer& o) const
     {
-      if(_timer.tv_sec == o._timer.tv_sec)
-	return _timer.tv_nsec < o._timer.tv_nsec;
-      return _timer.tv_sec < o._timer.tv_sec;
+      return _nxtExpireTime < o._nxtExpireTime;
     }
     
     bool operator>(const Timer& o) const
     {
-      if(_timer.tv_sec == o._timer.tv_sec)
-	return _timer.tv_nsec > o._timer.tv_nsec;
-      return _timer.tv_sec > o._timer.tv_sec;
+      return _nxtExpireTime > o._nxtExpireTime; 
     }
     
     bool operator==(const Timer& o) const
     {
-      return _timer.tv_sec == o._timer.tv_sec
-	&&  _timer.tv_nsec == o._timer.tv_nsec;
+      return _nxtExpireTime == o._nxtExpireTime;
     }
-    int create();
-    int start();
-    static Timer getCurrentTimer();
-    int getTimerFd() const
+    bool operator!=(const Timer& o) const
     {
-      return _tfd;
+      return _nxtExpireTime != o._nxtExpireTime;
+    }
+    void start();
+    void setLoop()
+    {
+      if(_start) return;
+      _type = LOOP;
+    }
+    bool cancle();
+    bool isCancled()
+    {
+      return _cancled;
+    }
+    //nullptr表示使用当前协程,否则表示回调函数
+    void setTask(CbType cb = nullptr);
+    std::shared_ptr<Task> getTask()
+    {
+      return _task;
     }
   private:
-    int _tfd = -1;    
-    struct timespec _timer;
+    void setNextExpireTime()
+    {
+      if(_type == SINGLE) return;
+      _nxtExpireTime += _interval;
+    }
+  private:
+    std::shared_ptr<Task> _task = nullptr;
+    bool _start = false;
+    bool _cancled = false;
     TimerType _type = SINGLE;
-    mutable SpinLock _mx;
+    uint64_t _interval = 0;
+    uint64_t _nxtExpireTime = 0;
+    TimerManager* _manager = nullptr;
   };
 
-  class TimerManager
+  class TimerManager 
   {
   public:
-    virtual int addTimer(Timer::ptr* timer,std::function<void()> cb,
-			  Timer::TimerType type = Timer::SINGLE) = 0;
-    virtual int addTimer(Timer::ptr timer,std::function<void()> cb,
-			  Timer::TimerType type = Timer::SINGLE) = 0;
-    virtual int delTimer(int fd) = 0;
+    typedef std::shared_ptr<TimerManager> ptr;
+    friend class Timer;
+    int addTimer(Timer::ptr* timer,
+		 std::function<void()> cb = nullptr,
+		 Timer::TimerType type = Timer::SINGLE);
+    int addTimer(Timer::ptr timer,
+		 std::function<void()> cb = nullptr,
+		 Timer::TimerType type = Timer::SINGLE);
     virtual ~TimerManager() {}
-    /*
-    //当前时间
-    std::list<Timer> listExpiredTimer();
-    //指定时间
-    std::list<Timer> listExpiredTimer(time_t sec,long msec,long usec = 0);
-    std::list<Timer> listExpiredTimer(Timer timer);
-    */
+    //获取下一次超时时间
+    uint64_t getNextExpireTime();
+    //获取距离下一次超时的间隔时间
+    uint64_t getNextExpireInterval();
+    virtual void notify() = 0;
+    //列出所有超时的Timer
+    std::list<std::shared_ptr<Task> > getExpiredTasks();
+  public:
+    class Comparator
+    {
+    public:
+      bool operator() (const Timer::ptr& o1,const Timer::ptr& o2) const;
+    };
+  private:
+    std::set<Timer::ptr,Comparator> _timers;
+    mutable RWLock _mx;
   };
   
 }

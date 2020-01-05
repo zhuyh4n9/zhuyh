@@ -1,10 +1,13 @@
 #include "Processer.hpp"
+#include "Scheduler.hpp"
 #include <sys/epoll.h>
+#include "../logUtil.hpp"
+#include "../macro.hpp"
 
 namespace zhuyh
 {
-  thread_local Fiber::ptr __main_fiber = nullptr;
   static Logger::ptr sys_log  = GET_LOGGER("system");
+  thread_local Fiber::ptr __main_fiber = nullptr;
   std::atomic<int> Task::id{0};
   Processer::Processer(const std::string name,Scheduler* scheduler )
     :_name(name)
@@ -77,8 +80,8 @@ namespace zhuyh
 	  }
 	else if(task->fiber->_state != Fiber::READY)
 	  {
-	    //如果是SWITCHING状态则自旋,不加入队列
-	    while(task->fiber->_state == Fiber::SWITCHING)
+	    //不是READY一定是要切换为HOLD
+	    while(task->fiber->_state != Fiber::HOLD)
 	      ;
 	  }
 	/*

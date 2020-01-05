@@ -3,7 +3,6 @@
 #include <assert.h>
 #include <cstring>
 #include "util.hpp"
-#include "logUtil.hpp"
 #include "concurrent/fiber.hpp"
 
 #ifndef co_yield

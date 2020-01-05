@@ -1,4 +1,4 @@
-#include "../macro.hpp"
+#include "../logUtil.hpp"
 #include "fiber.hpp"
 #include "../log.hpp"
 #include "stackTrait.hpp"
@@ -69,7 +69,7 @@ namespace zhuyh
 
   Fiber::~Fiber()
   {
-    LOG_ROOT_INFO() << "Fiber ID : "<<_fid<<" Destroyed!";
+    //LOG_ROOT_INFO() << "Fiber ID : "<<_fid<<" Destroyed!";
     --__fiber_count;
     if(_state == INIT)
       {

@@ -1,5 +1,8 @@
 #include "IOManager.hpp"
-#include "../macro.hpp"
+#include <list>
+#include "../config.hpp"
+#include "Scheduler.hpp"
+#include <algorithm>
 
 namespace zhuyh
 { 
@@ -75,7 +78,7 @@ namespace zhuyh
     WRLockGuard lg(_lk);
     struct epoll_event ev;
     FdEvent*& epEv = _eventMap[fd];
-    LOG_INFO(sys_log) << "fd = "<<fd;
+    //LOG_INFO(sys_log) << "fd = "<<fd;
     if(epEv == nullptr)
       {
 	epEv = new FdEvent(fd,NONE);
@@ -253,8 +256,8 @@ namespace zhuyh
     const int MaxTimeOut = 500;
     while(1)
       {
-	LOG_INFO(sys_log) << "Holding : " << _holdCount
-			  << " Total  : " << _scheduler->totalTask;
+	//LOG_INFO(sys_log) << "Holding : " << _holdCount
+	//		  << " Total  : " << _scheduler->totalTask;
 	if(isStopping())
 	  {
 	    LOG_INFO(sys_log) << "IOManager : " << _name << " stopped!";
@@ -262,8 +265,9 @@ namespace zhuyh
 	    break;
 	  }
 	int rt = 0;
+	int nxtTimeOut = (int)std::min(getNextExpireInterval(),(uint64_t)MaxTimeOut);
 	do{
-	  rt = epoll_wait(_epfd,events,MaxEvent,MaxTimeOut);
+	  rt = epoll_wait(_epfd,events,MaxEvent,nxtTimeOut);
 	  if(rt<0 && errno == EINTR)
 	    {
 	      LOG_INFO(sys_log) <<"EINTR";
@@ -274,6 +278,11 @@ namespace zhuyh
 	      break;
 	    }
 	}while(1);
+	std::list<Task::ptr> tasks = getExpiredTasks();
+	for(Task::ptr& item : tasks)
+	  {
+	    _scheduler->addTask(item);
+	  }
 	for(int i=0;i<rt;i++)
 	  {
 	    struct epoll_event& ev = events[i];
@@ -292,20 +301,14 @@ namespace zhuyh
 	    if( (real_event & epEv->event) == NONE) continue;
 	    
 	    EventType tevent = (EventType)(~real_event & epEv->event);
-	    if(epEv->timer != nullptr && epEv->timer->getTimerType() == Timer::LOOP)
+	    
+	    int op = (tevent == NONE) ? EPOLL_CTL_DEL : EPOLL_CTL_MOD;
+	    ev.events = tevent | EPOLLET;
+	    int rt2 = epoll_ctl(_epfd,op,epEv->fd,&ev);
+	    if(rt2)
 	      {
-		ASSERT(false);
-	      }
-	    else
-	      {
-		int op = (tevent == NONE) ? EPOLL_CTL_DEL : EPOLL_CTL_MOD;
-		ev.events = tevent | EPOLLET;
-		int rt2 = epoll_ctl(_epfd,op,epEv->fd,&ev);
-		if(rt2)
-		  {
-		    LOG_ERROR(sys_log) << "epoll_ctl error";
-		    continue;
-		  }
+		LOG_ERROR(sys_log) << "epoll_ctl error";
+		continue;
 	      }
 	    if(real_event & READ)
 	      {
@@ -342,11 +345,6 @@ namespace zhuyh
     if(type & READ)
       {
 	ASSERT(epEv->rdtask != nullptr);
-	if(epEv->timer != nullptr)
-	  {
-	    if(epEv->timer->getTimerType() == Timer::SINGLE)
-	      epEv->timer.reset();
-	  }
 	Task::ptr task = nullptr;
 	task.swap(epEv->rdtask);
 	_scheduler->addTask(task);
@@ -355,32 +353,8 @@ namespace zhuyh
       {
 	Task::ptr task = nullptr;
 	task.swap(epEv->wrtask);
-	ASSERT(epEv->timer == nullptr);
 	_scheduler->addTask(task);
       }
     return 0;
   }
-  
-  int IOManager::delTimer(int fd)
-  {
-    WRLockGuard lg(_lk);
-    FdEvent* epEv = _eventMap[fd];
-    if(epEv == nullptr) return -1;
-    if(epEv-> timer == nullptr) return -1;
-    lg.unlock();
-    
-    LockGuard lg2(epEv->lk);
-    ASSERT(epEv->event == READ);
-    int rt = epoll_ctl(_epfd,EPOLL_CTL_DEL,fd,nullptr);
-    if(rt)
-      {
-	LOG_ERROR(sys_log) << "epoll ctl error : "<<strerror(errno);
-	return -1;
-      }
-    epEv->event = NONE;
-    epEv->timer.reset();
-    --_holdCount;
-    return 0;
-  }
-  
 };

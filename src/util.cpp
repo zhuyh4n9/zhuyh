@@ -1,6 +1,7 @@
 #include "util.hpp"
 #include "logUtil.hpp"
 #include "concurrent/fiber.hpp"
+#include "macro.hpp"
 
 namespace zhuyh
 {
