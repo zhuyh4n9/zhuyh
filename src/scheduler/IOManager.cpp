@@ -3,6 +3,7 @@
 #include "../config.hpp"
 #include "Scheduler.hpp"
 #include <algorithm>
+#include "../NetIO/Hook.hpp"
 
 namespace zhuyh
 { 
@@ -249,6 +250,7 @@ namespace zhuyh
   
   void IOManager::run()
   {
+    Hook::setHookState(Hook::State::ON);
     Fiber::getThis();
     const int MaxEvent = 1000;
     struct epoll_event* events = new epoll_event[1000];

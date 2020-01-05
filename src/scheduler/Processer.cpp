@@ -3,6 +3,7 @@
 #include <sys/epoll.h>
 #include "../logUtil.hpp"
 #include "../macro.hpp"
+#include "../NetIO/Hook.hpp"
 
 namespace zhuyh
 {
@@ -150,6 +151,7 @@ namespace zhuyh
   
   void Processer::run()
   {
+    Hook::setHookState(Hook::State::ON);
     std::vector<struct epoll_event> evs(20);
     setMainFiber(Fiber::getThis());
     while(1)

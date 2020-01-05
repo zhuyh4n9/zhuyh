@@ -20,11 +20,12 @@ set(LIB_SRC
   src/scheduler/Scheduler.cpp
   src/co.cpp
   src/scheduler/TimerManager.cpp
-  src/latch/coLock.cpp)
+  src/latch/coLock.cpp
+  src/NetIO/Hook.cpp)
 
-set(LIBS yaml-cpp pthread)
+set(LIBS yaml-cpp pthread dl)
 add_library(zhuyh SHARED ${LIB_SRC})
-add_library(libzhuyh STATIC ${LIB_SRC})
+add_library(libzhuyh STATIC  ${LIB_SRC})
 
 #add_executable(logtest test/logtest.cpp)
 #target_link_libraries(logtest zhuyh ${LIBS})
