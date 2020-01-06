@@ -21,7 +21,8 @@ set(LIB_SRC
   src/co.cpp
   src/scheduler/TimerManager.cpp
   src/latch/coLock.cpp
-  src/NetIO/Hook.cpp)
+  src/netio/Hook.cpp
+  src/netio/FdManager.cpp)
 
 set(LIBS yaml-cpp pthread dl)
 add_library(zhuyh SHARED ${LIB_SRC})

@@ -22,14 +22,17 @@ namespace zhuyh
 
 extern "C"
 {
-  typedef unsigned int(*sleep_func)(unsigned int seconds);
+  using sleep_func =  unsigned int(*)(unsigned int seconds);
   extern sleep_func sleep_f;
 
-  typedef int (*usleep_func)(useconds_t usec);
+  using usleep_func =  int (*)(useconds_t usec);
   extern usleep_func usleep_f;
 
-  typedef int (*nanosleep_func)(const struct timespec *req, struct timespec *rem);
+  using nanosleep_func = int (*)(const struct timespec *req, struct timespec *rem);
   extern nanosleep_func nanosleep_f;
+  
+  using socket_func =  int (*)(int domain,int type,int protocol);
 
-  typedef int (*socket_func)(int domain, int type, int protocol);
+  using fcntl_func = int (*)(int fd, int cmd, ... /* arg */ );
+  extern fcntl_func fcntl_f;
 }

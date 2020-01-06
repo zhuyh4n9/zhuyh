@@ -4,14 +4,16 @@
 #include "../macro.hpp"
 #include "../logUtil.hpp"
 #include "../scheduler/TimerManager.hpp"
-extern "C"
-{
-  sleep_func sleep_f;
-  usleep_func usleep_f;
-  nanosleep_func nanosleep_f;
-}
+
 namespace zhuyh
 {
+  extern "C"
+  {
+    sleep_func sleep_f;
+    usleep_func usleep_f;
+    nanosleep_func nanosleep_f;
+    fcntl_func fcntl_f;
+  }
   thread_local bool __hook_state__ = false;
   void Hook::setHookState(State state)
   {
@@ -32,8 +34,9 @@ namespace zhuyh
 #define HOOK_FUNC()				\
   XX(sleep);					\
   XX(usleep);					\
-  XX(nanosleep);
-
+  XX(nanosleep);				\
+  XX(fcntl);
+  
   struct HookInit
   {
     HookInit()
@@ -90,7 +93,7 @@ int nanosleep(const struct timespec *req, struct timespec *rem)
   time_t nsec = req->tv_nsec;
   if(nsec <0 || nsec > 1000000000 || sec < 0 || sec > 1000000000)
     {
-      errno = EINTR;
+      errno = EINVAL;
       return -1;
     }
   nsec /=1000000;
