@@ -11,7 +11,8 @@ namespace zhuyh
 {
 
   FdInfo::FdInfo(int fd)
-    :_blocking(true),
+    :_sysBlocking(true),
+     _userBlocking(true),
      _rdtimeout((uint64_t)-1),
      _wrtimeout((uint64_t)-1),
      _closed(true),
@@ -35,12 +36,8 @@ namespace zhuyh
 	  {
 	    _fdType = SOCKET;
 	  }
-	else if(S_ISFIFO(_stat.st_mode))
-	  {
-	    _fdType = PIPE;
-	  }
       }
-    //设置非阻塞
+    //设置非阻塞,目前只处理Socket描述符
     if(_fdType != NONE)
       {
 	int flags = 0;
@@ -53,11 +50,11 @@ namespace zhuyh
 		  return -1;
 	      }
 	  }
-	_blocking = false;
+	_sysBlocking = false;
       }
     else
       {
-	_blocking = true;
+	_sysBlocking = true;
       }
     _closed = false;
     _inited = true;
@@ -69,7 +66,7 @@ namespace zhuyh
     _fds.resize(1024);
   }
   
-  FdInfo::ptr FdManager::getFdInfo(int fd,bool create)
+  FdInfo::ptr FdManager::lookUp(int fd,bool create)
   {
     ASSERT(fd >=0);
     {
@@ -94,7 +91,7 @@ namespace zhuyh
     return _fds[fd];
   }
 
-  void FdManager::delFdInfo(int fd)
+  void FdManager::del(int fd)
   {
     ASSERT(fd >= 0);
     WRLockGuard lg(_mx);

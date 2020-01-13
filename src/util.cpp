@@ -2,6 +2,7 @@
 #include "logUtil.hpp"
 #include "concurrent/fiber.hpp"
 #include "macro.hpp"
+#include "netio/Hook.hpp"
 
 namespace zhuyh
 {
@@ -99,10 +100,10 @@ namespace zhuyh
 
   int setNonb(int fd)
   {
-    int flags = fcntl(fd,F_GETFL);
+    int flags = fcntl_f(fd,F_GETFL);
     if(flags < 0 )
       return -1;
-    return fcntl(fd,F_SETFL,flags | O_NONBLOCK);
+    return fcntl_f(fd,F_SETFL,flags | O_NONBLOCK);
   }
   
   int clearNonb(int fd)

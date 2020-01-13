@@ -197,7 +197,7 @@ namespace zhuyh
     if(rt)
       {
 	LOG_ERROR(sys_log) << "epoll_ctl error";
-	return -1;
+	return -2;
       }
     triggerEvent(epEv,type);
     --_holdCount;
@@ -250,7 +250,7 @@ namespace zhuyh
   
   void IOManager::run()
   {
-    Hook::setHookState(Hook::State::ON);
+    Hook::setHookState(true);
     Fiber::getThis();
     const int MaxEvent = 1000;
     struct epoll_event* events = new epoll_event[1000];
@@ -258,8 +258,8 @@ namespace zhuyh
     const int MaxTimeOut = 500;
     while(1)
       {
-	//LOG_INFO(sys_log) << "Holding : " << _holdCount
-	//		  << " Total  : " << _scheduler->totalTask;
+	// LOG_INFO(sys_log) << "Holding : " << _holdCount
+	// 		  << " Total  : " << _scheduler->totalTask;
 	if(isStopping())
 	  {
 	    LOG_INFO(sys_log) << "IOManager : " << _name << " stopped!";

@@ -70,9 +70,9 @@ int main()
       
       ASSERT2(rt >= 0,strerror(errno));
       scheduler->addReadEvent(test->fd[0],
-       			      Task::ptr(new Task(std::bind(&TEST::funcRead,test))) );
+       			      std::bind(&TEST::funcRead,test) );
       scheduler->addWriteEvent(test->fd[1],
-       			       Task::ptr(new Task(std::bind(&TEST::funcWrite,test))) );
+			       std::bind(&TEST::funcWrite,test) );
       rt = 0;
       if((rt=scheduler->addTimer(Timer::ptr(new Timer(5)),Alarm) < 0))
       	{

@@ -41,9 +41,11 @@ namespace zhuyh
   
   bool Timer::cancle()
   {
-    ASSERT(0);
+    //ASSERT(0);
+    
     ASSERT(_manager != nullptr);
     WRLockGuard(_manager->_mx);
+    if(_cancled) return false;
     _cancled = true;
     auto it = _manager->_timers.find(shared_from_this());
     if(it != _manager->_timers.end())

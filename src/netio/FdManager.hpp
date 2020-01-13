@@ -42,14 +42,21 @@ namespace zhuyh
       _fdType = type;
     }
     
-    bool isBlock() const
+    bool isSysNonBlock() const
     {
-      return _blocking;
+      return !_sysBlocking;
     }
 
-    bool isNonb() const
+    bool isUserNonBlock() const
     {
-      return !_blocking;
+      return !_userBlocking;
+    }
+
+    bool setUserBlockState(bool state)
+    {
+      bool origin = _userBlocking;
+      _userBlocking = state;
+      return origin;
     }
     
     int getFd() const
@@ -82,12 +89,18 @@ namespace zhuyh
     {
       return _closed;
     }
-    
+    void close()
+    {
+      _fd = -1;
+      _closed = true;
+    }
   private:
     int init();
   private:
-    //是否阻塞
-    bool _blocking = true;
+    //是否是系统设置的阻塞
+    bool _sysBlocking = true;
+    //是否是用户设置的阻塞
+    bool _userBlocking = true;
     //读写超时时间
     uint64_t _rdtimeout = (uint64_t)-1;
     uint64_t _wrtimeout = (uint64_t)-1;
@@ -105,8 +118,8 @@ namespace zhuyh
   {
   public:
     typedef std::shared_ptr<FdManager> ptr;
-    FdInfo::ptr getFdInfo(int fd,bool create = false);
-    void delFdInfo(int fd);
+    FdInfo::ptr lookUp(int fd,bool create = false);
+    void del(int fd);
   private:
     FdManager();
   public:
@@ -115,4 +128,5 @@ namespace zhuyh
     std::vector<FdInfo::ptr> _fds;
     RWLock _mx;
   };
+  
 }

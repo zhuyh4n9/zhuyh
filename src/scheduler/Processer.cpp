@@ -151,16 +151,17 @@ namespace zhuyh
   
   void Processer::run()
   {
-    Hook::setHookState(Hook::State::ON);
+    
+    Hook::setHookState(true);
     std::vector<struct epoll_event> evs(20);
     setMainFiber(Fiber::getThis());
     while(1)
       {
+	
 	Task::ptr task;
+	//LOG_INFO(sys_log) << " totalTask : "<<_readyTask.size();
 	while(_readyTask.try_pop_back(task))
 	  {
-	    // LOG_INFO(sys_log) << " totalTask : "<<_scheduler->totalTask
-	    // 		      << " holdCount : "<< _scheduler-> getHold();
 	    ASSERT(task != nullptr);
 	    worked++;
 	    if(task->fiber)
@@ -220,18 +221,20 @@ namespace zhuyh
 	       && _readyTask.empty()
 	       && _scheduler->getHold() <= 0)
 	      {
-		//LOG_INFO(sys_log) << "EXIT PROCESS";
 		return;
 	      }
 	  }
-	static const int MaxTimeOut = 100;
+	
+	static const int MaxTimeOut = 50;
 	int rt = 0;
 	while(1)
 	  {
 	    rt = epoll_wait(_epfd,&*evs.begin(),20,MaxTimeOut);
 	    //被中断打断
 	    if(rt < 0 && errno == EINTR)
-	      continue;
+	      {
+		continue;
+	      }
 	    break;
 	  }
 	if(rt  < 0 )

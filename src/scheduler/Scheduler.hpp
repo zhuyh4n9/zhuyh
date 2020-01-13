@@ -43,9 +43,9 @@ namespace zhuyh
     //供外界添加新任务
     void addNewTask(std::shared_ptr<Task> task);
     //添加一个读事件
-    int addReadEvent(int fd,std::shared_ptr<Task> task);
+    int addReadEvent(int fd,std::function<void()> cb = nullptr);
     //添加一个写事件
-    int addWriteEvent(int fd,std::shared_ptr<Task> task);
+    int addWriteEvent(int fd,std::function<void()> cb = nullptr);
     //负载均衡,返回正在偷取任务数
     int balance(std::shared_ptr<Processer> prc);
     //获取根管理器,需要在进入main函数前进行一次初始化
@@ -53,8 +53,9 @@ namespace zhuyh
     int getHold();
     int addTimer(std::shared_ptr<Timer> timer,std::function<void()> cb = nullptr,
 		 Timer::TimerType type = Timer::TimerType::SINGLE);
-
-#undef XX
+    int cancleReadEvent(int fd);
+    int cancleWriteEvent(int fd);
+    int cancleAllEvent(int fd);
   private:
     //需要线程安全,供IOManager使用
     void addTask(std::shared_ptr<Task> task);

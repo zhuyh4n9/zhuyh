@@ -104,14 +104,25 @@ namespace zhuyh
     addTask(task);
   }
   
-  int Scheduler::addReadEvent(int fd,std::shared_ptr<Task> task)
+  int Scheduler::addReadEvent(int fd,std::function<void()> cb)
   {
     if(_stopping == true) return -1;
-    return  _ioMgr -> addEvent( fd,task,IOManager::READ);
+        Task::ptr task = nullptr;
+    if(cb == nullptr)
+      task.reset(new Task(Fiber::getThis));
+    else
+      task.reset(new Task(cb));
+    return _ioMgr -> addEvent(fd,task,IOManager::READ);
   }
-  int Scheduler::addWriteEvent(int fd,std::shared_ptr<Task> task)
+  
+  int Scheduler::addWriteEvent(int fd,std::function<void()> cb)
   {
     if(_stopping == true) return -1;
+    Task::ptr task = nullptr;
+    if(cb == nullptr)
+      task.reset(new Task(Fiber::getThis));
+    else
+      task.reset(new Task(cb));
     return _ioMgr -> addEvent(fd,task,IOManager::WRITE);
   }
 
@@ -217,5 +228,21 @@ namespace zhuyh
 	  }
       }								       
     return -1;								
-  }  
+  }
+  int Scheduler::cancleReadEvent(int fd)
+  {
+    return _ioMgr->cancleEvent(fd,IOManager::READ);
+  }
+  
+  int Scheduler::cancleWriteEvent(int fd)
+  {
+    return _ioMgr->cancleEvent(fd,IOManager::WRITE);
+  }
+
+  int Scheduler::cancleAllEvent(int fd)
+  {
+    return _ioMgr->cancleAll(fd);
+  }
+
+  
 }
