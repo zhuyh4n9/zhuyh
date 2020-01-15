@@ -7,6 +7,10 @@
 #include "../scheduler/TimerManager.hpp"
 #include "FdManager.hpp"
 #include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdarg.h>
+#include <sys/ioctl.h>
 
 static auto sys_log = GET_LOGGER("system");
 
@@ -83,6 +87,7 @@ struct HookInit
   HookInit()
   {
     static std::atomic_flag initTag{ATOMIC_FLAG_INIT};
+    //防止被初始化多次
     if(!initTag.test_and_set())
       {
 	zhuyh::FdManager::getThis();
@@ -99,11 +104,15 @@ static HookInit& __hook_initer__()
   return __ininter;
 }
 
-template<class func>
-void do_init(func fn)
+//防止一些静态变量在Hook前初始化,构造函数却使用了hook住的函数
+void do_init()
 {
-  if(fn == nullptr)
-    __hook_initer__();
+  static bool inited = false;
+  if(!inited)
+    {
+      inited = true;
+      __hook_initer__();
+    }
 }
 
 struct TimerInfo
@@ -197,7 +206,7 @@ extern "C"
 {
   unsigned int sleep(unsigned int seconds)
   {
-    do_init(sleep_f);
+    do_init();
     if(zhuyh::Hook::isHookEnable() == false)
       {
 	//LOG_ROOT_ERROR() << "USE ORIGIN";
@@ -211,7 +220,7 @@ extern "C"
   
   int usleep(useconds_t usec)
   {
-    do_init(usleep_f);
+    do_init();
     if(zhuyh::Hook::isHookEnable() == false)
       {
 	//LOG_ROOT_ERROR() << "USE ORIGIN";
@@ -226,8 +235,7 @@ extern "C"
   
   int nanosleep(const struct timespec *req, struct timespec *rem)
   {
-    do_init(nanosleep_f);
-    LOG_ROOT_INFO() << "START";
+    do_init();
     if(zhuyh::Hook::isHookEnable() == false)
       return nanosleep_f(req,rem);
     auto scheduler = zhuyh::Scheduler::getThis();
@@ -246,7 +254,7 @@ extern "C"
   
   int socket(int domain, int type, int protocol)
   {
-    do_init(socket_f);
+    do_init();
     if(zhuyh::Hook::isHookEnable() == false)
       return socket_f(domain,type,protocol);
     int fd = socket_f(domain,type,protocol);
@@ -260,7 +268,7 @@ extern "C"
   int connect(int sockfd, const struct sockaddr *addr,
 	      socklen_t addrlen)
   {
-    do_init(connect_f);
+    do_init();
     if(zhuyh::Hook::isHookEnable() == false)
       return connect_f(sockfd,addr,addrlen);
     zhuyh::FdManager::ptr fdmanager = zhuyh::FdManager::getThis();
@@ -351,7 +359,7 @@ extern "C"
 
   int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen)
   {
-    do_init(accept_f);
+    do_init();
     int fd = do_io(sockfd,"accept",accept_f,zhuyh::IOManager::READ,
 		 SO_RCVTIMEO,addr,addrlen);
     if(fd >= 0)
@@ -364,21 +372,21 @@ extern "C"
 
   ssize_t read(int fd, void *buf, size_t count)
   {
-    do_init(read_f);
+    do_init();
     return do_io(fd,"read",read_f,zhuyh::IOManager::READ,
 		 SO_RCVTIMEO,buf,count);
   }
   
   ssize_t readv(int fd, const struct iovec *iov, int iovcnt)
   {
-    do_init(readv_f);
+    do_init();
     return do_io(fd,"readv",readv_f,zhuyh::IOManager::READ,
 		 SO_RCVTIMEO,iov,iovcnt);
   }
   
   ssize_t recv(int sockfd, void *buf, size_t len, int flags)
   {
-    do_init(recv_f);
+    do_init();
     return do_io(sockfd,"recv",recv_f,zhuyh::IOManager::READ,
 		 SO_RCVTIMEO,buf,len,flags);
   }
@@ -386,35 +394,35 @@ extern "C"
   ssize_t recvfrom(int sockfd, void *buf, size_t len, int flags,
 		   struct sockaddr *src_addr, socklen_t* addrlen)
   {
-    do_init(recvfrom_f);
+    do_init();
     return do_io(sockfd,"recvfrom",recvfrom_f,zhuyh::IOManager::READ,
 		 SO_RCVTIMEO,buf,len,flags,src_addr,addrlen);
   }
 
   ssize_t recvmsg(int sockfd, struct msghdr *msg, int flags)
   {
-    do_init(recvmsg_f);
+    do_init();
     return do_io(sockfd,"recvfrom",recvmsg_f,zhuyh::IOManager::READ,
 		 SO_RCVTIMEO,msg,flags);
   }
   
   ssize_t write(int fd, const void *buf, size_t count)
   {
-    do_init(write_f);
+    do_init();
     return do_io(fd,"write",write_f,zhuyh::IOManager::WRITE,
 		 SO_SNDTIMEO,buf,count);
   }
 
   ssize_t writev(int fd, const struct iovec *iov, int iovcnt)
   {
-    do_init(writev_f);
+    do_init();
     return do_io(fd,"writev",writev_f,zhuyh::IOManager::WRITE,
 		 SO_SNDTIMEO,iov,iovcnt);
   }
   
   ssize_t send(int sockfd, const void *buf, size_t len, int flags)
   {
-    do_init(send_f);
+    do_init();
     return do_io(sockfd,"send",send_f,zhuyh::IOManager::WRITE,
 		 SO_SNDTIMEO,buf,len,flags);
   }
@@ -422,21 +430,21 @@ extern "C"
   ssize_t sendto(int sockfd, const void *buf, size_t len, int flags,
 		 const struct sockaddr *dest_addr, socklen_t addrlen)
   {
-    do_init(sendto_f);
+    do_init();
     return do_io(sockfd,"sendto",sendto_f,zhuyh::IOManager::WRITE,
 		 SO_SNDTIMEO,buf,len,flags,dest_addr,addrlen);
   }
 
   ssize_t sendmsg(int sockfd, const struct msghdr *msg, int flags)
   {
-    do_init(sendmsg_f);
+    do_init();
     return do_io(sockfd,"sendmsg",sendmsg_f,zhuyh::IOManager::WRITE,
 		 SO_SNDTIMEO,msg,flags);
   }
 
   int close(int fd)
   {
-    do_init(close_f);
+    do_init();
     if(zhuyh::Hook::isHookEnable() == false)
       {
 	return close_f(fd);
@@ -455,21 +463,142 @@ extern "C"
 
   int fcntl(int fd, int cmd, ... /* arg */ )
   {
-    do_init(fcntl_f);
-    return 0;
+    do_init();
+    va_list va;
+    va_start(va,cmd);
+    switch(cmd)
+      {
+      case F_SETFL :
+	{
+	  int arg = va_arg(va,int);
+	  va_end(va);
+	  auto fdInfo = zhuyh::FdManager::getThis()->lookUp(fd,false);
+	  if(fdInfo == nullptr || fdInfo->isClosed() || !fdInfo->isSocket())
+	    {
+	      return fcntl_f(fd,cmd,arg);
+	    }
+	  fdInfo->setUserNonBlock(arg & O_NONBLOCK);
+	  if(fdInfo->isSysNonBlock())
+	    {
+	      arg |= O_NONBLOCK;
+	    }
+	  else
+	    {
+	      arg &= ~O_NONBLOCK;
+	    }
+	  return fcntl_f(fd,cmd,arg);
+	}
+	break;
+      case F_GETFL :
+	{
+	  va_end(va);
+	  int arg = fcntl_f(fd,cmd);
+	  auto fdInfo = zhuyh::FdManager::getThis()->lookUp(fd,false);
+	  if(fdInfo == nullptr || fdInfo->isClosed() || !fdInfo->isSocket())
+	    {
+	      return arg;
+	    }
+	  if(fdInfo->isUserNonBlock())
+	    {
+	      return arg | O_NONBLOCK;
+	    }
+	  else
+	    {
+	      return arg & ~ O_NONBLOCK;
+	    }
+	}
+	break;
+      case F_DUPFD :
+      case F_DUPFD_CLOEXEC :
+      case F_SETFD :
+      case F_SETOWN :
+      case F_SETSIG :
+      case F_SETLEASE :
+      case F_NOTIFY :
+#ifdef F_SETPIPE_SZ
+      case F_SETPIPE_SZ :
+#endif
+	{
+	  int arg = va_arg(va,int);
+	  va_end(va);
+	  return fcntl_f(fd,cmd,arg);
+	}
+	break;
+      case F_GETFD :
+      case F_GETOWN :
+      case F_GETSIG :
+      case F_GETLEASE :
+#ifdef F_GETPIPE_SZ
+      case F_GETPIPE_SZ :
+#endif
+	{
+	  va_end(va);
+	  return fcntl_f(fd,cmd);
+	}
+	break;
+      case F_SETLK :
+      case F_SETLKW :
+      case F_GETLK :
+	{
+	  struct flock* arg = va_arg(va,struct flock*);
+	  va_end(va);
+	  return fcntl(fd,cmd,arg);
+	}
+	break;
+      case F_GETOWN_EX :
+      case F_SETOWN_EX :
+	{
+	  struct f_owner_exlock* arg = va_arg(va,struct f_owner_exlock*);
+	  va_end(va);
+	  return fcntl(fd,cmd,arg);
+	}
+	break;
+      default:
+	va_end(va);
+	return fcntl(fd,cmd);
+      }
   }
   
   int ioctl(int fd, unsigned long request, ...)
   {
-    do_init(ioctl_f);
-    return 0;
+    do_init();
+    va_list va;
+    va_start(va,request);
+    void* arg = va_arg(va,void*);
+    va_end(va);
+    if(request == FIONBIO)
+      {
+	bool setNb = !!*(int*)arg;
+	auto fdInfo = zhuyh::FdManager::getThis()->lookUp(fd,false);
+	if(fdInfo == nullptr || fdInfo->isClosed() || !fdInfo->isSocket())
+	  return ioctl_f(fd,request,setNb);
+	fdInfo->setUserNonBlock(setNb);
+      }
+    return ioctl_f(fd,request,arg); 
   }
   
   int setsockopt(int sockfd, int level, int optname,
 		 const void *optval, socklen_t optlen)
   {
-    do_init(setsockopt_f);
-    return 0;
+    do_init();
+    int rt = setsockopt_f(sockfd, level, optname, optval, optlen);
+    if(zhuyh::Hook::isHookEnable() == false)
+      return rt;
+    if(level == SOL_SOCKET)
+      {
+	if(optname == SO_RCVTIMEO
+	   || optname == SO_SNDTIMEO)
+	  {
+	    auto fdInfo = zhuyh::FdManager::getThis()->lookUp(sockfd,false);
+	    if(fdInfo)
+	      {
+		const timeval& tv = *(const timeval*)optval;
+		uint64_t millsec = tv.tv_sec*1000 + tv.tv_usec / 1000;
+		fdInfo -> setTimeout(optname,millsec);
+	      }
+	  }
+      }
+    return rt;
   }
   
 }

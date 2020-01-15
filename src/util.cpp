@@ -100,10 +100,10 @@ namespace zhuyh
 
   int setNonb(int fd)
   {
-    int flags = fcntl_f(fd,F_GETFL);
+    int flags = fcntl(fd,F_GETFL);
     if(flags < 0 )
       return -1;
-    return fcntl_f(fd,F_SETFL,flags | O_NONBLOCK);
+    return fcntl(fd,F_SETFL,flags | O_NONBLOCK);
   }
   
   int clearNonb(int fd)

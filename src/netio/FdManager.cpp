@@ -68,7 +68,7 @@ namespace zhuyh
   
   FdInfo::ptr FdManager::lookUp(int fd,bool create)
   {
-    ASSERT(fd >=0);
+    if(fd < 0 ) return nullptr;
     {
       RDLockGuard lg(_mx);
       if((unsigned)fd >= _fds.size())

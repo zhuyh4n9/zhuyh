@@ -52,10 +52,10 @@ namespace zhuyh
       return !_userBlocking;
     }
 
-    bool setUserBlockState(bool state)
+    bool setUserNonBlock(bool state)
     {
       bool origin = _userBlocking;
-      _userBlocking = state;
+      _userBlocking = !state;
       return origin;
     }
     
