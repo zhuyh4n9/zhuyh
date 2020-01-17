@@ -41,7 +41,7 @@ namespace zhuyh
     close_func close_f;
   }
   
-  bool& __hook_state__()
+  static bool& __hook_state__()
   {
     static thread_local bool _state = false;
     return _state;
@@ -306,13 +306,12 @@ extern "C"
     
     if(timeout != (uint64_t)-1)
       {
-	scheduler->addTimer(timer,[winfo,sockfd](){
+	scheduler->addTimer(timer,[winfo,sockfd,scheduler](){
 	    auto t = winfo.lock();
 	    if(!t || t->cancled)
 	      {
 		return ;
 	      }
-	    zhuyh::Scheduler* scheduler = zhuyh::Scheduler::getThis();
 	    t->cancled = ETIMEDOUT;
 	    scheduler->cancleWriteEvent(sockfd);
 	  });
@@ -339,7 +338,7 @@ extern "C"
 	  }
 	LOG_ERROR(sys_log) << "Failed to add Event";
 	return -1;
-      }    
+      }
     int error = 0;
     socklen_t len = sizeof(int);
     if(getsockopt(sockfd,SOL_SOCKET,SO_ERROR,&error,&len) == -1)
@@ -356,7 +355,6 @@ extern "C"
 	return -1;
       }
   }
-
   int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen)
   {
     do_init();

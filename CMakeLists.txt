@@ -61,6 +61,12 @@ target_link_libraries(test_co zhuyh  ${LIBS})
 add_executable(test_timer test/test_timer.cpp)
 target_link_libraries(test_timer zhuyh ${LIBS})
 
+add_executable(test_hook test/test_hook.cpp)
+target_link_libraries(test_hook zhuyh ${LIBS})
+
+add_executable(test_client test/test_client.cpp)
+target_link_libraries(test_client zhuyh ${LIBS})
+
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 

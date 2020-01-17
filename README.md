@@ -84,7 +84,7 @@ sendto
 sendmsg
 close
 fcntl
-iocntl
+ioctl
 setsockopt
 
 未来计划支持
