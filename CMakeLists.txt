@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 ENABLE_LANGUAGE(ASM)
 project(zhuyh)
 set(CMAKE_CXX_FLAGS
-  "$ENV{CXXFLAGS} -rdynamic -O2 -g  -std=c++11 -Wall -Werror -Wno-unused-function")
+  "$ENV{CXXFLAGS} -rdynamic -O2 -g  -std=c++11 -Wall -Werror -Wno-unused-function -fstack-protector-all")
 
 set(LIB_SRC
   src/log.cpp
@@ -24,7 +24,12 @@ set(LIB_SRC
   src/netio/Hook.cpp
   src/netio/FdManager.cpp)
 
-set(LIBS yaml-cpp pthread dl)
+set(LIBS 
+    zhuyh  
+    dl
+    pthread
+    yaml-cpp)
+
 add_library(zhuyh SHARED ${LIB_SRC})
 add_library(libzhuyh STATIC  ${LIB_SRC})
 

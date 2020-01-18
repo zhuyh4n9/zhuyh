@@ -52,7 +52,9 @@ int main()
 	  {
 	    LOG_ROOT_ERROR() << "failed to send msg";
 	  }
+	LOG_ROOT_INFO() << "Sending : " << buf;
 	close(cfd);
+	LOG_ROOT_INFO() << "connection closed";
       };
     }
   return 0;

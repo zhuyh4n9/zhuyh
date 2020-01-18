@@ -45,7 +45,7 @@ namespace zhuyh
 	  {
 	    if( (flags & O_NONBLOCK) == 0)
 	      {
-		int rt = fcntl(_fd,F_SETFL,flags | O_NONBLOCK);
+		int rt = fcntl_f(_fd,F_SETFL,flags | O_NONBLOCK);
 		if(rt < 0)
 		  return -1;
 	      }
@@ -63,7 +63,7 @@ namespace zhuyh
   
   FdManager::FdManager()
   {
-    _fds.resize(1024);
+    _fds.resize(4096);
   }
   
   FdInfo::ptr FdManager::lookUp(int fd,bool create)
@@ -77,12 +77,13 @@ namespace zhuyh
 	}
       else
 	{
-	  if(!create || _fds[fd] == nullptr)
+	  if(create == false  || _fds[fd] != nullptr)
 	    return _fds[fd];
 	}
+      //lg.unlock();
     }
-    //_fds[fd] == nullptr 且 create == true
     WRLockGuard lg(_mx);
+    //_fds[fd] == nullptr 且 create == true
     if((unsigned)fd >= _fds.size())
       {
 	_fds.resize(fd*2);

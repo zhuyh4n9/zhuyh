@@ -128,12 +128,15 @@ static int do_io(int fd,const char* funcName,OriFunc oriFunc,
 {
   if(zhuyh::Hook::isHookEnable() == false)
     return oriFunc(fd,std::forward<Args>(args)...);
+  
   auto fdmanager = zhuyh::FdManager::getThis();
   auto fdInfo= fdmanager->lookUp(fd,false);
   if(fdInfo == nullptr)
     {
       return oriFunc(fd,std::forward<Args>(args)...);
     }
+  //exit(1);
+  //LOG_ROOT_ERROR() << "use hook func : " << funcName;
   if(fdInfo -> isClosed())
     {
       errno = EBADF;
@@ -163,7 +166,7 @@ static int do_io(int fd,const char* funcName,OriFunc oriFunc,
     zhuyh::Timer::ptr timer = nullptr;
     if(timeout != (uint64_t)-1)
       {
-	timer.reset(new zhuyh::Timer(0,timeout));
+	timer.reset(new zhuyh::Timer(0,5000));
 	scheduler->addTimer(timer,[fd,winfo,event,scheduler](){
 	    auto t = winfo.lock();
 	    if(!t || t->cancled )
@@ -177,9 +180,9 @@ static int do_io(int fd,const char* funcName,OriFunc oriFunc,
       }
     int rt = 0;
     if(event == zhuyh::IOManager::READ)
-      rt = scheduler->cancleReadEvent(fd);
+      rt = scheduler->addReadEvent(fd);
     else if(event == zhuyh::IOManager::WRITE)
-      rt = scheduler->cancleWriteEvent(fd);
+      rt = scheduler->addWriteEvent(fd);
     if(rt == 0)
       {
 	zhuyh::Fiber::YieldToSwitch();
@@ -193,7 +196,7 @@ static int do_io(int fd,const char* funcName,OriFunc oriFunc,
       }
     else
       {
-	LOG_ERROR(sys_log) << "Failed to add Event in function : "<< funcName;
+	LOG_ERROR(sys_log) << "Failed to add Event in function : "<< funcName <<" rt = "<<rt;
 	if(timer)
 	  timer->cancle();
 	return -1;
@@ -294,7 +297,7 @@ extern "C"
       {
 	return 0;
       }
-    else if(rt != -1 || errno == EINPROGRESS)
+    else if(rt != -1 || errno != EINPROGRESS)
       {
 	return rt;
       }
@@ -303,25 +306,31 @@ extern "C"
     zhuyh::Timer::ptr timer = nullptr;
     std::shared_ptr<TimerInfo> tinfo(new TimerInfo());
     std::weak_ptr<TimerInfo> winfo(tinfo);
-    
+    //LOG_ROOT_INFO() << timeout;
     if(timeout != (uint64_t)-1)
       {
+	timer.reset(new zhuyh::Timer(0,timeout));
 	scheduler->addTimer(timer,[winfo,sockfd,scheduler](){
+	    //LOG_ROOT_INFO() << "cancling";
 	    auto t = winfo.lock();
 	    if(!t || t->cancled)
 	      {
 		return ;
 	      }
 	    t->cancled = ETIMEDOUT;
+	    //LOG_ROOT_INFO() << "cancled";
 	    scheduler->cancleWriteEvent(sockfd);
 	  });
       }
     rt = scheduler->addWriteEvent(sockfd);
     if(rt == 0)
       {
+	//LOG_ROOT_INFO() << "Switching...";
 	zhuyh::Fiber::YieldToSwitch();
+	//LOG_ROOT_INFO() << "Switched";
 	if(timer)
 	  {
+	    LOG_ROOT_INFO() << sockfd;
 	    timer->cancle();
 	  }
 	if(tinfo->cancled)
@@ -452,9 +461,9 @@ extern "C"
     auto fdInfo = fdmanager->lookUp(fd,false);
     if(fdInfo)
       {
-	fdInfo->close();
 	scheduler->cancleAllEvent(fd);
 	fdmanager->del(fd);
+	fdInfo->close();
       }
     return close_f(fd);
   }

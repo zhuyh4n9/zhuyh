@@ -106,10 +106,10 @@ namespace zhuyh
   
   int Scheduler::addReadEvent(int fd,std::function<void()> cb)
   {
-    if(_stopping == true) return -1;
-        Task::ptr task = nullptr;
+    //(_stopping == true) ASSERT(0);
+    Task::ptr task = nullptr;
     if(cb == nullptr)
-      task.reset(new Task(Fiber::getThis));
+      task.reset(new Task(Fiber::getThis()));
     else
       task.reset(new Task(cb));
     return _ioMgr -> addEvent(fd,task,IOManager::READ);
@@ -117,10 +117,10 @@ namespace zhuyh
   
   int Scheduler::addWriteEvent(int fd,std::function<void()> cb)
   {
-    if(_stopping == true) return -1;
+    //(_stopping == true) ASSERT(false);
     Task::ptr task = nullptr;
     if(cb == nullptr)
-      task.reset(new Task(Fiber::getThis));
+      task.reset(new Task(Fiber::getThis()));
     else
       task.reset(new Task(cb));
     return _ioMgr -> addEvent(fd,task,IOManager::WRITE);

@@ -89,15 +89,17 @@ namespace zhuyh
     int rt = setNonb(fd);
     if(rt < 0)
       {
+	//ASSERT(0);
 	LOG_ERROR(sys_log) << "Failed to setNonb";
 	return -1;
       }
     auto op = epEv->event == NONE ? EPOLL_CTL_ADD : EPOLL_CTL_MOD;
     if(type & epEv->event)
       {
-	LOG_WARN(sys_log) << "type : " << type << " Exist"
+	//ASSERT(0);
+	LOG_ERROR(sys_log) << "type : " << type << " Exist"
 			  << "current : " << epEv->event;
-	return false;
+	return -1;
       }
     ev.events = epEv->event | EPOLLET | type;
     ev.data.ptr = epEv;
@@ -106,6 +108,7 @@ namespace zhuyh
     if(rt)
       {
 	LOG_ERROR(sys_log) << "epoll_ctl errro : " << strerror(errno);
+	//ASSERT2(false,strerror(errno));
 	return -1;
       }
     if(type & EventType::READ)
@@ -253,13 +256,13 @@ namespace zhuyh
     Hook::setHookState(true);
     Fiber::getThis();
     const int MaxEvent = 1000;
-    struct epoll_event* events = new epoll_event[1000];
+    struct epoll_event* events = new epoll_event[1001];
     //毫秒
     const int MaxTimeOut = 500;
     while(1)
       {
-	// LOG_INFO(sys_log) << "Holding : " << _holdCount
-	// 		  << " Total  : " << _scheduler->totalTask;
+	LOG_INFO(sys_log) << "Holding : " << _holdCount
+			  << " Total  : " << _scheduler->totalTask;
 	if(isStopping())
 	  {
 	    LOG_INFO(sys_log) << "IOManager : " << _name << " stopped!";
@@ -341,11 +344,13 @@ namespace zhuyh
 
   int IOManager::triggerEvent(FdEvent* epEv,EventType type)
   {
+    //ASSERT2(0, "Trigger event");
     ASSERT( type == READ  || type == WRITE);
     ASSERT(type & epEv->event);
     epEv->event =(EventType)(epEv-> event & ~type);
     if(type & READ)
       {
+	//LOG_ROOT_INFO() << "Triggle READ Event";
 	ASSERT(epEv->rdtask != nullptr);
 	Task::ptr task = nullptr;
 	task.swap(epEv->rdtask);
@@ -353,8 +358,10 @@ namespace zhuyh
       }
     else if(type & WRITE)
       {
+	//LOG_ROOT_INFO() << "Triggle WRITE Event";
 	Task::ptr task = nullptr;
 	task.swap(epEv->wrtask);
+	//LOG_ROOT_INFO() << "added task"<<(unsigned long long)task.get();
 	_scheduler->addTask(task);
       }
     return 0;

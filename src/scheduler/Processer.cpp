@@ -85,6 +85,7 @@ namespace zhuyh
 	    while(task->fiber->_state != Fiber::HOLD)
 	      ;
 	  }
+	//LOG_ROOT_ERROR() << "add Success : "<<(unsigned long long)task;
 	/*
 	  else
 	  {
@@ -157,7 +158,6 @@ namespace zhuyh
     setMainFiber(Fiber::getThis());
     while(1)
       {
-	
 	Task::ptr task;
 	//LOG_INFO(sys_log) << " totalTask : "<<_readyTask.size();
 	while(_readyTask.try_pop_back(task))
@@ -225,7 +225,7 @@ namespace zhuyh
 	      }
 	  }
 	
-	static const int MaxTimeOut = 50;
+	static const int MaxTimeOut = 500;
 	int rt = 0;
 	while(1)
 	  {
@@ -244,7 +244,7 @@ namespace zhuyh
 	  }
 	char buf[64];
 	rt = 0;
-	while( (rt = read(_notifyFd[0],buf,64)) )
+	while( (rt = read(_notifyFd[0],buf,63)) )
 	  {
 	    //LOG_DEBUG(sys_log) << "Recieved Notify! rt = "<<rt;
 	    if(rt < 0)

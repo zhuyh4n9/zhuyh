@@ -7,9 +7,11 @@
 #include <algorithm>
 namespace zhuyh
 {
+  //std::atomic<uint64_t> Timer::__id__{0};
   static Logger::ptr sys_log = GET_LOGGER("system");
   Timer::Timer(time_t sec,time_t msec ,time_t usec ,time_t nsec)
   {
+    //_id = ++__id__;
     _cancled = false;
     ASSERT(sec >= 0 && msec >= 0 && usec >= 0 && nsec >= 0);
     usec += nsec/1000;
@@ -19,6 +21,7 @@ namespace zhuyh
     _nxtExpireTime = _interval + getCurrentTime();
     //LOG_ROOT_INFO() << "nxt : "<<_nxtExpireTime;
     _type = SINGLE;
+    _manager = nullptr;
   }
   void Timer::start()
   {
@@ -41,16 +44,21 @@ namespace zhuyh
   
   bool Timer::cancle()
   {
-    //ASSERT(0);
-    
-    ASSERT(_manager != nullptr);
+    //ASSERT(0); 
     WRLockGuard(_manager->_mx);
     if(_cancled) return false;
-    _cancled = true;
-    auto it = _manager->_timers.find(shared_from_this());
-    if(it != _manager->_timers.end())
-      _manager->_timers.erase(it);
-    return true;
+    if(_task)
+      {
+	_cancled = true;
+	auto self = shared_from_this();
+	auto it = _manager->_timers.find(self);
+	//LOG_ROOT_INFO() << (unsigned long long)self.get();
+	//if(it != _manager->_timers.end())
+	//coredump here
+	_manager->_timers.erase(it);
+	return true;
+      }
+    return false;
   }
   void Timer::setTask(CbType cb)
   {
@@ -67,7 +75,9 @@ namespace zhuyh
   }
   bool TimerManager::Comparator::operator() (const Timer::ptr& o1,const Timer::ptr& o2) const
   {
-    ASSERT(o1 != nullptr && o2 != nullptr);
+    if(o1 == nullptr && o2 == nullptr) return false;
+    if(!o1) return true;
+    if(!o2) return false;
     if(*o1 != *o2)
       return *o1 < *o2;
     return o1.get() < o2.get();
@@ -81,12 +91,12 @@ namespace zhuyh
     //LOG_ROOT_INFO() << "total : "<<_timers.size();
     if(_timers.empty() ) return res;
     auto t = Timer::ptr(new Timer());
-    std::set<Timer::ptr>::iterator pos = _timers.upper_bound(t);
-    // while(pos!= _timers.end() && ( (*pos)->_nxtExpireTime == t->_nxtExpireTime) )
-    //   pos++;
+    std::set<Timer::ptr>::iterator pos = _timers.lower_bound(t);
+    while(pos!= _timers.end() && ( (*pos)->_nxtExpireTime == t->_nxtExpireTime) )
+      pos++;
     for(auto it = _timers.begin();it != pos; it++)
       {
-	ASSERT((*it)->isCancled() != true);
+	//ASSERT((*it)->isCancled() != true);
 	if(!(*it)->isCancled())
 	  {
 	    res.push_back((*it)->getTask());
@@ -108,6 +118,7 @@ namespace zhuyh
   uint64_t TimerManager::getNextExpireTime()
   {
     RDLockGuard lg(_mx);
+    //coredump here
     if(_timers.empty()) return (uint64_t)-1;
     auto it =  _timers.begin();
     return (*it)->_nxtExpireTime;

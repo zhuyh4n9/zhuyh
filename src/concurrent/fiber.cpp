@@ -84,6 +84,7 @@ namespace zhuyh
 	if(_pagesProtect && !isMain)
 	  StackTrait::unprotectStack(_stack,_pagesProtect);
 	Allocator::dealloc(_stack,_stackSize);
+	_stack = nullptr;
       }
     else
       {

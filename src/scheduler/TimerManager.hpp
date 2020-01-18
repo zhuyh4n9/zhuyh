@@ -15,7 +15,7 @@ namespace zhuyh
 {
   class Task;
   class TimerManager;
-  class Timer final : public std::enable_shared_from_this<Timer>
+  class Timer : public std::enable_shared_from_this<Timer>
   {
   public:
     typedef std::function<void()> CbType;
@@ -74,7 +74,7 @@ namespace zhuyh
       _type = LOOP;
     }
     bool cancle();
-    bool isCancled()
+    bool isCancled() const
     {
       return _cancled;
     }

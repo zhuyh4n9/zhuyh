@@ -91,7 +91,6 @@ namespace zhuyh
     }
     void close()
     {
-      _fd = -1;
       _closed = true;
     }
   private:

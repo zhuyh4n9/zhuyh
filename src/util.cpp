@@ -103,7 +103,7 @@ namespace zhuyh
     int flags = fcntl(fd,F_GETFL);
     if(flags < 0 )
       return -1;
-    return fcntl(fd,F_SETFL,flags | O_NONBLOCK);
+    return fcntl_f(fd,F_SETFL,flags | O_NONBLOCK);
   }
   
   int clearNonb(int fd)

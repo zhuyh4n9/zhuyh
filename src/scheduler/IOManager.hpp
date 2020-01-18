@@ -88,5 +88,6 @@ namespace zhuyh
     std::atomic<bool> _stopping{false};
     std::atomic<int> _holdCount{0};
     FdEvent* _notifyEvent;
+    
   };  
 }
