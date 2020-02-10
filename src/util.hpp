@@ -21,7 +21,5 @@ namespace zhuyh
   time_t getElapseTime();
   //打印函数调用栈
   void BackTrace(std::vector<std::string>& bt,int size,int skip);
-  int setNonb(int fd);
-  int clearNonb(int fd);
   std::string Bt2Str(int size,int skip,const std::string& prefix);
 }

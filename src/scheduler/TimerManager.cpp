@@ -45,7 +45,7 @@ namespace zhuyh
   bool Timer::cancle()
   {
     //ASSERT(0); 
-    WRLockGuard(_manager->_mx);
+    LockGuard lg(_manager->_mx);
     if(_cancled) return false;
     if(_task)
       {
@@ -75,52 +75,52 @@ namespace zhuyh
   }
   bool TimerManager::Comparator::operator() (const Timer::ptr& o1,const Timer::ptr& o2) const
   {
-    if(o1 == nullptr && o2 == nullptr) return false;
+    if(!o1 && !o2) return false;
     if(!o1) return true;
     if(!o2) return false;
-    if(*o1 != *o2)
-      return *o1 < *o2;
+    if(o1->_nxtExpireTime < o2->_nxtExpireTime)
+      return true;
+    if(o1->_nxtExpireTime > o2->_nxtExpireTime)
+      return false;
     return o1.get() < o2.get();
   }
   std::list<Task::ptr> TimerManager::getExpiredTasks()
   {
     std::list<Task::ptr> res;
     std::list<Timer::ptr> tms;
-    uint64_t minExpireTime = (uint64_t)-1;
-    WRLockGuard lg(_mx);
+    LockGuard lg(_mx);
     //LOG_ROOT_INFO() << "total : "<<_timers.size();
     if(_timers.empty() ) return res;
     auto t = Timer::ptr(new Timer());
-    std::set<Timer::ptr>::iterator pos = _timers.lower_bound(t);
-    while(pos!= _timers.end() && ( (*pos)->_nxtExpireTime == t->_nxtExpireTime) )
-      pos++;
-    for(auto it = _timers.begin();it != pos; it++)
+    auto pos = _timers.begin();
+    while(pos != _timers.end() && (*pos)->_nxtExpireTime <= t->_nxtExpireTime)
       {
-	//ASSERT((*it)->isCancled() != true);
-	if(!(*it)->isCancled())
+	pos++;
+      }
+    tms.insert(tms.begin(),_timers.begin(),pos);
+    _timers.erase(_timers.begin(),pos);
+    for(auto& item : tms)
+      {
+	res.push_back(item->_task);
+	if(item->_type == Timer::LOOP)
 	  {
-	    res.push_back((*it)->getTask());
-	    if((*it)->getTimerType() == Timer::TimerType::LOOP)
-	      {
-		(*it)->setNextExpireTime();
- 		minExpireTime = std::min(minExpireTime, (*it)->_nxtExpireTime);
-		tms.push_back(*it);
-	      }
+	    _timers.insert(item);
+	  }
+	else
+	  {
+	    item->_task = nullptr;
 	  }
       }
-    _timers.erase(_timers.begin(),pos);
-    //循环定时器
-    for(auto item : tms) _timers.insert(item);
     //LOG_ROOT_INFO() << "res size : " <<res.size() << "cur : "<<t->_nxtExpireTime;
     return res;
   }
 
   uint64_t TimerManager::getNextExpireTime()
   {
-    RDLockGuard lg(_mx);
-    //coredump here
+    LockGuard lg(_mx);
     if(_timers.empty()) return (uint64_t)-1;
     auto it =  _timers.begin();
+    //coredump here
     return (*it)->_nxtExpireTime;
   }
 
@@ -140,7 +140,7 @@ namespace zhuyh
   {
     ASSERT(timer != nullptr);
     bool headTag = false;
-    WRLockGuard lg(_mx);
+    LockGuard lg(_mx);
     //如果是循环定时器更改定时器类型
     if(type == Timer::TimerType::LOOP) timer->setLoop();
     //设置本Manager为定时器Manager

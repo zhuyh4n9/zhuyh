@@ -10,14 +10,14 @@ namespace zhuyh
   static ConfigVar<int>::ptr __max_thread = Config::lookUp<int>("scheduler.maxthread",
 							   32,"scheduler max thread");
   static ConfigVar<int>::ptr __min_thread = Config::lookUp<int>("scheduler.minthread",
-								32,"scheduler min thread");
+								2,"scheduler min thread");
   static ConfigVar<int>::ptr __limit_payload = Config::lookUp<int>("scheduler.limitpayload",
 							      20,"scheduler limitpayload");
   
   static Logger::ptr sys_log = GET_LOGGER("system");
   
   Scheduler::Scheduler(const std::string& name,int minThread,int maxThread,int limitPayLoad)
-    :_minThread(minThread),_maxThread(maxThread),_limitPayLoad(limitPayLoad)
+    :_minThread(minThread),_maxThread(maxThread),_limitPayLoad(limitPayLoad),totalTask{0}
   {
     if(name == "")
       _name = "Scheduler";
@@ -28,13 +28,13 @@ namespace zhuyh
   
   //默认构造函数为私有,用于创建根调度器
   Scheduler::Scheduler()
+    :totalTask{0}
   {
     _minThread = __min_thread->getVar();
     _maxThread = __max_thread->getVar();
     _limitPayLoad = __limit_payload->getVar();
     _pcsQue.resize(_minThread);
     _name = "root";
-    
     LOG_DEBUG(sys_log) << "Root Scheduler Created!";
   }
   
@@ -96,11 +96,6 @@ namespace zhuyh
 
   void Scheduler::addNewTask(std::shared_ptr<Task> task)
   {
-    if(_stopping == true)
-      {
-	ASSERT(false);
-	return;
-      }
     addTask(task);
   }
   

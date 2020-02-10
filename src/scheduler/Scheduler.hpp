@@ -80,7 +80,7 @@ namespace zhuyh
     int _maxThread = 20;
     //执行器平均任务大于次值则开启新线程
     int _limitPayLoad = 20;
-    std::atomic<int> totalTask;
+    std::atomic<int> totalTask{0};
     //static Mutex _addTaskmx;
     //static SpinLock _getThismx;
     //用于协程信号量

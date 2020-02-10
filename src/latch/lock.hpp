@@ -72,20 +72,25 @@ namespace zhuyh
     //tas实现自旋锁
     void lock() override
     {
-      while(std::atomic_flag_test_and_set_explicit(&a_flag,std::memory_order_acquire))
-	;
+      pthread_spin_lock(&lk);
     }
 
       //清除flag标记
     void unlock() override
     {
-      std::atomic_flag_clear_explicit(&a_flag,std::memory_order_release);
+      pthread_spin_unlock(&lk);
     }
       
     SpinLock()
-      :a_flag(ATOMIC_FLAG_INIT) {}
+    {
+      pthread_spin_init(&lk,0);
+    }
+    ~SpinLock()
+    {
+      pthread_spin_destroy(&lk);
+    }
   private:
-    std::atomic_flag a_flag;
+    pthread_spinlock_t lk;
   };
   
   //互斥锁

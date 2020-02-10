@@ -106,21 +106,9 @@ namespace zhuyh
     bool isMain = false;
     size_t _stackSize = 0;
     size_t _pagesProtect = 0;
-    static uint32_t& _fiber_local_not_term()
-    {
-      static thread_local uint32_t __fiber_local_not_term{0};
-      return __fiber_local_not_term;
-    }
-    static Fiber*& _this_fiber()
-    {
-      static thread_local Fiber* __this_fiber = nullptr;
-      return __this_fiber;
-    }
-    static Fiber::ptr& _main_fiber()
-    {
-      static thread_local Fiber::ptr _threadFiber = nullptr;
-      return _threadFiber;
-    }
+    static uint32_t& _fiber_local_not_term();    
+    static Fiber*& _this_fiber();
+    static Fiber::ptr& _main_fiber();
   };
   
 }

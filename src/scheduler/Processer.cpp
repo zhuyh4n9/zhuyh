@@ -10,6 +10,21 @@ namespace zhuyh
   static Logger::ptr sys_log  = GET_LOGGER("system");
   thread_local Fiber::ptr __main_fiber = nullptr;
   std::atomic<int> Task::id{0};
+  static int setNonb(int fd)
+  {
+    int flags = fcntl_f(fd,F_GETFL);
+    if(flags < 0 )
+      return -1;
+    return fcntl_f(fd,F_SETFL,flags | O_NONBLOCK);
+  }
+  
+  static int clearNonb(int fd)
+  {
+    int flags = fcntl_f(fd,F_GETFL);
+    if(flags < 0 )
+      return -1;
+    return fcntl_f(fd,F_SETFL,flags & ~O_NONBLOCK);
+  }
   Processer::Processer(const std::string name,Scheduler* scheduler )
     :_name(name)
   {
@@ -26,7 +41,8 @@ namespace zhuyh
     rt = setNonb(_notifyFd[1]);
     ASSERT2(rt >= 0 , "setNonb error");
     
-    struct epoll_event ev;
+    struct epoll_event ev{0};
+    memset(&ev,0,sizeof(ev));
     ev.events = EPOLLET | EPOLLIN;
     ev.data.fd = _notifyFd[0];
     rt = epoll_ctl(_epfd,EPOLL_CTL_ADD,_notifyFd[0],&ev);
@@ -95,6 +111,7 @@ namespace zhuyh
 		    
 	  }
 	*/
+	ASSERT(task != nullptr);
 	_readyTask.push_front(task);
 	++_payLoad;
 	notify();
@@ -156,6 +173,7 @@ namespace zhuyh
     Hook::setHookState(true);
     std::vector<struct epoll_event> evs(20);
     setMainFiber(Fiber::getThis());
+    //ASSERT(_readyTask.empty());
     while(1)
       {
 	Task::ptr task;
@@ -179,6 +197,7 @@ namespace zhuyh
 		ASSERT(false);
 	      }
 	    Fiber::ptr& fiber = task->fiber;
+	    //task.reset();
 	    ASSERT(fiber != nullptr);
 	    ASSERT(fiber->_stack != nullptr);
 	    ASSERT2(fiber->getState() == Fiber::READY,Fiber::getState(fiber->getState()));

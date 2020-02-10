@@ -2,6 +2,7 @@
 #include "fiber.hpp"
 #include "../log.hpp"
 #include "stackTrait.hpp"
+#include <sys/mman.h>
 
 namespace zhuyh
 {
@@ -15,20 +16,39 @@ namespace zhuyh
   //static thread_local Fiber::ptr _threadFiber = nullptr;
   //默认协程栈大小
   static ConfigVar<size_t>::ptr __fiber_stack_size =
-    Config::lookUp<size_t>("fiber.stack_size",128*1024,"__stack_size");
+    Config::lookUp<size_t>("fiber.stack_size",256*1024,"__stack_size");
   class MallocAlloc
   {
   public:
     static char* alloc(size_t size)
     {
-      return (char*)malloc(size);
+      return (char*)mmap(0,size,PROT_READ | PROT_WRITE,
+			 MAP_PRIVATE | MAP_ANON,-1,0);
     }
     static void dealloc(void* ptr,size_t size)
     {
-      free(ptr);
+      munmap(ptr,size);
     }
   };
-
+  
+  uint32_t& Fiber::_fiber_local_not_term()
+  {
+    static thread_local uint32_t __fiber_local_not_term{0};
+    return __fiber_local_not_term;
+  }
+  
+  Fiber*& Fiber::_this_fiber()
+  {
+    static thread_local Fiber* __this_fiber = nullptr;
+    return __this_fiber;
+  }
+  
+  Fiber::ptr& Fiber::_main_fiber()
+  {
+    static thread_local Fiber::ptr _threadFiber = nullptr;
+    return _threadFiber;
+  }
+  
   using Allocator = MallocAlloc;
   //主协程
   Fiber::Fiber()

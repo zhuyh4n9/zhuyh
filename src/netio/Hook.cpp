@@ -136,32 +136,37 @@ static int do_io(int fd,const char* funcName,OriFunc oriFunc,
       return oriFunc(fd,std::forward<Args>(args)...);
     }
   //exit(1);
-  //LOG_ROOT_ERROR() << "use hook func : " << funcName;
   if(fdInfo -> isClosed())
     {
       errno = EBADF;
       return -1;
     }
-  if(fdInfo -> isUserNonBlock() == true
-     || fdInfo -> isSocket() == false)
+  if(fdInfo -> isUserNonBlock() == true)
     {
       return oriFunc(fd,std::forward<Args>(args)...);
     }
-  TimerInfo::ptr tinfo(new TimerInfo);
+  if ( fdInfo -> isSocket() == false)
+    { 
+      return oriFunc(fd,std::forward<Args>(args)...);
+    }
   uint64_t timeout = fdInfo->getTimeout(timeout_so);
   auto scheduler = zhuyh::Scheduler::getThis();
   do{
+    LOG_ROOT_WARN() << "call function "<<"do_io<"<<funcName<<">";
     int n = 0;
     do{  
       n = oriFunc(fd,std::forward<Args>(args)...);
     }while(n == -1 && errno == EINTR);
     
-    if(n == -1 && (errno != EAGAIN && errno != EWOULDBLOCK))
+    if(n == -1 && errno != EAGAIN )
       {
 	return -1;
       }
     if(n >= 0)
-      return n;
+      {
+	return n;
+      }
+    TimerInfo::ptr tinfo(new TimerInfo());
     std::weak_ptr<TimerInfo> winfo(tinfo);
     zhuyh::Timer::ptr timer = nullptr;
     if(timeout != (uint64_t)-1)
@@ -190,6 +195,7 @@ static int do_io(int fd,const char* funcName,OriFunc oriFunc,
 	  timer->cancle();
 	if(tinfo->cancled)
 	  {
+	    //LOG_ROOT_ERROR() << "errno = " << " error = "<<strerror(errno);
 	    errno = tinfo->cancled;
 	    return -1;
 	  }
@@ -330,7 +336,7 @@ extern "C"
 	//LOG_ROOT_INFO() << "Switched";
 	if(timer)
 	  {
-	    LOG_ROOT_INFO() << sockfd;
+	    //  LOG_ROOT_INFO() << sockfd;
 	    timer->cancle();
 	  }
 	if(tinfo->cancled)

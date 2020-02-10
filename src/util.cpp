@@ -97,21 +97,5 @@ namespace zhuyh
       }
     return ss.str();
   }
-
-  int setNonb(int fd)
-  {
-    int flags = fcntl(fd,F_GETFL);
-    if(flags < 0 )
-      return -1;
-    return fcntl_f(fd,F_SETFL,flags | O_NONBLOCK);
-  }
-  
-  int clearNonb(int fd)
-  {
-    int flags = fcntl(fd,F_GETFL);
-    if(flags < 0 )
-      return -1;
-    return fcntl(fd,F_SETFL,flags & ~O_NONBLOCK);
-  }
   
 }

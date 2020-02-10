@@ -8,7 +8,21 @@
 namespace zhuyh
 { 
   static Logger::ptr sys_log = GET_LOGGER("system");
-
+  static int setNonb(int fd)
+  {
+    int flags = fcntl_f(fd,F_GETFL);
+    if(flags < 0 )
+      return -1;
+    return fcntl_f(fd,F_SETFL,flags | O_NONBLOCK);
+  }
+  
+  static int clearNonb(int fd)
+  {
+    int flags = fcntl_f(fd,F_GETFL);
+    if(flags < 0 )
+      return -1;
+    return fcntl_f(fd,F_SETFL,flags & ~O_NONBLOCK);
+  }
   IOManager::IOManager(const std::string& name,Scheduler* scheduler )
   {
     _epfd = epoll_create(1);
@@ -78,6 +92,7 @@ namespace zhuyh
     ASSERT( type == READ  || type == WRITE);
     WRLockGuard lg(_lk);
     struct epoll_event ev;
+    //TODO : 改为vector
     FdEvent*& epEv = _eventMap[fd];
     //LOG_INFO(sys_log) << "fd = "<<fd;
     if(epEv == nullptr)
@@ -261,8 +276,7 @@ namespace zhuyh
     const int MaxTimeOut = 500;
     while(1)
       {
-	LOG_INFO(sys_log) << "Holding : " << _holdCount
-			  << " Total  : " << _scheduler->totalTask;
+	LOG_INFO(sys_log) << "Holding : " << _holdCount << " Total  : " << _scheduler->totalTask;
 	if(isStopping())
 	  {
 	    LOG_INFO(sys_log) << "IOManager : " << _name << " stopped!";

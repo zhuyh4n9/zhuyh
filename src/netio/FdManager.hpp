@@ -56,7 +56,7 @@ namespace zhuyh
     {
       bool origin = _userBlocking;
       _userBlocking = !state;
-      return origin;
+      return !origin;
     }
     
     int getFd() const

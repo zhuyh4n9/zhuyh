@@ -40,32 +40,9 @@ namespace zhuyh
       // LOG_ROOT_INFO() << "timer destroyed _tfd = "<<_tfd;
     }
     static uint64_t getCurrentTime();
-    bool isZero()
-    {
-      return _interval == 0;
-    }
     TimerType getTimerType() const
     {
       return _type;
-    }
-    
-    bool operator<(const Timer& o) const
-    {
-      return _nxtExpireTime < o._nxtExpireTime;
-    }
-    
-    bool operator>(const Timer& o) const
-    {
-      return _nxtExpireTime > o._nxtExpireTime; 
-    }
-    
-    bool operator==(const Timer& o) const
-    {
-      return _nxtExpireTime == o._nxtExpireTime;
-    }
-    bool operator!=(const Timer& o) const
-    {
-      return _nxtExpireTime != o._nxtExpireTime;
     }
     void start();
     void setLoop()
@@ -127,7 +104,7 @@ namespace zhuyh
     };
   private:
     std::set<Timer::ptr,Comparator> _timers;
-    mutable RWLock _mx;
+    mutable Mutex _mx;
   };
   
 }
