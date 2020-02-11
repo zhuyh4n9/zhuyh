@@ -86,33 +86,18 @@ struct HookInit
 {
   HookInit()
   {
-    static std::atomic_flag initTag{ATOMIC_FLAG_INIT};
-    //防止被初始化多次
-    if(!initTag.test_and_set())
-      {
-	zhuyh::FdManager::getThis();
-	HOOK_FUNC();
-      }  
+    zhuyh::FdManager::FdMgr::getInstance();
+    HOOK_FUNC();
   }
 };
 
 #undef XX
 
-static HookInit& __hook_initer__()
-{
-  static HookInit __ininter;
-  return __ininter;
-}
-
 //防止一些静态变量在Hook前初始化,构造函数却使用了hook住的函数
 void do_init()
 {
-  static bool inited = false;
-  if(!inited)
-    {
-      inited = true;
-      __hook_initer__();
-    }
+  //线程安全
+  static HookInit __ininter;
 }
 
 struct TimerInfo

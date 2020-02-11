@@ -54,23 +54,26 @@ add_library(libzhuyh STATIC  ${LIB_SRC})
 #add_executable(test_queue test/test_queue.cpp)
 #target_link_libraries(test_queue zhuyh  ${LIBS})
 
-add_executable(test_processer test/test_processer.cpp)
-target_link_libraries(test_processer zhuyh  ${LIBS})
+#Add_Executable(test_processer test/test_processer.cpp)
+#target_link_libraries(test_processer zhuyh  ${LIBS})
 
-add_executable(test_iomgr test/test_iomgr.cpp )
-target_link_libraries(test_iomgr zhuyh  ${LIBS})
+#add_executable(test_iomgr test/test_iomgr.cpp )
+#target_link_libraries(test_iomgr zhuyh  ${LIBS})
 
-add_executable(test_co test/test_co.cpp)
-target_link_libraries(test_co zhuyh  ${LIBS})
+#add_executable(test_co test/test_co.cpp)
+#target_link_libraries(test_co zhuyh  ${LIBS})
 
-add_executable(test_timer test/test_timer.cpp)
-target_link_libraries(test_timer zhuyh ${LIBS})
+#add_executable(test_timer test/test_timer.cpp)
+#target_link_libraries(test_timer zhuyh ${LIBS})
 
 add_executable(test_hook test/test_hook.cpp)
 target_link_libraries(test_hook zhuyh ${LIBS})
 
 add_executable(test_client test/test_client.cpp)
 target_link_libraries(test_client zhuyh ${LIBS})
+
+add_executable(test_http test/test_http.cpp)
+target_link_libraries(test_http zhuyh ${LIBS})
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
