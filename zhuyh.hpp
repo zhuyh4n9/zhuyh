@@ -5,7 +5,6 @@
 #include "src/latch/latchUtil.hpp"
 #include "src/latch/lock.hpp"
 #include "src/concurrent/Thread.hpp"
-#include "src/util.hpp"
 #include "src/macro.hpp"
 #include "src/concurrent/fiber.hpp"
 #include "src/scheduler/TSQueue.hpp"
