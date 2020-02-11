@@ -60,7 +60,7 @@ void test_co()
 int main()
 {
   LOG_ROOT_INFO() << "Entering";
-  Scheduler* scheduler = Scheduler::getThis();
+  Scheduler* scheduler = Scheduler::Schd::getInstance();
   scheduler->start();
   for(int i =0 ;i<400;++i)
     {
@@ -89,6 +89,6 @@ int main()
     }
   LOG_ROOT_INFO() << "HOOK STATE : "<<zhuyh::Hook::isHookEnable();
   sleep(10);
-  Scheduler::getThis()->stop();
+  Scheduler::Schd::getInstance()->stop();
   return 0;
 }

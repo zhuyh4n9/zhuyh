@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <vector>
+#include "../Singleton.hpp"
 
 namespace zhuyh
 {
@@ -116,12 +117,14 @@ namespace zhuyh
   class FdManager final
   {
   public:
+    friend SingletonPtr<FdManager>;
     typedef std::shared_ptr<FdManager> ptr;
     FdInfo::ptr lookUp(int fd,bool create = false);
     void del(int fd);
   private:
     FdManager();
   public:
+    typedef SingletonPtr<FdManager> FdMgr;
     static FdManager::ptr getThis();
   private:
     std::vector<FdInfo::ptr> _fds;

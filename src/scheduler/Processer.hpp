@@ -18,7 +18,7 @@ namespace zhuyh
     friend class Scheduler;
     typedef std::shared_ptr<Processer> ptr;
     //构造函数提供最大空闲协程数和负载因子,maxIdle = 0 采用配置文件中个数
-    Processer(const std::string name = "",Scheduler* scheduler = nullptr);
+    Processer(const std::string name = "");
     ~Processer();
     //TODO:需要线程安全
     using Deque = NonbTSQueue<Task::ptr>;

@@ -48,7 +48,7 @@ namespace zhuyh
       std::shared_ptr<Task> wrtask = nullptr;
     };
     typedef std::shared_ptr<IOManager> ptr;
-    IOManager(const std::string& name = "",Scheduler* scheduler = nullptr);
+    IOManager(const std::string& name = "");
     ~IOManager();
     int addEvent(int fd,std::shared_ptr<Task> task,EventType type);
     int delEvent(int fd, EventType type);
@@ -70,8 +70,8 @@ namespace zhuyh
       return _stopping;
     }
     //设置/获取调度器
-    Scheduler* getScheduler();
-    void setScheduler(Scheduler* scheduler);
+    //Scheduler* getScheduler();
+    //void setScheduler(Scheduler* scheduler);
     //触发一个事件
     int triggerEvent(FdEvent* epEv,EventType type);
 

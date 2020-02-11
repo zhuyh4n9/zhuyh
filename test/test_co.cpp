@@ -23,6 +23,6 @@ int main()
     LOG_ROOT_INFO() << "C";
     co_yield;
   };
-  zhuyh::Scheduler::getThis() -> stop();
+  zhuyh::Scheduler::Schd::getInstance() -> stop();
   return 0;
 }

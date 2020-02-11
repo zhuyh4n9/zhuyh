@@ -14,7 +14,7 @@ namespace zhuyh
     __co() {}
     inline const __co& operator=(CbType cb)
     {
-      Scheduler::getThis()->addNewTask(Task::ptr(new Task(cb)));
+      Scheduler::Schd::getInstance()->addNewTask(Task::ptr(new Task(cb)));
       return *this;
     }
    

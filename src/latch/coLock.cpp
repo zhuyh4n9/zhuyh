@@ -5,7 +5,7 @@ namespace zhuyh
 
   bool CoSemaphore::tryWait()
   {
-    ASSERT(Scheduler::getThis() != nullptr);
+    ASSERT(Scheduler::Schd::getInstance() != nullptr);
     {
       LockGuard lg(_mx);
       if(_value > 0)
@@ -19,7 +19,7 @@ namespace zhuyh
 
   void CoSemaphore::wait()
   {
-    auto scheduler = Scheduler::getThis();
+    auto scheduler = Scheduler::Schd::getInstance();
     ASSERT(scheduler != nullptr);
     {
       LockGuard lg(_mx);
@@ -37,7 +37,7 @@ namespace zhuyh
 
   void CoSemaphore::notify()
   {
-    auto scheduler = Scheduler::getThis();
+    auto scheduler = Scheduler::Schd::getInstance();
     ASSERT(scheduler);
     LockGuard lg(_mx);
     if(!_holdQue.empty())

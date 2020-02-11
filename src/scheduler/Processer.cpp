@@ -25,13 +25,11 @@ namespace zhuyh
       return -1;
     return fcntl_f(fd,F_SETFL,flags & ~O_NONBLOCK);
   }
-  Processer::Processer(const std::string name,Scheduler* scheduler )
+  
+  Processer::Processer(const std::string name)
     :_name(name)
   {
-    if(scheduler == nullptr )
-      _scheduler = Scheduler::getThis();
-    else
-      _scheduler = scheduler;
+    _scheduler = Scheduler::Schd::getInstance();
     _epfd = epoll_create(1);
     ASSERT2(_epfd >=0 , "epoll_create error");
     int rt = pipe(_notifyFd);

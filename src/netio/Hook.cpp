@@ -150,7 +150,7 @@ static int do_io(int fd,const char* funcName,OriFunc oriFunc,
       return oriFunc(fd,std::forward<Args>(args)...);
     }
   uint64_t timeout = fdInfo->getTimeout(timeout_so);
-  auto scheduler = zhuyh::Scheduler::getThis();
+  auto scheduler = zhuyh::Scheduler::Schd::getInstance();
   do{
     LOG_ROOT_WARN() << "call function "<<"do_io<"<<funcName<<">";
     int n = 0;
@@ -221,7 +221,7 @@ extern "C"
 	//LOG_ROOT_ERROR() << "USE ORIGIN";
 	return sleep_f(seconds);
       }
-    auto scheduler = zhuyh::Scheduler::getThis();
+    auto scheduler = zhuyh::Scheduler::Schd::getInstance();
     ASSERT(scheduler != nullptr);
     scheduler->addTimer(zhuyh::Timer::ptr(new zhuyh::Timer((time_t)seconds)));
     return 0;
@@ -235,7 +235,7 @@ extern "C"
 	//LOG_ROOT_ERROR() << "USE ORIGIN";
 	return usleep_f(usec);
       }
-    auto scheduler = zhuyh::Scheduler::getThis();
+    auto scheduler = zhuyh::Scheduler::Schd::getInstance();
     ASSERT(scheduler != nullptr);
     usec /= 1000;
     scheduler->addTimer(zhuyh::Timer::ptr(new zhuyh::Timer(0,(time_t)usec)));
@@ -247,7 +247,7 @@ extern "C"
     do_init();
     if(zhuyh::Hook::isHookEnable() == false)
       return nanosleep_f(req,rem);
-    auto scheduler = zhuyh::Scheduler::getThis();
+    auto scheduler = zhuyh::Scheduler::Schd::getInstance();
     ASSERT(scheduler != nullptr);
     time_t sec = req->tv_sec;
     time_t nsec = req->tv_nsec;
@@ -308,7 +308,7 @@ extern "C"
 	return rt;
       }
     uint64_t timeout = zhuyh::connect_time_out->getVar();
-    zhuyh::Scheduler* scheduler = zhuyh::Scheduler::getThis();
+    zhuyh::Scheduler* scheduler = zhuyh::Scheduler::Schd::getInstance();
     zhuyh::Timer::ptr timer = nullptr;
     std::shared_ptr<TimerInfo> tinfo(new TimerInfo());
     std::weak_ptr<TimerInfo> winfo(tinfo);
@@ -462,8 +462,8 @@ extern "C"
       {
 	return close_f(fd);
       }
-    auto scheduler = zhuyh::Scheduler::getThis();
-    auto fdmanager = zhuyh::FdManager::getThis();
+    auto scheduler = zhuyh::Scheduler::Schd::getInstance();
+    auto fdmanager = zhuyh::FdManager::FdMgr::getInstance();
     auto fdInfo = fdmanager->lookUp(fd,false);
     if(fdInfo)
       {
@@ -485,7 +485,7 @@ extern "C"
 	{
 	  int arg = va_arg(va,int);
 	  va_end(va);
-	  auto fdInfo = zhuyh::FdManager::getThis()->lookUp(fd,false);
+	  auto fdInfo = zhuyh::FdManager::FdMgr::getInstance()->lookUp(fd,false);
 	  if(fdInfo == nullptr || fdInfo->isClosed() || !fdInfo->isSocket())
 	    {
 	      return fcntl_f(fd,cmd,arg);
@@ -506,7 +506,7 @@ extern "C"
 	{
 	  va_end(va);
 	  int arg = fcntl_f(fd,cmd);
-	  auto fdInfo = zhuyh::FdManager::getThis()->lookUp(fd,false);
+	  auto fdInfo = zhuyh::FdManager::FdMgr::getInstance()->lookUp(fd,false);
 	  if(fdInfo == nullptr || fdInfo->isClosed() || !fdInfo->isSocket())
 	    {
 	      return arg;
@@ -582,7 +582,7 @@ extern "C"
     if(request == FIONBIO)
       {
 	bool setNb = !!*(int*)arg;
-	auto fdInfo = zhuyh::FdManager::getThis()->lookUp(fd,false);
+	auto fdInfo = zhuyh::FdManager::FdMgr::getInstance()->lookUp(fd,false);
 	if(fdInfo == nullptr || fdInfo->isClosed() || !fdInfo->isSocket())
 	  return ioctl_f(fd,request,setNb);
 	fdInfo->setUserNonBlock(setNb);
@@ -602,7 +602,7 @@ extern "C"
 	if(optname == SO_RCVTIMEO
 	   || optname == SO_SNDTIMEO)
 	  {
-	    auto fdInfo = zhuyh::FdManager::getThis()->lookUp(sockfd,false);
+	    auto fdInfo = zhuyh::FdManager::FdMgr::getInstance()->lookUp(sockfd,false);
 	    if(fdInfo)
 	      {
 		const timeval& tv = *(const timeval*)optval;

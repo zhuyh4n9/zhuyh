@@ -56,6 +56,6 @@ int main()
 	free(buf);
       };
     }
-  Scheduler::getThis()->stop();
+  Scheduler::Schd::getInstance()->stop();
   return 0;
 }

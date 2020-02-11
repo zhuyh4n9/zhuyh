@@ -162,11 +162,11 @@ namespace zhuyh
     t.swap(*task);
     addTask(t);
   }
-  Scheduler* Scheduler::getThis()
-  {
-    static Scheduler::ptr _scheduler(new Scheduler());
-    return _scheduler.get();
-  }
+  // Scheduler* Scheduler::getThis()
+  // {
+  //   static Scheduler::ptr _scheduler(new Scheduler());
+  //   return _scheduler.get();
+  // }
 
   //可能会有bug
   Processer::ptr Scheduler::getMaxPayLoad()

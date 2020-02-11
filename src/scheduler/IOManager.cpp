@@ -23,17 +23,14 @@ namespace zhuyh
       return -1;
     return fcntl_f(fd,F_SETFL,flags & ~O_NONBLOCK);
   }
-  IOManager::IOManager(const std::string& name,Scheduler* scheduler )
+  IOManager::IOManager(const std::string& name)
   {
     _epfd = epoll_create(1);
     if(_epfd < 0 )
       {
 	throw std::logic_error("epoll_create error");
       }
-    if(scheduler == nullptr)
-      _scheduler = Scheduler::getThis();
-    else
-      _scheduler = scheduler;
+    _scheduler = Scheduler::Schd::getInstance();
     if(name == "")
       _name = "IOManager";
     else
@@ -344,15 +341,6 @@ namespace zhuyh
   }
 
   void IOManager::clearAllEvent()
-  {
-  }
-  
-  Scheduler* IOManager::getScheduler()
-  {
-    return nullptr;
-  }
-
-  void IOManager::setScheduler(Scheduler* scheduler)
   {
   }
 
