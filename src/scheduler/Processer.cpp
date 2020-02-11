@@ -93,12 +93,13 @@ namespace zhuyh
 	    ASSERT(task -> fiber == nullptr);
 	    ++(_scheduler->totalTask);
 	  }
-	else if(task->fiber->_state != Fiber::READY)
-	  {
-	    //不是READY一定是要切换为HOLD
-	    while(task->fiber->_state != Fiber::HOLD)
-	      ;
-	  }
+	//单线程导致死循环
+	// else if(task->fiber->_state != Fiber::READY)
+	//   {
+	//     //不是READY一定是要切换为HOLD
+	//     while(task->fiber->_state != Fiber::HOLD)
+	//       ;
+	//   }
 	//LOG_ROOT_ERROR() << "add Success : "<<(unsigned long long)task;
 	/*
 	  else
@@ -182,6 +183,16 @@ namespace zhuyh
 	    worked++;
 	    if(task->fiber)
 	      {
+		if(task -> fiber->getState() != Fiber::HOLD &&
+		   task -> fiber->getState() != Fiber::READY)
+		  ASSERT2(task -> fiber->getState() == Fiber::EXEC,
+			  Fiber::getState(task->fiber->getState()));
+		//Take Care,Maybe Bugs
+		if(task -> fiber->getState() == Fiber::EXEC)
+		  {
+		    _readyTask.push_front(task);
+		    continue;
+		  }
 		task->fiber -> setState(Fiber::READY);
 	      }
 	    else if(task->cb)

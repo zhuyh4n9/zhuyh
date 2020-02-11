@@ -10,7 +10,7 @@ namespace zhuyh
   static ConfigVar<int>::ptr __max_thread = Config::lookUp<int>("scheduler.maxthread",
 							   32,"scheduler max thread");
   static ConfigVar<int>::ptr __min_thread = Config::lookUp<int>("scheduler.minthread",
-								2,"scheduler min thread");
+								1,"scheduler min thread");
   static ConfigVar<int>::ptr __limit_payload = Config::lookUp<int>("scheduler.limitpayload",
 							      20,"scheduler limitpayload");
   
