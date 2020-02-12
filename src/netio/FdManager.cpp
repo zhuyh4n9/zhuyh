@@ -101,10 +101,10 @@ namespace zhuyh
     _fds[fd].reset();
   }
 
-  FdManager::ptr FdManager::getThis()
-  {
-    static FdManager::ptr fdManager(new FdManager());
-    return fdManager;
-  }
+  // FdManager::ptr FdManager::getThis()
+  // {
+  //   static FdManager::ptr fdManager(new FdManager());
+  //   return fdManager;
+  // }
   
 }

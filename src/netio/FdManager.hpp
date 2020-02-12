@@ -125,7 +125,7 @@ namespace zhuyh
     FdManager();
   public:
     typedef SingletonPtr<FdManager> FdMgr;
-    static FdManager::ptr getThis();
+    //static FdManager::ptr getThis();
   private:
     std::vector<FdInfo::ptr> _fds;
     RWLock _mx;

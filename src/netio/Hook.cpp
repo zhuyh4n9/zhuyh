@@ -114,7 +114,7 @@ static int do_io(int fd,const char* funcName,OriFunc oriFunc,
   if(zhuyh::Hook::isHookEnable() == false)
     return oriFunc(fd,std::forward<Args>(args)...);
   
-  auto fdmanager = zhuyh::FdManager::getThis();
+  auto fdmanager = zhuyh::FdManager::FdMgr::getInstance();
   auto fdInfo= fdmanager->lookUp(fd,false);
   if(fdInfo == nullptr)
     {
@@ -254,7 +254,7 @@ extern "C"
     int fd = socket_f(domain,type,protocol);
     if(fd == -1)
       return fd;
-    zhuyh::FdManager::ptr fdmanager = zhuyh::FdManager::getThis();
+    zhuyh::FdManager::ptr fdmanager = zhuyh::FdManager::FdMgr::getInstance();
     fdmanager->lookUp(fd,true);
     return fd;
   }
@@ -265,7 +265,7 @@ extern "C"
     do_init();
     if(zhuyh::Hook::isHookEnable() == false)
       return connect_f(sockfd,addr,addrlen);
-    zhuyh::FdManager::ptr fdmanager = zhuyh::FdManager::getThis();
+    zhuyh::FdManager::ptr fdmanager = zhuyh::FdManager::FdMgr::getInstance();
     zhuyh::FdInfo::ptr fdInfo = fdmanager->lookUp(sockfd,false);
     if(fdInfo == nullptr)
       {
@@ -362,7 +362,7 @@ extern "C"
 		 SO_RCVTIMEO,addr,addrlen);
     if(fd >= 0)
       {
-	auto fdmanager = zhuyh::FdManager::getThis();
+	auto fdmanager = zhuyh::FdManager::FdMgr::getInstance();
 	fdmanager->lookUp(fd,true);
       }
     return fd;
