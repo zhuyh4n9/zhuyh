@@ -32,7 +32,7 @@ namespace zhuyh
       scheduler->addHold();
       //--(scheduler->totalTask);
     }
-    Fiber::YieldToSwitch();
+    Fiber::YieldToHold();
   }
 
   void CoSemaphore::notify()

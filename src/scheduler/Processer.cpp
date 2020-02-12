@@ -216,7 +216,7 @@ namespace zhuyh
 	      {
 		_readyTask.push_front(task);
 	      }
-	    else if(fiber->getState() == Fiber::SWITCHING)
+	    else if(fiber->getState() == Fiber::EXEC)
 	      {
 		fiber->_state = Fiber::HOLD;
 		--_payLoad;

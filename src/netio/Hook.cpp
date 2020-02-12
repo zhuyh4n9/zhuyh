@@ -175,7 +175,7 @@ static int do_io(int fd,const char* funcName,OriFunc oriFunc,
       rt = scheduler->addWriteEvent(fd);
     if(rt == 0)
       {
-	zhuyh::Fiber::YieldToSwitch();
+	zhuyh::Fiber::YieldToHold();
 	if(timer)
 	  timer->cancle();
 	if(tinfo->cancled)
@@ -317,7 +317,7 @@ extern "C"
     if(rt == 0)
       {
 	//LOG_ROOT_INFO() << "Switching...";
-	zhuyh::Fiber::YieldToSwitch();
+	zhuyh::Fiber::YieldToHold();
 	//LOG_ROOT_INFO() << "Switched";
 	if(timer)
 	  {

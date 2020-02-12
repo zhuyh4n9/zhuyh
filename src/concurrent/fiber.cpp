@@ -16,7 +16,7 @@ namespace zhuyh
   //static thread_local Fiber::ptr _threadFiber = nullptr;
   //默认协程栈大小
   static ConfigVar<size_t>::ptr __fiber_stack_size =
-    Config::lookUp<size_t>("fiber.stack_size",256*1024,"__stack_size");
+    Config::lookUp<size_t>("fiber.stack_size",128*1024,"__stack_size");
   class MallocAlloc
   {
   public:
@@ -203,13 +203,12 @@ namespace zhuyh
     cur->swapOut();
   }
   
-  void Fiber::YieldToSwitch()
+  void Fiber::YieldToHold()
   {
     Fiber::ptr cur = getThis();
     if(cur == _main_fiber() ) return;
     ASSERT(cur!=nullptr);
     setThis(_main_fiber().get());
-    cur->_state = SWITCHING;
     if(jump_fcontext(&(cur->_ctx),_main_fiber()->_ctx,0))
       {
 	ASSERT2(false,"jump_fcontext error");
