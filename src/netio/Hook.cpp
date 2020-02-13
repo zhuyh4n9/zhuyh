@@ -137,7 +137,7 @@ static int do_io(int fd,const char* funcName,OriFunc oriFunc,
   uint64_t timeout = fdInfo->getTimeout(timeout_so);
   auto scheduler = zhuyh::Scheduler::Schd::getInstance();
   do{
-    LOG_ROOT_WARN() << "call function "<<"do_io<"<<funcName<<">";
+    //LOG_ROOT_WARN() << "call function "<<"do_io<"<<funcName<<">";
     int n = 0;
     do{  
       n = oriFunc(fd,std::forward<Args>(args)...);
@@ -145,10 +145,12 @@ static int do_io(int fd,const char* funcName,OriFunc oriFunc,
     
     if(n == -1 && errno != EAGAIN )
       {
+	//LOG_ROOT_ERROR() << "errno = " << errno << " error = "<<strerror(errno);
 	return -1;
       }
     if(n >= 0)
       {
+	errno = 0;
 	return n;
       }
     TimerInfo::ptr tinfo(new TimerInfo());
@@ -180,7 +182,7 @@ static int do_io(int fd,const char* funcName,OriFunc oriFunc,
 	  timer->cancle();
 	if(tinfo->cancled)
 	  {
-	    //LOG_ROOT_ERROR() << "errno = " << " error = "<<strerror(errno);
+	    //LOG_ROOT_ERROR() << "errno = " <<errno<< " error = "<<strerror(errno);
 	    errno = tinfo->cancled;
 	    return -1;
 	  }

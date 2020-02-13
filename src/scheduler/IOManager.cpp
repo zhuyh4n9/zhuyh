@@ -53,7 +53,7 @@ namespace zhuyh
   {
     if(!_stopping)
       stop();
-    LOG_INFO(sys_log) << "IOManager Destroyed";
+    //LOG_INFO(sys_log) << "IOManager Destroyed";
     if(_epfd >= 0)
       {
 	close(_epfd);
@@ -273,10 +273,10 @@ namespace zhuyh
     const int MaxTimeOut = 500;
     while(1)
       {
-	LOG_INFO(sys_log) << "Holding : " << _holdCount << " Total  : " << _scheduler->totalTask;
+	//LOG_INFO(sys_log) << "Holding : " << _holdCount << " Total  : " << _scheduler->totalTask;
 	if(isStopping())
 	  {
-	    LOG_INFO(sys_log) << "IOManager : " << _name << " stopped!";
+	    //LOG_INFO(sys_log) << "IOManager : " << _name << " stopped!";
 	    delete [] events;
 	    break;
 	  }

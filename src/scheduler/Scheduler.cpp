@@ -41,8 +41,9 @@ namespace zhuyh
   //TODO : to be fixed
   Scheduler::~Scheduler()
   {
-    ASSERT(_stopping == true);
-    LOG_INFO(sys_log) << "Scheduler : "<<_name<<" Destroyed";
+    if(_stopping == false)
+      stop();
+    //LOG_INFO(sys_log) << "Scheduler : "<<_name<<" Destroyed";
   }
   int Scheduler::getHold()
   {
@@ -90,7 +91,7 @@ namespace zhuyh
       }
     _ioMgr->join();
     _currentThread = 0;
-    LOG_DEBUG(sys_log)<<"Scheduler Stopped";
+    //LOG_DEBUG(sys_log)<<"Scheduler Stopped";
     _stop = true;
   }
 

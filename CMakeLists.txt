@@ -22,7 +22,8 @@ set(LIB_SRC
   src/scheduler/TimerManager.cpp
   src/latch/coLock.cpp
   src/netio/Hook.cpp
-  src/netio/FdManager.cpp)
+  src/netio/FdManager.cpp
+  src/Socket/Address.cpp)
 
 set(LIBS 
     zhuyh  
@@ -74,6 +75,9 @@ target_link_libraries(test_client zhuyh ${LIBS})
 
 add_executable(test_http test/test_http.cpp)
 target_link_libraries(test_http zhuyh ${LIBS})
+
+add_executable(test_address test/test_address.cpp)
+target_link_libraries(test_address zhuyh ${LIBS})
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)

@@ -66,7 +66,7 @@ namespace zhuyh
 	close(_notifyFd[1]);
 	_notifyFd[1] = -1;
       }
-    LOG_INFO(sys_log) << "Processer : "<<_name<<"  Destroyed, worked = :"<<worked;
+    //LOG_INFO(sys_log) << "Processer : "<<_name<<"  Destroyed, worked = :"<<worked;
   }
   
   void Processer::start()
@@ -79,7 +79,7 @@ namespace zhuyh
       {
 	LOG_ERROR(sys_log) << e.what();
       }
-    LOG_INFO(sys_log) << "Processer Started!";
+    //LOG_INFO(sys_log) << "Processer Started!";
   }
 
   bool Processer::addTask(Task::ptr task)
