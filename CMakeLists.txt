@@ -23,7 +23,7 @@ set(LIB_SRC
   src/latch/coLock.cpp
   src/netio/Hook.cpp
   src/netio/FdManager.cpp
-  src/Socket/Address.cpp)
+  src/socket/Address.cpp)
 
 set(LIBS 
     zhuyh  
