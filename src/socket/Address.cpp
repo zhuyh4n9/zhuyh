@@ -294,10 +294,11 @@ namespace zhuyh
     //阻止域名解析
     hints.ai_flags = AI_NUMERICHOST;
     hints.ai_family = AF_UNSPEC;
-
+    //    LOG_ROOT_INFO() << "Here";
     int error = getaddrinfo(addr.c_str(),NULL,&hints,&res);
     if(error == EAI_NONAME)
       {
+	LOG_WARN(sys_log) << "no such address : "<<addr;
 	return nullptr;
       }
     else if(error)
