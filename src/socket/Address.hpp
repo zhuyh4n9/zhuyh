@@ -1,6 +1,6 @@
 #pragma once
 
-#include<unistd.h>
+# include<unistd.h>
 #include<memory>
 #include<sys/socket.h>
 #include<sys/types.h>
@@ -11,14 +11,52 @@
 #include<netinet/in.h>
 #include "endian.hpp"
 #include <vector>
+#include <unordered_map>
+#include <iostream>
 
 namespace zhuyh
 {
   class IPAddress;
+  class IAddress;
+  std::ostream& operator<<(std::ostream& os,const IAddress& addr);
   class IAddress
   {
   public:
     typedef std::shared_ptr<IAddress> ptr;
+    class InterfaceInfo
+    {
+    public:
+      friend std::ostream& operator<<(std::ostream& os,const InterfaceInfo& addr);
+      typedef std::shared_ptr<InterfaceInfo> ptr;
+      InterfaceInfo(const std::string name,
+		    IAddress::ptr addr,
+		    uint32_t prefix_len)
+	:m_name(name),m_addr(addr),m_prefix_len(prefix_len)
+      {
+      }
+      const std::string& getIfName()
+      {
+	return m_name;
+      }
+      IAddress::ptr getAddress()
+      {
+	return m_addr;
+      }
+      uint32_t getPrefixLen()
+      {
+	return m_prefix_len;
+      }
+      std::ostream& display(std::ostream& os) const
+      {
+	os << "<"<<m_name<<","<<*m_addr<<","<<m_prefix_len<<">";
+	return os;
+      }
+    private:
+      std::string m_name;
+      IAddress::ptr m_addr;
+      uint32_t m_prefix_len;
+    };
+  public:
     virtual ~IAddress() {}
     virtual sockaddr* getAddr() = 0;
     virtual const sockaddr* getAddr() const = 0;
@@ -43,6 +81,12 @@ namespace zhuyh
     newAddressByHostAnyIp(const std::string& host,
 			  int family = AF_UNSPEC ,int sockType = 0,
 			  int protocol = 0);
+    static bool getInterfaceAddress(std::unordered_multimap<std::string,
+				InterfaceInfo::ptr>& res,
+				int family = AF_UNSPEC);
+    static bool getInterfaceAddress(std::vector<InterfaceInfo::ptr>& res,
+				    const std::string& name,
+				    int family = AF_UNSPEC);
   };
 
   class IPAddress : public IAddress
@@ -173,7 +217,6 @@ namespace zhuyh
   private:
     sockaddr m_addr;
   };
-  
-  std::ostream& operator<<(std::ostream& os,const IAddress& addr);
+  std::ostream& operator<<(std::ostream& os,const IAddress::InterfaceInfo& addr);
 }
 

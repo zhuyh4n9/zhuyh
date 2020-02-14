@@ -7,6 +7,7 @@
 #include <cstring>
 #include <errno.h>
 #include <netdb.h>
+#include <ifaddrs.h>
 
 namespace zhuyh
 {
@@ -36,15 +37,38 @@ namespace zhuyh
   {
     return (T)( (1ull << (64 - bits) ) - 1ul);
   }
-  // template<T>
-  // typename std::enable_if< sizeof(T) == 1 ||
-  // 			   sizeof(T) == 2 ||
-  // 			   sizeof(T) == 4 ||
-  // 			   sizeof(T) == 8,T>::type
-  // getMaskCode(uint32_t bits)
-  // {
-  //   return (T)( ((uint8_t)1 << sizeof(T)*8 - bits) -(uint8_t)1);
-  // }
+  template<class T>
+  typename std::enable_if<(sizeof(T) == 8 ||
+			   sizeof(T) == 4 ||
+			   sizeof(T) == 2 ||
+			   sizeof(T) == 1),uint32_t>::type
+  getMaskLen(T value)
+  {
+    uint32_t res = 0;
+    while(value)
+      {
+	value -= value & -value;
+	res++;
+      }
+    return res;
+  }
+  
+  template<class T>
+  typename std::enable_if<sizeof(T) == 16,uint32_t>::type
+  getMaskLen(T value)
+  {
+    //    printf("%ld\n",sizeof(T));
+    uint8_t* p = (uint8_t*)&value;
+    uint32_t res = 0;
+    for(int i=0;i<16;i++)
+    {
+      uint32_t t = getMaskLen<uint32_t>(p[i]);
+      if(t == 0) break;
+      res += t;
+    }
+    return res;
+  }
+  
   int IAddress::getFamily() const
   {
     return getAddr()->sa_family;
@@ -191,7 +215,78 @@ namespace zhuyh
 	freeaddrinfo(addrRes);
 	return true;
   }
-  //使用dns获取地址
+  
+  //网卡信息
+  bool IAddress::getInterfaceAddress(std::unordered_multimap<std::string,
+				     InterfaceInfo::ptr>& result,
+				     int family )
+  {
+    struct ifaddrs *nxt,*res;
+    nxt = res = nullptr;
+    if(getifaddrs(&res) != 0)
+      {
+	LOG_ERROR(sys_log) << "getInterfaceAddress getifaddrs error = "
+			   <<strerror(errno) << " errno = "<<errno;
+	return false;
+      }
+    nxt = res;
+    while(nxt)
+      {
+	IAddress::ptr addr = nullptr;
+	uint32_t prefix_len = 0;
+	if(family != AF_UNSPEC && family != nxt->ifa_addr->sa_family)
+	  continue;
+	if(nxt->ifa_addr->sa_family == AF_INET)
+	  {
+	    addr = newAddress(nxt->ifa_addr);
+	    uint32_t mask = ((sockaddr_in*)(nxt->ifa_netmask))->sin_addr.s_addr;
+	    prefix_len = getMaskLen(mask);
+	  }
+	else if(nxt->ifa_addr->sa_family == AF_INET6)
+	  {
+	    addr = newAddress(nxt->ifa_addr);
+	    in6_addr& mask = ((sockaddr_in6*)(nxt->ifa_netmask))->sin6_addr;
+	    prefix_len = getMaskLen(mask);
+	  }
+	if(addr)
+	  {
+	    result.insert(std::make_pair(nxt->ifa_name,
+			 InterfaceInfo::ptr(new InterfaceInfo(nxt->ifa_name,addr,prefix_len) )));
+	  }
+	nxt = nxt->ifa_next;
+      }
+    freeifaddrs(res);
+    return true;
+  }
+  bool IAddress::getInterfaceAddress(std::vector<InterfaceInfo::ptr>& res,
+				 const std::string& name,
+				 int family)
+  {
+    if(name.empty() || name == "*")
+      {
+	if(family == AF_INET || family == AF_UNSPEC)
+	  {
+	    res.push_back(std::make_shared<InterfaceInfo>(name,IAddress::ptr(new IPv4Address()),
+							  0));
+	  }
+	if(family == AF_INET || family == AF_UNSPEC)
+	  {
+	    res.push_back(std::make_shared<InterfaceInfo>(name,IAddress::ptr(new IPv6Address()),
+							  0));
+	  }
+	return true;
+      }
+    std::unordered_multimap<std::string,InterfaceInfo::ptr> mp;
+    if(getInterfaceAddress(mp,family) == false)
+      return false;
+    auto range = mp.equal_range(name);
+    for(auto it = range.first;it != range.second;it++)
+      {
+	res.push_back(it->second);
+      }
+    return !res.empty();
+  }
+
   IPAddress::ptr IPAddress::newAddress(const std::string& addr,uint16_t port)
   {
     struct addrinfo hints,*res = nullptr;
@@ -491,6 +586,12 @@ namespace zhuyh
   }
 
   std::ostream& operator<<(std::ostream& os,const IAddress& addr)
+  {
+    addr.display(os);
+    return os;
+  }
+
+  std::ostream& operator<<(std::ostream& os,const IAddress::InterfaceInfo& addr)
   {
     addr.display(os);
     return os;
