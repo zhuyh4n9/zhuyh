@@ -63,11 +63,12 @@ close
 fcntl
 ioctl
 setsockopt
-
-未来计划支持
 pipe
 pipe2
 dup
 dup2
+dup3
+未来计划支持
+select
 
 ```
