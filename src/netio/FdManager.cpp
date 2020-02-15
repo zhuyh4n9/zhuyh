@@ -36,6 +36,11 @@ namespace zhuyh
 	  {
 	    _fdType = SOCKET;
 	  }
+	if(S_ISFIFO(_stat.st_mode))
+	  {
+	    //LOG_ROOT_INFO() << "IS PIPE";
+	    _fdType = PIPE;
+	  }
       }
     //设置非阻塞,目前只处理Socket描述符
     if(_fdType != NONE)

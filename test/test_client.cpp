@@ -17,7 +17,7 @@ int main()
 	memset(&addr,0,sizeof(addr));
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(50000);
-	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	addr.sin_addr.s_addr = inet_addr("47.113.110.111");
 	int rt = connect(fd,(struct sockaddr*)&addr,sizeof(addr));
 	if(rt < 0)
 	  {

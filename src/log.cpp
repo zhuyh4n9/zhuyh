@@ -370,10 +370,10 @@ namespace zhuyh
 				std::shared_ptr<Logger> logger,
 				LogEvent::ptr event)
   {
-    if(event->l_level >= logger->getBtLevel())
-      {
-	ss<<"\nBackTrace:\n"<<Bt2Str(100,7,"         ");
-      }
+    // if(event->l_level >= logger->getBtLevel())
+    //   {
+    // 	ss<<"\nBackTrace:\n"<<Bt2Str(100,7,"         ");
+    //   }
   }
   //日志体组件
   void LogMessageItem::format(std::stringstream& ss,

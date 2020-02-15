@@ -39,6 +39,11 @@ namespace zhuyh
     recvfrom_func recvfrom_f;
     recvmsg_func recvmsg_f;
     close_func close_f;
+    pipe_func pipe_f;
+    pipe2_func pipe2_f;
+    dup_func dup_f;
+    dup2_func dup2_f;
+    dup3_func dup3_f;
   }
   
   static bool& __hook_state__()
@@ -80,7 +85,12 @@ namespace zhuyh
   XX(sendto);					\
   XX(sendmsg);					\
   XX(send);					\
-  XX(close);					
+  XX(close);					\
+  XX(pipe);					\
+  XX(pipe2)					\
+  XX(dup)					\
+  XX(dup2)					\
+  XX(dup3)
 
 struct HookInit
 {
@@ -130,14 +140,15 @@ static int do_io(int fd,const char* funcName,OriFunc oriFunc,
     {
       return oriFunc(fd,std::forward<Args>(args)...);
     }
-  if ( fdInfo -> isSocket() == false)
-    { 
+  if ( fdInfo -> isSocket() == false
+       && fdInfo -> isPipe() == false)
+    {
       return oriFunc(fd,std::forward<Args>(args)...);
     }
   uint64_t timeout = fdInfo->getTimeout(timeout_so);
   auto scheduler = zhuyh::Scheduler::Schd::getInstance();
   do{
-    //LOG_ROOT_WARN() << "call function "<<"do_io<"<<funcName<<">";
+    //LOG_ROOT_WARN() << "call function "<<"do_io<"<<funcName<<">" << " fd = "<<fd;
     int n = 0;
     do{  
       n = oriFunc(fd,std::forward<Args>(args)...);
@@ -189,7 +200,8 @@ static int do_io(int fd,const char* funcName,OriFunc oriFunc,
       }
     else
       {
-	LOG_ERROR(sys_log) << "Failed to add Event in function : "<< funcName <<" rt = "<<rt;
+	LOG_ERROR(sys_log) << "Failed to add Event in function : "
+			   << funcName <<" rt = "<<rt << " error = "<< strerror(errno);
 	if(timer)
 	  timer->cancle();
 	return -1;
@@ -600,5 +612,87 @@ extern "C"
       }
     return rt;
   }
-  
+
+  //
+  int pipe(int pipefd[2])
+  {
+    do_init();
+    int rt = pipe_f(pipefd);
+    if(zhuyh::Hook::isHookEnable() == false)
+      return  rt;
+    //LOG_ROOT_INFO() << "called pipe";
+    if(rt < 0)
+      return rt;
+    auto mgr = zhuyh::FdManager::FdMgr::getInstance();
+    mgr->lookUp(pipefd[0],true);
+    mgr->lookUp(pipefd[1],true);
+    return rt;
+  }
+
+  int pipe2(int pipefd[2],int flags)
+  {
+    do_init();
+    int rt = pipe2_f(pipefd,flags);
+    if(zhuyh::Hook::isHookEnable() == false)
+      return  rt;
+    //LOG_ROOT_INFO() << "called pipe2";
+    if(rt < 0)
+      return rt;
+    auto mgr = zhuyh::FdManager::FdMgr::getInstance();
+    //用户设置了非阻塞则交个用户处理
+    auto fdInfo = mgr->lookUp(pipefd[0],true);
+    fdInfo->setUserNonBlock(flags & O_NONBLOCK);
+    auto fdInfo2 =mgr->lookUp(pipefd[1],true);
+    fdInfo2->setUserNonBlock(flags & O_NONBLOCK);
+    
+    return rt;
+  }
+
+  int dup(int oldfd)
+  {
+    do_init();
+    int newfd = dup_f(oldfd);
+    if(zhuyh::Hook::isHookEnable() == false)
+      return newfd;
+    //LOG_ROOT_INFO() << "called dup";
+    if(newfd < 0)
+      return newfd;
+    auto mgr = zhuyh::FdManager::FdMgr::getInstance();
+    mgr->lookUp(newfd,true);
+    return newfd;
+  }
+
+  int dup2(int oldfd,int newfd)
+  {
+    do_init();
+    int rt = dup2(oldfd,newfd);
+    if(zhuyh::Hook::isHookEnable() == false)
+      return newfd;
+    //LOG_ROOT_INFO() << "called dup2";
+    if(rt < 0)
+      return rt;
+    auto mgr = zhuyh::FdManager::FdMgr::getInstance();
+    mgr->lookUp(newfd,true);
+    return rt;
+  }
+
+  //不一定所有系统都支持
+  int dup3(int oldfd,int newfd,int flags)
+  {
+    do_init();
+    if(dup3_f == nullptr)
+      {
+	errno = EPERM;
+	return -1;
+      }
+    if(zhuyh::Hook::isHookEnable() == false)
+      return newfd;
+    //    LOG_ROOT_INFO() << "called dup3";
+    int rt = dup3_f(oldfd,newfd,flags);
+    if(rt < 0)
+      return rt;
+    auto mgr = zhuyh::FdManager::FdMgr::getInstance();
+    mgr->lookUp(newfd,true);
+    return rt;
+  }
 }

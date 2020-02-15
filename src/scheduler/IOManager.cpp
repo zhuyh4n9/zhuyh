@@ -110,7 +110,8 @@ namespace zhuyh
       {
 	//ASSERT(0);
 	LOG_ERROR(sys_log) << "type : " << type << " Exist"
-			  << "current : " << epEv->event;
+			   << "current : " << epEv->event
+			   <<" fd = " <<fd;
 	return -1;
       }
     ev.events = epEv->event | EPOLLET | type;

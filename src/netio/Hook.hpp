@@ -100,4 +100,20 @@ extern "C"
   
   using close_func = int (*)(int fd);
   extern close_func close_f;
+
+  using pipe_func = int (*)(int pipefd[2]);
+  extern pipe_func pipe_f;
+
+  using pipe2_func = int (*)(int pipefd[2], int flags);
+  extern pipe2_func pipe2_f;
+
+  using dup_func = int (*)(int oldfd);
+  extern dup_func dup_f;
+
+  using dup2_func = int (*)(int oldfd, int newfd);
+  extern dup2_func dup2_f;
+  
+  using dup3_func = int (*)(int oldfd, int newfd, int flags);
+  extern dup3_func dup3_f;
+
 }
