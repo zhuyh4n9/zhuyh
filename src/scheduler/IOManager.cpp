@@ -307,6 +307,10 @@ namespace zhuyh
 	    if(epEv->fd == _notifyFd[0]) continue;
 	    int real_event = NONE;
 	    LockGuard lg(epEv->lk);
+	    if(ev.events & (EPOLLERR | EPOLLHUP))
+	      {
+		ev.events |= (EPOLLIN | EPOLLOUT) & (epEv->event);
+	      }
 	    if(ev.events & READ )
 	      {
 		real_event |= READ;

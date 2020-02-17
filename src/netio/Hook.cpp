@@ -461,14 +461,13 @@ extern "C"
       {
 	return close_f(fd);
       }
-    auto scheduler = zhuyh::Scheduler::Schd::getInstance();
     auto fdmanager = zhuyh::FdManager::FdMgr::getInstance();
     auto fdInfo = fdmanager->lookUp(fd,false);
     if(fdInfo)
       {
+	auto scheduler = zhuyh::Scheduler::Schd::getInstance();
 	scheduler->cancleAllEvent(fd);
 	fdmanager->del(fd);
-	fdInfo->close();
       }
     return close_f(fd);
   }
