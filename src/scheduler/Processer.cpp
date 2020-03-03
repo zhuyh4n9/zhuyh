@@ -185,8 +185,8 @@ namespace zhuyh
 	      {
 		if(task -> fiber->getState() != Fiber::HOLD &&
 		   task -> fiber->getState() != Fiber::READY)
-		  ASSERT2(task -> fiber->getState() == Fiber::EXEC,
-			  Fiber::getState(task->fiber->getState()));
+		  // ASSERT2(task -> fiber->getState() == Fiber::EXEC,
+		  // 	  Fiber::getState(task->fiber->getState()));
 		//Take Care,Maybe Bugs
 		if(task -> fiber->getState() == Fiber::EXEC)
 		  {

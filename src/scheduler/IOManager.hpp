@@ -74,13 +74,14 @@ namespace zhuyh
     //void setScheduler(Scheduler* scheduler);
     //触发一个事件
     int triggerEvent(FdEvent* epEv,EventType type);
-
+  private:
+    void resizeMap(uint32_t size);
   private:
     //epoll句柄
     int _epfd = -1;
     Scheduler* _scheduler;
     // fd --> event
-    std::unordered_map<int,FdEvent*> _eventMap;
+    std::vector<FdEvent*> _eventMap;
     mutable RWLock _lk;
     int _notifyFd[2];
     Thread::ptr _thread = nullptr;

@@ -78,7 +78,7 @@ namespace zhuyh
     if(!out)
       {
 	std::cout<<"oops! bad i/o in function: "
-		 <<__func__<<" lines : "<<__LINE__
+	  <<__func__<<" lines : "<<__LINE__
 	         <<" file : "<<__FILE__<<std::endl;
 	return false;
       }
@@ -765,7 +765,7 @@ namespace zhuyh
     LogIniter()
     {
       __log_define_->addCb(onLogChange);
-      Config::loadFromYamlFile("/home/zhuyh/mnt/Code/GraduationDesign/zhuyh/config/logs.yml");
+      Config::loadFromYamlFile("/home/zhuyh/Code/GraduationDesign/zhuyh/config/logs.yml");
     }
   };
   static LogIniter __log_initer_;

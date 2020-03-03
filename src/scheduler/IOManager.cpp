@@ -45,6 +45,7 @@ namespace zhuyh
     ev.events = EPOLLIN | EPOLLET;
     ev.data.ptr = _notifyEvent;
     rt = epoll_ctl(_epfd,EPOLL_CTL_ADD,_notifyFd[0],&ev);
+    resizeMap((uint32_t)4096);
     ASSERT(rt >= 0);
     _thread.reset(new Thread(std::bind(&IOManager::run,this),_name));
     //LOG_INFO(sys_log) << "IOManager : "<< _name <<" Created!";
@@ -72,8 +73,11 @@ namespace zhuyh
     _thread->join();
     for(auto  p : _eventMap)
       {
-	delete p.second;
-	p.second = nullptr;
+	if(p)
+	  {
+	    delete p;
+	    p = nullptr;
+	  }
       }
     delete _notifyEvent;
     _eventMap.clear();
@@ -83,20 +87,38 @@ namespace zhuyh
     int rt = write(_notifyFd[1],"",1);
     ASSERT(rt >= 0);
   }
-
+  void IOManager::resizeMap(uint32_t size)
+  {
+    _eventMap.resize(size);
+    for(size_t i=0;i<_eventMap.size();i++)
+      {
+	if(_eventMap[i] == nullptr)
+	  {
+	    _eventMap[i] = new FdEvent(i,NONE);
+	  }
+      }
+  }
   int IOManager::addEvent(int fd,Task::ptr task,EventType type)
   {
     ASSERT( type == READ  || type == WRITE);
-    WRLockGuard lg(_lk);
+    RDLockGuard lg(_lk);
     struct epoll_event ev;
     //TODO : 改为vector
-    FdEvent*& epEv = _eventMap[fd];
+    FdEvent* epEv = nullptr;
+    ASSERT2(fd >= 0,"fd cannot be smaller than 0");
     //LOG_INFO(sys_log) << "fd = "<<fd;
-    if(epEv == nullptr)
+    if((size_t)fd < _eventMap.size())
       {
-	epEv = new FdEvent(fd,NONE);
+	epEv = _eventMap[fd];
+	lg.unlock();
       }
-    lg.unlock();
+    else
+      {
+	lg.unlock();
+	WRLockGuard lg3(_lk);
+	resizeMap(_eventMap.size()*2);
+	epEv = _eventMap[fd];
+      }
     LockGuard lg2(epEv->lk);
     int rt = setNonb(fd);
     if(rt < 0)
@@ -146,13 +168,13 @@ namespace zhuyh
     ASSERT( type != NONE);
     ASSERT(type == READ || type == WRITE);
     struct epoll_event ev;
-    WRLockGuard lg(_lk);
-    FdEvent*& epEv = _eventMap[fd];
-    if(epEv == nullptr)
+    RDLockGuard lg(_lk);
+    if((size_t)fd >= _eventMap.size())
       {
-	LOG_WARN(sys_log) << "Failed to del Event";
+	LOG_ERROR(sys_log) << "fd<"<<fd<<"> is bigger than _eventMap.size()<"<<_eventMap.size()<<">";
 	return -1;
       }
+    FdEvent* epEv = _eventMap[fd];
     lg.unlock();
     
     LockGuard lg2(epEv->lk);
@@ -190,19 +212,18 @@ namespace zhuyh
     ASSERT( type != NONE);
     ASSERT(type == READ || type == WRITE);
     struct epoll_event ev;
-    WRLockGuard lg(_lk);
-    FdEvent*& epEv = _eventMap[fd];
-    if(epEv == nullptr)
+    RDLockGuard lg(_lk);
+    if((size_t)fd >= _eventMap.size())
       {
-	LOG_WARN(sys_log) << "event does not exist";
+	LOG_WARN(sys_log) << "fd<"<<fd<<"> is bigger than _eventMap.size()<"<<_eventMap.size()<<">";
 	return -1;
       }
+    FdEvent* epEv = _eventMap[fd];
     lg.unlock();
-      
     LockGuard lg2(epEv->lk);
     if( (EventType)(epEv->event & type) == NONE )
       {
-	LOG_WARN(sys_log) << "type : " << type << " Not Exist";
+	//LOG_WARN(sys_log) << "type : " << type << " Not Exist";
 	return -1;    	
       }
     auto tevent = epEv->event & ~type;
@@ -222,13 +243,13 @@ namespace zhuyh
 
   int IOManager::cancleAll(int fd)
   {
-    WRLockGuard lg(_lk);
-    FdEvent*& epEv = _eventMap[fd];
-    if(epEv == nullptr )
+    RDLockGuard lg(_lk);
+    if((size_t)fd >= _eventMap.size())
       {
-	LOG_WARN(sys_log) << "event doesn't exist";
+	LOG_WARN(sys_log) << "fd<"<<fd<<"> is bigger than _eventMap.size()<"<<_eventMap.size()<<">";
 	return -1;
       }
+    FdEvent* epEv = _eventMap[fd];
     lg.unlock();
     
     LockGuard lg2(epEv->lk);

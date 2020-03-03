@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 ENABLE_LANGUAGE(ASM)
 project(zhuyh)
 set(CMAKE_CXX_FLAGS
-  "$ENV{CXXFLAGS} -rdynamic -O0 -g  -std=c++11 -Wall -Werror -Wno-unused-function -fstack-protector-all")
+  "$ENV{CXXFLAGS} -rdynamic -O2 -g  -std=c++11 -Wall -Werror -Wno-unused-function -fstack-protector-all")
 
 set(LIB_SRC
   src/log.cpp

@@ -601,6 +601,7 @@ extern "C"
 	   || optname == SO_SNDTIMEO)
 	  {
 	    auto fdInfo = zhuyh::FdManager::FdMgr::getInstance()->lookUp(sockfd,false);
+	    //肯会有线程安全问题
 	    if(fdInfo)
 	      {
 		const timeval& tv = *(const timeval*)optval;
