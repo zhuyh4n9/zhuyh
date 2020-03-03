@@ -195,6 +195,10 @@ namespace zhuyh
     {
       return std::make_shared<UnixAddress>(*this);
     }
+    void setAddrLen(socklen_t len)
+    {
+      m_len = len;
+    }
   private:
     struct sockaddr_un m_addr;
     socklen_t m_len;
