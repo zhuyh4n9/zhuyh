@@ -22,4 +22,5 @@ namespace zhuyh
   //打印函数调用栈
   void BackTrace(std::vector<std::string>& bt,int size,int skip);
   std::string Bt2Str(int size,int skip,const std::string& prefix);
+  std::string getEnv(const std::string& envName);
 }

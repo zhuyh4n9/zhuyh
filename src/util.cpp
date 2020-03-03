@@ -97,5 +97,11 @@ namespace zhuyh
       }
     return ss.str();
   }
-  
+  std::string getEnv(const std::string& envName)
+  {
+    char* str = getenv(envName.c_str());
+    if(str == nullptr) return "";
+    std::string env(str);
+    return env;
+  }
 }

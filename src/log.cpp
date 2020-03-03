@@ -765,7 +765,15 @@ namespace zhuyh
     LogIniter()
     {
       __log_define_->addCb(onLogChange);
-      Config::loadFromYamlFile("/home/zhuyh/Code/GraduationDesign/zhuyh/config/logs.yml");
+      std::string prefix = getEnv("PATH_CFG");
+      if(prefix == "")
+	{
+	  std::cerr<<"Environment Variable : PATH_CFG is empty,you're suppose to set such variable to tell system the location of config file,PATH_CFG must be a directory"<<std::endl;
+	  exit(1);
+	}
+      if(prefix[prefix.size()-1] != '/') prefix+="/";
+      prefix +="logs.yml";
+      Config::loadFromYamlFile(prefix);
     }
   };
   static LogIniter __log_initer_;
