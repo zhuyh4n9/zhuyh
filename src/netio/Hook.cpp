@@ -113,7 +113,7 @@ void do_init()
 struct TimerInfo
 {
   typedef std::shared_ptr<TimerInfo> ptr;
-  bool cancled = false;
+  int cancled = 0;
 };
 
 template<typename OriFunc,typename...Args>
@@ -167,14 +167,15 @@ static int do_io(int fd,const char* funcName,OriFunc oriFunc,
     TimerInfo::ptr tinfo(new TimerInfo());
     std::weak_ptr<TimerInfo> winfo(tinfo);
     zhuyh::Timer::ptr timer = nullptr;
+    //LOG_ROOT_INFO()<<funcName<<" timeout : "<<timeout;
     if(timeout != (uint64_t)-1)
       {
-	timer.reset(new zhuyh::Timer(0,5000));
+	timer.reset(new zhuyh::Timer(0,timeout));
 	scheduler->addTimer(timer,[fd,winfo,event,scheduler](){
 	    auto t = winfo.lock();
 	    if(!t || t->cancled )
 	      return;
-	    errno = ETIMEDOUT;
+	    t->cancled = ETIMEDOUT;
 	    if(event == zhuyh::IOManager::READ)
 	      scheduler->cancleReadEvent(fd);
 	    else if(event == zhuyh::IOManager::WRITE)
@@ -592,6 +593,7 @@ extern "C"
 		 const void *optval, socklen_t optlen)
   {
     do_init();
+    //LOG_ROOT_INFO() << "Set Sockoption1";
     int rt = setsockopt_f(sockfd, level, optname, optval, optlen);
     if(zhuyh::Hook::isHookEnable() == false)
       return rt;
@@ -600,10 +602,12 @@ extern "C"
 	if(optname == SO_RCVTIMEO
 	   || optname == SO_SNDTIMEO)
 	  {
+	    //LOG_ROOT_INFO() << "Set Sockoption2";
 	    auto fdInfo = zhuyh::FdManager::FdMgr::getInstance()->lookUp(sockfd,false);
 	    //肯会有线程安全问题
 	    if(fdInfo)
 	      {
+		//LOG_ROOT_INFO() << "Set Sockoption3r";
 		const timeval& tv = *(const timeval*)optval;
 		uint64_t millsec = tv.tv_sec*1000 + tv.tv_usec / 1000;
 		fdInfo -> setTimeout(optname,millsec);

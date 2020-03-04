@@ -54,7 +54,7 @@ namespace zhuyh
     ~Socket();
     //输出TCP相关信息
     std::ostream& dump(std::ostream& os);
-    //获取/设置发送/接收超时
+    //获取/设置发送/接收超时,单位(ms)
     uint64_t getSendTimeout() const ;
     bool setSendTimeout(uint64_t to);
     uint64_t getRecvTimeout() const;
@@ -121,13 +121,13 @@ namespace zhuyh
     template<typename T>
     bool setSockOption(int level, int optname,const T& val)
     {
-      if( !m_connect || m_sockfd < 0 ) return false;
+      if(m_sockfd < 0 ) return false;
       return setSockOption(level,optname,(void*)&val,sizeof(T));
     }
     template<typename T>
     bool getSockOption(int level, int optname,T& res)
     {
-      if( !m_connect || m_sockfd < 0 ) return false;
+      if( m_sockfd < 0 ) return false;
       socklen_t len = sizeof(T);
       return getSockOption(level,optname,(void*)&res,&len);
     }

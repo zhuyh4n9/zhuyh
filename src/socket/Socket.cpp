@@ -19,7 +19,7 @@ namespace zhuyh
   }
   uint64_t Socket::getSendTimeout() const
   {
-    if(m_sockfd < 0 || !m_connect) return (uint64_t)-1;
+    if(m_sockfd < 0 ) return (uint64_t)-1;
     auto fdinfo = FdManager::FdMgr::getInstance()->lookUp(m_sockfd);
     uint64_t to = (uint64_t)-1;
     if(fdinfo)
@@ -29,36 +29,38 @@ namespace zhuyh
 
   bool  Socket::setSendTimeout(uint64_t to)
   {
-    if(m_sockfd < 0 || !m_connect) return false;
+    if(m_sockfd < 0 ) return false;
     struct timeval tv;
     tv.tv_sec = to / 1000;
-    tv.tv_usec = to % (1000*1000);
+    tv.tv_usec = (to % 1000)*1000;
     int rt = setSockOption(SOL_SOCKET,SO_SNDTIMEO,tv);
     return !rt;
   }
   uint64_t Socket::getRecvTimeout() const
   {
-    if(m_sockfd < 0 || !m_connect) return (uint64_t)-1;
+    if(m_sockfd < 0 ) return (uint64_t)-1;
     auto fdinfo = FdManager::FdMgr::getInstance()->lookUp(m_sockfd);
     uint64_t to = (uint64_t)-1;
     if(fdinfo)
-      to = fdinfo->getTimeout(SO_SNDTIMEO);
+      to = fdinfo->getTimeout(SO_RCVTIMEO);
     return to;
   }
 
   bool  Socket::setRecvTimeout(uint64_t to)
   {
-    if(m_sockfd < 0 || !m_connect) return false;
+    if(m_sockfd < 0) return false;
     struct timeval tv;
     tv.tv_sec = to / 1000;
-    tv.tv_usec = to % (1000*1000);
+    tv.tv_usec = (to % 1000)*1000;
     int rt = setSockOption(SOL_SOCKET,SO_RCVTIMEO,tv);
-    return !rt;
+    //LOG_ROOT_INFO() << " setRecvTimeout rt : "<<rt;
+    return rt;
   }
 
   bool Socket::setSockOption(int level, int optname,
 			     const void *optval, socklen_t optlen)
   {
+    //LOG_ROOT_INFO() << " setSockOption";
     int rt = setsockopt(m_sockfd,level,optname,optval,optlen);
     if(rt)
       {
@@ -85,12 +87,14 @@ namespace zhuyh
   bool Socket::init(int sockfd)
   {
     if(m_sockfd != -1) return false;
-    if(sockfd < 0) return false;;
+    if(sockfd < 0) return false;
     auto fdInfo = FdManager::FdMgr::getInstance()->lookUp(sockfd);
     if(fdInfo && fdInfo->isSocket() && !fdInfo->isClosed())
       {
+	m_sockfd = sockfd;
+	m_connect = true;
 	int rt = initSock();
-	if(rt) return false;
+	if(!rt) return false;
 	if(getRemoteAddr() == nullptr) return false;
 	if(getLocalAddr() == nullptr) return false;
 	return true;
@@ -166,7 +170,7 @@ namespace zhuyh
 
   bool Socket::close()
   {
-    if(!m_connect && m_sockfd == -1)
+    if(!m_connect || m_sockfd == -1)
       {
 	return false;
       }
@@ -179,6 +183,7 @@ namespace zhuyh
 			       << " errno : " << errno;
 	    return false;
 	  }
+	m_sockfd = -1;
 	m_connect = false;
 	return true;
       }
@@ -190,8 +195,9 @@ namespace zhuyh
     int fd = ::accept(m_sockfd,nullptr,nullptr);
     if(fd < 0)
       {
-	LOG_ERROR(sys_log) << "accept failed, error : "<<strerror(errno)
-			   << " errno = "<<errno;
+	if(errno !=ETIMEDOUT)
+	  LOG_ERROR(sys_log) << "accept failed, error : "<<strerror(errno)
+			     << " errno = "<<errno;
 	return nullptr;
       }
     Socket::ptr sock(new Socket(m_family,m_type,m_protocol));
@@ -223,6 +229,7 @@ namespace zhuyh
 	close();
 	return false;
       }
+    m_connect = 1;
     getRemoteAddr();
     getLocalAddr();
     return true;
@@ -248,11 +255,11 @@ namespace zhuyh
        << " sockfd : "<<m_sockfd;
     if(m_localAddr)
       {
-	os << " localAddr : "<<m_localAddr;
+	os << " localAddr : "<<*m_localAddr;
       }
     if(m_remoteAddr)
       {
-	os << " remoteAddr : "<<m_remoteAddr;
+	os << " remoteAddr : "<<*m_remoteAddr;
       }
     os<<"]";
     return os;
@@ -263,7 +270,7 @@ namespace zhuyh
     if(m_type != SOCK_STREAM) return -1;
     if(m_connect)
       {
-	return ::send(m_sockfd,buff,length,flags | MSG_NOSIGNAL);
+	return ::send(m_sockfd,buff,length,flags);
       }
     return -1;
   }
@@ -277,7 +284,7 @@ namespace zhuyh
 	memset(&msg,0,sizeof(msg));
 	msg.msg_iov = (iovec*)buff;
 	msg.msg_iovlen = size;
-	return ::sendmsg(m_sockfd,&msg,flags | MSG_NOSIGNAL);
+	return ::sendmsg(m_sockfd,&msg,flags);
       }
     return -1;
   }
@@ -289,7 +296,7 @@ namespace zhuyh
       return -1;
     if(m_connect)
       {
-	return ::sendto(m_sockfd,buff,length,flags | MSG_NOSIGNAL,
+	return ::sendto(m_sockfd,buff,length,flags,
 			to->getAddr(),to->getAddrLen());
       }
     return -1;
@@ -307,7 +314,7 @@ namespace zhuyh
 	msg.msg_iovlen = size;
 	msg.msg_name = to->getAddr();
 	msg.msg_namelen = to->getAddrLen();
-	return ::sendmsg(m_sockfd,&msg,flags | MSG_NOSIGNAL);
+	return ::sendmsg(m_sockfd,&msg,flags);
       }
     return -1;
   }
@@ -317,7 +324,7 @@ namespace zhuyh
     if(m_type != SOCK_STREAM) return -1;
     if(m_connect)
       {
-	return ::recv(m_sockfd,buff,length,flags | MSG_NOSIGNAL);
+	return ::recv(m_sockfd,buff,length,flags);
       }
     return -1;
   }
@@ -331,7 +338,7 @@ namespace zhuyh
 	memset(&msg,0,sizeof(msg));
 	msg.msg_iov = buff;
 	msg.msg_iovlen = size;
-	return ::recvmsg(m_sockfd,&msg,flags | MSG_NOSIGNAL);
+	return ::recvmsg(m_sockfd,&msg,flags);
       }
     return -1;
   }
@@ -344,7 +351,7 @@ namespace zhuyh
     if(m_connect)
       {
 	socklen_t addrlen =from->getAddrLen();
-	return ::recvfrom(m_sockfd,buff,length,flags | MSG_NOSIGNAL,
+	return ::recvfrom(m_sockfd,buff,length,flags,
 			  from->getAddr(),&addrlen);
       }
     return -1;
@@ -361,7 +368,7 @@ namespace zhuyh
 	msg.msg_iovlen = size;
 	msg.msg_name = from->getAddr();
 	msg.msg_namelen = from->getAddrLen();
-	return ::recvmsg(m_sockfd,&msg,flags | MSG_NOSIGNAL);
+	return ::recvmsg(m_sockfd,&msg,flags);
       }
     return -1;
   }

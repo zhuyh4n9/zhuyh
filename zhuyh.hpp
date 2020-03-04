@@ -14,3 +14,4 @@
 #include "src/scheduler/Scheduler.hpp"
 #include "src/latch/coLock.hpp"
 #include "src/socket/Address.hpp"
+#include "src/socket/Socket.hpp"
