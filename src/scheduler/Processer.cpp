@@ -83,11 +83,12 @@ namespace zhuyh
 	  }
 	catch (std::exception& e)
 	  {
-	LOG_ERROR(sys_log) << e.what();
+	    LOG_ERROR(sys_log) << e.what();
 	  }
       }
     else
       {
+	Thread::setName(_name);
 	addTask(Task::ptr(new Task(cb)));
 	run();
       }
