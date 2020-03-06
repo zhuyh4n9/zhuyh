@@ -15,9 +15,18 @@ namespace zhuyh
 							      20,"scheduler limitpayload");
   
   static Logger::ptr sys_log = GET_LOGGER("system");
-  
-  Scheduler::Scheduler(const std::string& name,int minThread,int maxThread,int limitPayLoad)
-    :_minThread(minThread),_maxThread(maxThread),_limitPayLoad(limitPayLoad),totalTask{0}
+
+  static thread_local Scheduler* s_schd;
+  Scheduler* Scheduler::getThis()
+  {
+    return s_schd;
+  }
+  void Scheduler::setThis(Scheduler* schd)
+  {
+    s_schd = schd;
+  }
+  Scheduler::Scheduler(const std::string& name,int threads)
+    :_minThread(threads),_maxThread(threads)
   {
     if(name == "")
       _name = "Scheduler";
@@ -51,26 +60,32 @@ namespace zhuyh
     return _ioMgr -> _holdCount;
   }
   //由于进入Main函数之前,根调度器就已经创建并且运行,
-  void Scheduler::start()
+  void Scheduler::start(CbType cb)
   {
     if(_stop == false) return;
     ASSERT(_minThread > 0 && _maxThread > 0);
     ASSERT(_maxThread >= _minThread);
     ASSERT(_limitPayLoad > 0 );
+    //设置为自己
+    setThis(this);
     //LOG_INFO(sys_log) << "HERE";
-    _ioMgr.reset(new IOManager());
+    _ioMgr.reset(new IOManager("",getThis()));
     _currentThread = _minThread;
     for(int i=0;i<_minThread;i++)
       {
 	std::stringstream ss;
 	ss<<_name<<"_processer_"<<i;
 	//LOG_INFO(sys_log) << shared_from_this() << std::endl;
-	_pcsQue[i].reset(new Processer(ss.str()) );
+	_pcsQue[i].reset(new Processer(ss.str(),getThis()));
       }
-    for(int i = 0;i<_minThread;i++)
+    for(int i = 0;i<_minThread-1;i++)
       {
 	_pcsQue[i]->start();
       }
+    if(cb)
+      _pcsQue[_minThread-1]->start(cb);
+    else
+      _pcsQue[_minThread-1]->start();
     LOG_DEBUG(sys_log) << "Scheduler Created!";
     _stop = false;
   }
@@ -94,9 +109,17 @@ namespace zhuyh
     //LOG_DEBUG(sys_log)<<"Scheduler Stopped";
     _stop = true;
   }
-
+  
   void Scheduler::addNewTask(std::shared_ptr<Task> task)
   {
+    ASSERT2(_stop == false,"Scheduler should start first");
+    addTask(task);
+  }
+
+  void Scheduler::addNewTask(CbType cb)
+  {
+    ASSERT2(_stop == false,"Scheduler should start first");
+    Task::ptr task(new Task(cb));
     addTask(task);
   }
   
@@ -142,7 +165,6 @@ namespace zhuyh
   {
     --(_ioMgr->_holdCount);
   }
-  
   void Scheduler::addTask(std::shared_ptr<Task> task)
   {
     Processer::ptr p = getMinPayLoad();

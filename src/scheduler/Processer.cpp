@@ -26,10 +26,14 @@ namespace zhuyh
     return fcntl_f(fd,F_SETFL,flags & ~O_NONBLOCK);
   }
   
-  Processer::Processer(const std::string name)
+  Processer::Processer(const std::string name,Scheduler* schd)
     :_name(name)
   {
-    _scheduler = Scheduler::Schd::getInstance();
+    //根调度器
+    if(schd == nullptr)
+      _scheduler = Scheduler::Schd::getInstance();
+    else
+      _scheduler = schd;
     _epfd = epoll_create(1);
     ASSERT2(_epfd >=0 , "epoll_create error");
     int rt = pipe(_notifyFd);
@@ -69,17 +73,25 @@ namespace zhuyh
     //LOG_INFO(sys_log) << "Processer : "<<_name<<"  Destroyed, worked = :"<<worked;
   }
   
-  void Processer::start()
+  void Processer::start(CbType cb)
   {
-    try
+    if(cb == nullptr)
       {
-	_thread.reset(new Thread(std::bind(&Processer::run,shared_from_this()),_name));
-      }
-    catch (std::exception& e)
-      {
+	try
+	  {
+	    _thread.reset(new Thread(std::bind(&Processer::run,shared_from_this()),_name));
+	  }
+	catch (std::exception& e)
+	  {
 	LOG_ERROR(sys_log) << e.what();
+	  }
       }
-    //LOG_INFO(sys_log) << "Processer Started!";
+    else
+      {
+	addTask(Task::ptr(new Task(cb)));
+	run();
+      }
+	//LOG_INFO(sys_log) << "Processer Started!";
   }
 
   bool Processer::addTask(Task::ptr task)
@@ -168,7 +180,7 @@ namespace zhuyh
   
   void Processer::run()
   {
-    
+    Scheduler::setThis(_scheduler);
     Hook::setHookState(true);
     std::vector<struct epoll_event> evs(20);
     setMainFiber(Fiber::getThis());
@@ -253,7 +265,7 @@ namespace zhuyh
 	      }
 	  }
 	
-	static const int MaxTimeOut = 500;
+	static const int MaxTimeOut = 10;
 	int rt = 0;
 	while(1)
 	  {

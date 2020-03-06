@@ -34,16 +34,20 @@ namespace zhuyh
     typedef std::function<void()> CbType;
     typedef Singleton<Scheduler> Schd;
     //用户创建调度器
-    Scheduler(const std::string& name,int minThread,int maxThread,int limitPayLoad = 20);
+    Scheduler(const std::string& name,int threads);
     ~Scheduler();
     void stop();
-    void start();
+    //设置回调则复用主线程
+    void start(CbType cb = nullptr);
+    static Scheduler* getThis();
+    static void setThis(Scheduler* schd);
     //添加计时器
     //void addTimer();
     /*
      *负载均衡时机:某一个线程无任务时,去向另外一个线程偷取任务
      */
     //供外界添加新任务
+    void addNewTask(CbType cb);
     void addNewTask(std::shared_ptr<Task> task);
     int addReadEvent(int fd,std::function<void()> cb = nullptr);
     int addWriteEvent(int fd,std::function<void()> cb = nullptr);
@@ -54,6 +58,7 @@ namespace zhuyh
     int cancleReadEvent(int fd);
     int cancleWriteEvent(int fd);
     int cancleAllEvent(int fd);
+    
   private:
     int balance(std::shared_ptr<Processer> prc);
     //需要线程安全,供IOManager使用

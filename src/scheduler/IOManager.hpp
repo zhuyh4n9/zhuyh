@@ -48,7 +48,7 @@ namespace zhuyh
       std::shared_ptr<Task> wrtask = nullptr;
     };
     typedef std::shared_ptr<IOManager> ptr;
-    IOManager(const std::string& name = "");
+    IOManager(const std::string& name = "",Scheduler* schd = nullptr);
     ~IOManager();
     int addEvent(int fd,std::shared_ptr<Task> task,EventType type);
     int delEvent(int fd, EventType type);

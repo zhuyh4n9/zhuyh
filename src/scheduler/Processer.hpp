@@ -16,16 +16,17 @@ namespace zhuyh
   {
   public:
     friend class Scheduler;
+    typedef std::function<void()> CbType;
     typedef std::shared_ptr<Processer> ptr;
     //构造函数提供最大空闲协程数和负载因子,maxIdle = 0 采用配置文件中个数
-    Processer(const std::string name = "");
+    Processer(const std::string name = "",Scheduler* schd = nullptr);
     ~Processer();
     //TODO:需要线程安全
     using Deque = NonbTSQueue<Task::ptr>;
     //向该processer添加一个任务
     bool addTask(Task::ptr task);
     bool addTask(Task::ptr* task);
-    void start();
+    void start(CbType cb = nullptr);
     void stop();
     void join()
     {

@@ -23,14 +23,17 @@ namespace zhuyh
       return -1;
     return fcntl_f(fd,F_SETFL,flags & ~O_NONBLOCK);
   }
-  IOManager::IOManager(const std::string& name)
+  IOManager::IOManager(const std::string& name,Scheduler* schd)
   {
     _epfd = epoll_create(1);
     if(_epfd < 0 )
       {
 	throw std::logic_error("epoll_create error");
       }
-    _scheduler = Scheduler::Schd::getInstance();
+    if(schd == nullptr)
+      _scheduler = Scheduler::Schd::getInstance();
+    else
+      _scheduler = schd;
     if(name == "")
       _name = "IOManager";
     else
@@ -287,6 +290,7 @@ namespace zhuyh
   
   void IOManager::run()
   {
+    Scheduler::setThis(_scheduler);
     Hook::setHookState(true);
     Fiber::getThis();
     const int MaxEvent = 1000;

@@ -146,7 +146,7 @@ static int do_io(int fd,const char* funcName,OriFunc oriFunc,
       return oriFunc(fd,std::forward<Args>(args)...);
     }
   uint64_t timeout = fdInfo->getTimeout(timeout_so);
-  auto scheduler = zhuyh::Scheduler::Schd::getInstance();
+  auto scheduler = zhuyh::Scheduler::getThis();
   do{
     //LOG_ROOT_WARN() << "call function "<<"do_io<"<<funcName<<">" << " fd = "<<fd;
     int n = 0;
@@ -221,7 +221,7 @@ extern "C"
 	//LOG_ROOT_ERROR() << "USE ORIGIN";
 	return sleep_f(seconds);
       }
-    auto scheduler = zhuyh::Scheduler::Schd::getInstance();
+    auto scheduler = zhuyh::Scheduler::getThis();
     ASSERT(scheduler != nullptr);
     scheduler->addTimer(zhuyh::Timer::ptr(new zhuyh::Timer((time_t)seconds)));
     return 0;
@@ -235,7 +235,7 @@ extern "C"
 	//LOG_ROOT_ERROR() << "USE ORIGIN";
 	return usleep_f(usec);
       }
-    auto scheduler = zhuyh::Scheduler::Schd::getInstance();
+    auto scheduler = zhuyh::Scheduler::getThis();
     ASSERT(scheduler != nullptr);
     usec /= 1000;
     scheduler->addTimer(zhuyh::Timer::ptr(new zhuyh::Timer(0,(time_t)usec)));
@@ -247,7 +247,7 @@ extern "C"
     do_init();
     if(zhuyh::Hook::isHookEnable() == false)
       return nanosleep_f(req,rem);
-    auto scheduler = zhuyh::Scheduler::Schd::getInstance();
+    auto scheduler = zhuyh::Scheduler::getThis();
     ASSERT(scheduler != nullptr);
     time_t sec = req->tv_sec;
     time_t nsec = req->tv_nsec;
@@ -308,7 +308,7 @@ extern "C"
 	return rt;
       }
     uint64_t timeout = zhuyh::connect_time_out->getVar();
-    zhuyh::Scheduler* scheduler = zhuyh::Scheduler::Schd::getInstance();
+    zhuyh::Scheduler* scheduler = zhuyh::Scheduler::getThis();
     zhuyh::Timer::ptr timer = nullptr;
     std::shared_ptr<TimerInfo> tinfo(new TimerInfo());
     std::weak_ptr<TimerInfo> winfo(tinfo);
@@ -466,7 +466,7 @@ extern "C"
     auto fdInfo = fdmanager->lookUp(fd,false);
     if(fdInfo)
       {
-	auto scheduler = zhuyh::Scheduler::Schd::getInstance();
+	auto scheduler = zhuyh::Scheduler::getThis();
 	scheduler->cancleAllEvent(fd);
 	fdmanager->del(fd);
       }

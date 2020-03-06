@@ -3,8 +3,6 @@
 #include<byteswap.h>
 #include<stdint.h>
 
-#define ORDER_LITTLE_ENDIAN 1
-#define ORDER_BIG_ENDIAN  2
 
 namespace zhuyh
 {

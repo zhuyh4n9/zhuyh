@@ -90,6 +90,9 @@ int main(int argc,char* argv[])
       LOG_ROOT_ERROR() << "Port : "<< str << " is not Valid";
       exit(1);
     }
-  co std::bind(doServerLoop,port);
+  Scheduler::ptr accept_schd (new Scheduler("accept",1));
+  accept_schd->start(std::bind(doServerLoop,port));
+  
+  while(1) sleep(1);
   return 0;
 }
