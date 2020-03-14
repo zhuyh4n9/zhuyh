@@ -15,3 +15,4 @@
 #include "src/latch/coLock.hpp"
 #include "src/socket/Address.hpp"
 #include "src/socket/Socket.hpp"
+#include "src/bytearray/ByteArray.hpp"

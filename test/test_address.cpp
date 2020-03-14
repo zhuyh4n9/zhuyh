@@ -33,7 +33,7 @@ int main()
   };
   co [](){
     std::vector<IAddress::ptr> res;
-    if(IAddress::newAddressByHost(res,"www.baidu.com:ftp"))
+    if(IAddress::newAddressByHost(res,"www.baidu.com:http"))
       for(auto& item : res)
 	{
 	  LOG_ROOT_INFO()<<*item;
