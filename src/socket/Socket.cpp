@@ -105,12 +105,15 @@ namespace zhuyh
   //设置套接字选项 : 关闭Nagle算法，设置地址复用
   bool Socket::initSock()
   {
+    if(m_family == AF_UNIX) return true;
     int val = 1;
     setSockOption(SOL_SOCKET,SO_REUSEADDR,val);
+    // if(!rt) LOG_ROOT_INFO()<<"Failed to resue port";
     if(m_type == SOCK_STREAM)
       {
 	//取消Nagle
 	setSockOption(IPPROTO_TCP,TCP_NODELAY,val);
+	//if(!rt) LOG_ROOT_INFO()<<"Failed to resue port";
       }
     return true;
   }

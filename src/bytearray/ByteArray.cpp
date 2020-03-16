@@ -40,7 +40,7 @@ namespace zhuyh
   {
     if(blockSize == 0)
       {
-	blockSize = 4096;
+	m_blockSize = 4096;
       }
     m_head = new Node(m_blockSize);
     m_cur = m_head;
@@ -553,8 +553,7 @@ namespace zhuyh
 						std::to_string(m_capacity));
     if( v >= m_totalSize)
       {
-	m_position = m_totalSize;
-	return ;
+	m_totalSize = v;
       }
     Node* cur = m_head;
     int step = v / m_blockSize;
@@ -661,7 +660,7 @@ namespace zhuyh
     for(size_t i = 0;i<str.size();i++)
       {
 	if( i > 0 && i%32 == 0) ss << std::endl;
-	ss << std::setw(2) << std::setfill('0') << std::hex << (int)(uint8_t)str[i];
+	ss << std::setw(2) << std::setfill('0') << std::hex << (int)(uint8_t)str[i] <<" ";
       }
     return ss.str();
   }
@@ -731,13 +730,15 @@ namespace zhuyh
       {
 	nblockPos = pos % m_blockSize;
 	rm = m_blockSize - pos % m_blockSize;
-	int nread = std::min(size,(uint64_t)rm);
+	uint64_t nread = std::min(size,(uint64_t)rm);
 	iov.iov_base = cur->m_buff + nblockPos;
 	iov.iov_len = nread;
 	size -= nread;
-	pos += nread;;
+	pos += nread;
 	cur = cur->m_next;
 	buffers.push_back(iov);
+	//LOG_ROOT_INFO() << "pos : "<<pos<<" nblockSize : "<<nblockPos
+	//		<<" rm : " <<rm<<" nread : "<<nread;
       }
     return len;
   }
@@ -754,10 +755,11 @@ namespace zhuyh
     size -= getRemain();
     while(size)
       {
-	//LOG_INFO(s_logger) << "Allocating Block...";
 	Node* tmp = new Node(m_blockSize);
 	m_capacity+=m_blockSize;
 	size -= std::min(size,m_blockSize);
+	//LOG_INFO(s_logger) << "Allocating Block...size : "<<size
+	//		   <<" blockSize : "<<m_blockSize;
 	cur->m_next = tmp;
 	cur = cur->m_next;
       }
