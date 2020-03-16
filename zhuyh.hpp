@@ -15,4 +15,7 @@
 #include "src/latch/coLock.hpp"
 #include "src/socket/Address.hpp"
 #include "src/socket/Socket.hpp"
+#include "src/socket/TcpServer.hpp"
 #include "src/bytearray/ByteArray.hpp"
+#include "src/http/Http.hpp"
+#include "src/http/HttpParser.hpp"
