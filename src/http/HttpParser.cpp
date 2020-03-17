@@ -29,6 +29,8 @@ namespace http
   
   static uint64_t _http_request_header_size;
   static uint64_t _http_request_body_size;
+namespace
+{
   struct __RequestIniter
   {
     __RequestIniter()
@@ -48,8 +50,18 @@ namespace http
 		});			      
     }
   };
-
+  
   struct __RequestIniter s_request_initer;
+}
+  uint64_t HttpRequestParser::getMaxBodySize()
+  {
+    return _http_request_body_size;
+  }
+  
+  uint64_t HttpRequestParser::getMaxHeaderSize()
+  {
+    return _http_request_header_size;
+  }
   //request callback
   void on_request_method(void *data, const char *at, size_t length)
   {
@@ -65,19 +77,23 @@ namespace http
   }
   void on_request_uri(void *data, const char *at, size_t length)
   {
+    //LOG_WARN(s_logger) << std::string(at,length);
   }
   void on_request_path(void *data, const char *at, size_t length)
   {
+    //LOG_WARN(s_logger) << std::string(at,length);
     HttpRequestParser* parser = static_cast<HttpRequestParser*>(data);
     parser->getData()->setPath(std::string(at,length));
   }
   void on_request_fragment(void *data, const char *at, size_t length)
   {
+    LOG_WARN(s_logger) << std::string(at,length);
     HttpRequestParser* parser = static_cast<HttpRequestParser*>(data);
     parser->getData()->setFragment(std::string(at,length));
   }
   void on_request_query(void *data, const char *at, size_t length)
   {
+    LOG_WARN(s_logger) << std::string(at,length);
     HttpRequestParser* parser = static_cast<HttpRequestParser*>(data);
     parser->getData()->setQuery(std::string(at,length));
   }
@@ -117,28 +133,6 @@ namespace http
 				 std::string(value,vlen));
   }
 
-
-  struct __ResponseIniter
-  {
-    __ResponseIniter()
-    {
-      _http_response_header_size = s_http_response_header_size->getVar();
-      _http_response_body_size = s_http_response_body_size->getVar();
-      
-      s_http_response_header_size
-	->addCb([](const uint64_t& ov,const uint64_t& nv)
-		{
-		  _http_response_header_size = nv;
-		});
-      s_http_response_body_size
-	->addCb([](const uint64_t& ov,const uint64_t& nv)
-		{
-		  _http_response_body_size = nv;
-		});			      
-    }
-  };
-
-  struct __ResponseIniter s_responser_initer;
   
   HttpRequestParser::HttpRequestParser()
     :m_error(0)
@@ -176,7 +170,38 @@ namespace http
     return m_error || http_parser_has_error(&m_parser);
   }
 
-
+namespace
+{
+  struct __ResponseIniter
+  {
+    __ResponseIniter()
+    {
+      _http_response_header_size = s_http_response_header_size->getVar();
+      _http_response_body_size = s_http_response_body_size->getVar();
+      
+      s_http_response_header_size
+	->addCb([](const uint64_t& ov,const uint64_t& nv)
+		{
+		  _http_response_header_size = nv;
+		});
+      s_http_response_body_size
+	->addCb([](const uint64_t& ov,const uint64_t& nv)
+		{
+		  _http_response_body_size = nv;
+		});			      
+    }
+  };
+  
+  struct __ResponseIniter s_responser_initer;
+}
+  uint64_t HttpResponseParser::getMaxBodySize()
+  {
+    return _http_response_body_size;
+  }
+  uint64_t HttpResponseParser::getMaxHeaderSize()
+  {
+    return _http_response_header_size;
+  }
   //response callback
   void on_response_reason(void *data, const char *at, size_t length)
   {

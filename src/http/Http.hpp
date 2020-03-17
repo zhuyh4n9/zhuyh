@@ -51,7 +51,7 @@ namespace http
     XX(100,  CONTINUE,                        Continue)			        \
     XX(101,  SWITCHING_PROTOCOLS,             Switching Protocols)	        \
     XX(102,  PROCESSING,                      Processing)			\
-    XX(200,  OK,                              OK)				\
+    XX(200,  OK,                              OK)		          	\
     XX(201,  CREATED,                         Created)			        \
     XX(202,  ACCEPTED,                        Accepted)			        \
     XX(203,  NON_AUTHORITATIVE_INFORMATION,   Non Authoritative Infomation)     \
@@ -236,6 +236,11 @@ namespace http
     const MapType& getCookies() const
     {
       return m_cookies;
+    }
+
+    uint8_t getVersion() const
+    {
+      return m_version;
     }
     bool isClose() const
     {

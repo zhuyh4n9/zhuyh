@@ -93,7 +93,7 @@ namespace zhuyh
       return m_protocol;
     }
 
-    bool isConnect() const
+    bool isConnected() const
     {
       return m_connect;
     }

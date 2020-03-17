@@ -32,10 +32,10 @@ namespace http
 #define XX(num,name,string) { #string,(HttpMethod)num},
     HTTP_METHOD_MAP(XX)
 #undef XX
-    {"INVALID_METHOD",HttpMethod::INVALID_METHOD}
+    {"INVALID METHOD",HttpMethod::INVALID_METHOD}
   };
 
-  static const std::unordered_map<size_t,std::string>
+  static const std::map<size_t,std::string>
   s_status_to_string =
     {
 #define XX(num,name,string)        {num,#string},
@@ -58,7 +58,7 @@ namespace http
   {
     size_t idx = (size_t)method;
     if(idx > s_method_to_string.size())
-      return "INVALID_METHOD";
+      return "INVALID METHOD";
     return s_method_to_string[idx];
   }
   HttpMethod  stringToHttpMethod(const std::string&  method)
@@ -76,7 +76,7 @@ namespace http
     size_t idx = (size_t) status;
     auto it = s_status_to_string.find(idx);
     if(it == s_status_to_string.end())
-      return "INVALID_STATUS";
+      return "INVALID STATUS";
     return it->second;
   }
   HttpStatus  stringToHttpStatus(const std::string& status)
@@ -90,7 +90,7 @@ namespace http
     :m_method(HttpMethod::GET),
      m_version(version),
      m_close(close),
-     m_status(HttpStatus::INVALID_STATUS),
+     m_status(HttpStatus::OK),
      m_path("/")
   {
   }
