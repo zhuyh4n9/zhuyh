@@ -88,6 +88,7 @@ namespace http
   {
     std::stringstream ss;
     ss<<*resp;
+    //LOG_ROOT_INFO() << *resp;
     return writeFixSize(ss.str().c_str(),ss.str().size());
   }
   

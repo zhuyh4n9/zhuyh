@@ -38,13 +38,14 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include <errno.h>
+#include <cerrno>
+//#include "dbg.h"
 
 #define LEN(AT, FPC) (FPC - buffer - parser->AT)
 #define MARK(M,FPC) (parser->M = (FPC) - buffer)
 #define PTR_TO(F) (buffer + parser->F)
+#define check(A, M, ...) if(!(A)) { /*log_err(M, ##__VA_ARGS__);*/ errno=0; goto error; }
 
-#define check(A,M,...) if(!(A)) { errno = 0;goto error;}
 
 /** machine **/
 %%{
@@ -185,7 +186,7 @@ int httpclient_parser_execute(httpclient_parser *parser, const char *buffer, siz
     parser->mark = 0;
     parser->field_len = 0;
     parser->field_start = 0;
-    
+
     const char *p, *pe;
     int cs = parser->cs;
 
@@ -206,32 +207,17 @@ int httpclient_parser_execute(httpclient_parser *parser, const char *buffer, siz
     assert(p <= pe && "buffer overflow after parsing execute");
     assert(parser->nread <= len && "nread longer than length");
     assert(parser->body_start <= len && "body starts after buffer end");
-    //check(parser->mark < len, "mark is after buffer end");
-    if(!(parser->mark<len))
-    {
-       printf("mark is after buffer end\n");
-       goto error;
-    }
-   // check(parser->field_len <= len, "field has length longer than whole buffer");
-    if(!(parser->field_len < len))
-    {
-       printf("field has length longer than whole buffer\n");
-       goto error;
-    }
-   // check(parser->field_start < len, "field starts after buffer end");
-    if(!(parser->field_start < len))
-    {
-       printf("field stats after buffer end\n");
-       goto error;
-    }
-    /*
-    if(parser->body_start) {
-        // final \r\n combo encountered so stop right here 
-        parser->nread++;
-    }
-    */
+    check(parser->mark < len, "mark is after buffer end");
+    check(parser->field_len <= len, "field has length longer than whole buffer");
+    check(parser->field_start < len, "field starts after buffer end");
+
+    //if(parser->body_start) {
+    //    /* final \r\n combo encountered so stop right here */
+    //    parser->nread++;
+    //}
 
     return(parser->nread);
+
 error:
     return -1;
 }
@@ -258,3 +244,5 @@ int httpclient_parser_has_error(httpclient_parser *parser) {
 int httpclient_parser_is_finished(httpclient_parser *parser) {
     return parser->cs == httpclient_parser_first_final;
 }
+
+

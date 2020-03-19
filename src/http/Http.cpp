@@ -1,6 +1,7 @@
 #include "Http.hpp"
 #include <vector>
 #include <sstream>
+#include "../logs.hpp"
 
 namespace zhuyh
 {
@@ -18,73 +19,86 @@ namespace http
 
 
   //只读且文件作用域
-  static const std::vector<std::string> s_method_to_string =
+  static const std::vector<std::string>& s_method_to_string()
+  {
+    static const std::vector<std::string> _method_to_string =
     {
 #define XX(num,name,string)        #string,
      HTTP_METHOD_MAP(XX)
 #undef XX
      "INVALID METHOD"
     };
-
-  static const std::map<std::string,HttpMethod,CaseInsensitiveLesser>
-    s_string_to_method = 
-    {
-#define XX(num,name,string) { #string,(HttpMethod)num},
-    HTTP_METHOD_MAP(XX)
-#undef XX
-    {"INVALID METHOD",HttpMethod::INVALID_METHOD}
-  };
-
-  static const std::map<size_t,std::string>
-  s_status_to_string =
-    {
-#define XX(num,name,string)        {num,#string},
-     HTTP_STATUS_MAP(XX)
-#undef XX
-     {(size_t)HttpStatus::INVALID_STATUS,"INVALID STATUS"}
-    };
-
-  static std::map<std::string,HttpStatus> s_string_to_status =
+    return _method_to_string;
+  }
+  
+  static const std::map<std::string,HttpMethod,CaseInsensitiveLesser>&
+    s_string_to_method()
   {
-#define XX(num,name,string) {#string,(HttpStatus)num},
-    HTTP_STATUS_MAP(XX)
+    static const std::map<std::string,HttpMethod,CaseInsensitiveLesser>
+      _string_to_method = 
+      {
+#define XX(num,name,string) { #string,(HttpMethod)num},
+       HTTP_METHOD_MAP(XX)
 #undef XX
-    {"INVALID STATUS",HttpStatus::INVALID_STATUS}
-  };
+      };
+    return _string_to_method;
+  }
+  
+  static const std::map<int,std::string> s_status_to_string()
+  {
+    static std::map<int,std::string>
+      _status_to_string
+      {
+#define XX(num,name,str) {(int)HttpStatus::name, str},
+       HTTP_STATUS_MAP(XX)
+#undef XX
+      };
+    return _status_to_string;
+  }
+  static const std::map<std::string,HttpStatus>& s_string_to_status()
+  {
+    static std::map<std::string,HttpStatus> _string_to_status =
+      {
+#define XX(num,name,string) {string,(HttpStatus)num},
+       HTTP_STATUS_MAP(XX)
+#undef XX
+      };
+    return _string_to_status;
+  }
   //end of maps;
 
 
   std::string httpMethodToString(HttpMethod method)
   {
     size_t idx = (size_t)method;
-    if(idx > s_method_to_string.size())
+    if(idx > s_method_to_string().size())
       return "INVALID METHOD";
-    return s_method_to_string[idx];
+    return s_method_to_string()[idx];
   }
   HttpMethod  stringToHttpMethod(const std::string&  method)
   {
-    auto it = s_string_to_method.find(method);
-    if(it == s_string_to_method.end())
+    auto it = s_string_to_method().find(method);
+    if(it == s_string_to_method().end())
       {
 	return HttpMethod::INVALID_METHOD;
       }
     return it->second;
   }
   
-  std::string httpStatusToString(HttpStatus status)
+  std::string httpStatusToString(HttpStatus status,int pos = 1)
   {
-    size_t idx = (size_t) status;
-    auto it = s_status_to_string.find(idx);
-    if(it == s_status_to_string.end())
-      return "INVALID STATUS";
-    return it->second;
+    //LOG_ROOT_INFO() << "idx : "<<(int)status << " pos : "<<pos;
+    auto& mp = s_status_to_string();
+    //LOG_ROOT_INFO()<<"HERE\n";
+    auto it = mp.find((int)status);
+    return it == mp.end() ? "INVALID STATUS":it->second;
+    
   }
   HttpStatus  stringToHttpStatus(const std::string& status)
   {
-    auto it = s_string_to_status.find(status);
-    if(it == s_string_to_status.end())
-      return HttpStatus::INVALID_STATUS;
-    return it->second;
+    auto& mp = s_string_to_status();
+    auto it = mp.find(status);
+    return it == mp.end() ? HttpStatus::INVALID_STATUS : it->second;
   }
   HttpRequest::HttpRequest(uint8_t version,bool close)
     :m_method(HttpMethod::GET),
@@ -176,15 +190,16 @@ namespace http
   
   std::ostream& HttpRequest::dump(std::ostream& os) const
   {
-    os << httpMethodToString(m_method)<<" "<<m_path
+    os << httpMethodToString(m_method)<<" "
+       << (m_scheme.empty() ? "" : m_scheme+"://")<<m_path
        << (m_query.empty() ? "":"?")<<m_query
        << (m_fragment.empty() ? "":"#")<<m_fragment
        << " HTTP/"<<m_version/10<<"."<<m_version%10<<"\r\n";
     
-    os << "connection: "<<(m_close ? "close" : "keep-alive")<<"\r\n";
+    os << "Connection: "<<(m_close ? "close" : "keep-alive")<<"\r\n";
     for(auto& item : m_headers)
       {
-	if(strcasecmp(item.first.c_str(),"connecction") == 0)
+	if(strcasecmp(item.first.c_str(),"connection") == 0)
 	  continue;
 	os << item.first << ": "<<item.second<<"\r\n";
       }
@@ -268,7 +283,7 @@ namespace http
   {
     os << "HTTP/"<<m_version/10<<"."<<m_version%10
        << " "<<(uint32_t)m_status<<" "
-       <<(m_reason.empty() ? httpStatusToString(m_status) : m_reason)
+       <<(m_reason.empty() ? httpStatusToString(m_status,2) : m_reason)
        <<"\r\n";
 
     for(auto& item: m_headers)

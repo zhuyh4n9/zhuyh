@@ -67,7 +67,8 @@ namespace zhuyh
 							       zhuyh::getThreadId(), \
 							       __LINE__,__FILE__, \
 							       zhuyh::getCoroutineId(), \
-							       __func__,logger->getLogName()))).getSS()
+							       __func__,logger->getLogName(), \
+							       zhuyh::Thread::thisName()))).getSS()
 
 #define LOG_ROOT(level) LOGGER(level,GET_LOGGER("root"))
 #define LOG_ROOT_DEBUG() LOG_ROOT(zhuyh::LogLevel::Level::DEBUG)

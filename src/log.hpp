@@ -11,6 +11,7 @@
 #include <atomic>
 #include "latch/lock.hpp"
 #include "concurrent/Thread.hpp"
+#include "Singleton.hpp"
 
 namespace zhuyh
 {
@@ -50,6 +51,7 @@ namespace zhuyh
     //函数
     std::string s_func ;
     std::string s_logname;
+    std::string m_threadName;
     //最终所有消息写入到stringstream中
     std::stringstream ss;
     std::shared_ptr<Logger> logger;
@@ -61,7 +63,8 @@ namespace zhuyh
     LogEvent(std::shared_ptr<Logger> _logger,LogLevel::Level level,
 	     time_t elapse,time_t times,pid_t pid,pid_t tid,
 	     uint32_t lines,const std::string& files,uint32_t cid,
-	     const std::string& func,const std::string& logname = "");
+	     const std::string& func,const std::string& logname = "",
+	     const std::string& threadName = "NONE");
     LogEvent() {}
   };
 
@@ -401,10 +404,7 @@ namespace zhuyh
       :l_event(event)
     {
     }
-    ~LogWrapper() {
-      l_event->logger->log(l_event->l_level,l_event);
-      //std::cout<<"HERE\n";
-    }
+    ~LogWrapper();
     std::stringstream& getSS()
     {
       return l_event->ss;

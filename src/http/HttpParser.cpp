@@ -78,22 +78,35 @@ namespace
   void on_request_uri(void *data, const char *at, size_t length)
   {
     //LOG_WARN(s_logger) << std::string(at,length);
+    HttpRequestParser* parser = static_cast<HttpRequestParser*>(data);
+    parser->getData()->setUri(std::string(at,length));
   }
-  void on_request_path(void *data, const char *at, size_t length)
+  void on_request_scheme(void *data, const char *at, size_t length)
   {
     //LOG_WARN(s_logger) << std::string(at,length);
     HttpRequestParser* parser = static_cast<HttpRequestParser*>(data);
-    parser->getData()->setPath(std::string(at,length));
+    parser->getData()->setScheme(std::string(at,length));
+  }
+  void on_request_path(void *data, const char *at, size_t length)
+  {
+    HttpRequestParser* parser = static_cast<HttpRequestParser*>(data);
+    size_t steps = 0;
+    if(length >=2 && strncmp("//",at,2) == 0)
+      {
+	steps+=2;
+      }
+    //LOG_WARN(s_logger) << std::string(at+steps,length - steps);
+    parser->getData()->setPath(std::string(at+steps,length-steps));
   }
   void on_request_fragment(void *data, const char *at, size_t length)
   {
-    LOG_WARN(s_logger) << std::string(at,length);
+    // LOG_WARN(s_logger) << std::string(at,length);
     HttpRequestParser* parser = static_cast<HttpRequestParser*>(data);
     parser->getData()->setFragment(std::string(at,length));
   }
   void on_request_query(void *data, const char *at, size_t length)
   {
-    LOG_WARN(s_logger) << std::string(at,length);
+    //LOG_WARN(s_logger) << std::string(at,length);
     HttpRequestParser* parser = static_cast<HttpRequestParser*>(data);
     parser->getData()->setQuery(std::string(at,length));
   }
@@ -146,7 +159,8 @@ namespace
     m_parser.query_string = on_request_query;
     m_parser.http_version = on_request_version;
     m_parser.header_done = on_request_header_done;
-
+    m_parser.request_scheme = on_request_scheme;
+    
     m_parser.http_field = on_request_http_field;
     m_parser.data = this;
   }

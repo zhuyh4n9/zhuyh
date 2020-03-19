@@ -88,7 +88,10 @@ namespace zhuyh
   void IOManager::notify()
   {
     int rt = write(_notifyFd[1],"",1);
-    ASSERT(rt >= 0);
+    if(rt < 0)
+      {
+	LOG_ROOT_ERROR() << "rt : "<<rt << " error : "<<strerror(errno) << " errno : "<<errno;
+      }
   }
   void IOManager::resizeMap(uint32_t size)
   {
@@ -293,6 +296,7 @@ namespace zhuyh
     Scheduler::setThis(_scheduler);
     Hook::setHookState(true);
     Fiber::getThis();
+    std::shared_ptr<char> idleBuff(new char[1024],[](char* ptr) { delete [] ptr;});
     const int MaxEvent = 1000;
     struct epoll_event* events = new epoll_event[1001];
     //毫秒
@@ -329,7 +333,21 @@ namespace zhuyh
 	  {
 	    struct epoll_event& ev = events[i];
 	    FdEvent* epEv = (FdEvent*)ev.data.ptr;
-	    if(epEv->fd == _notifyFd[0]) continue;
+	    if(epEv->fd == _notifyFd[0])
+	      {
+		int rt = 0;
+		do
+		  {
+		    rt = read(_notifyFd[0],idleBuff.get(),1023);
+		    if(rt < 0)
+		      {
+			if(errno == EAGAIN || errno == EWOULDBLOCK) break;
+			LOG_ERROR(sys_log) << "read notifyFd failed,rt : "<<rt
+					   << " error : "<<strerror(errno)
+					   << " errno : "<<errno;
+		      }
+		  }while(1);
+	      }
 	    int real_event = NONE;
 	    LockGuard lg(epEv->lk);
 	    if(ev.events & (EPOLLERR | EPOLLHUP))

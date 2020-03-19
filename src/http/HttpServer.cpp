@@ -10,7 +10,8 @@ namespace http
 			 Scheduler* accept_schd,
 			 const std::string& name)
     :TcpServer(schd,accept_schd,name),
-     m_keepAlive(keepAlive)
+     m_keepAlive(keepAlive),
+     m_dispatch(std::make_shared<ServletDispatch>())
   {
   }
 
@@ -22,21 +23,18 @@ namespace http
 	HttpRequest::ptr req = session->recvRequest();
 	if(!req)
 	  {
+	    if(!errno ) break;
 	    LOG_WARN(s_logger) << "receive request failed, error : "<<strerror(errno)
 			       <<" errno : "<<errno<<" client : "<<client;
 	    break;
 	  }
+	//LOG_ROOT_INFO() <<*req;
 	HttpResponse::ptr resp =
 	  std::make_shared<HttpResponse>(req->getVersion(),
 					 req->isClose()||!m_keepAlive);
-	resp->setBody("Hello World");
-	int rt = session->sendResponse(resp);
-	if(rt <= 0)
-	  {
-	    LOG_WARN(s_logger) << "send response failed , error : "<<strerror(errno)
-			       <<" errno : "<<errno<<" client : "<<client;
-	    break;
-	  }
+	m_dispatch->handle(req,resp,session);
+	//LOG_ROOT_INFO()<<*resp;
+	session->sendResponse(resp);
       }
     while(m_keepAlive);
   }

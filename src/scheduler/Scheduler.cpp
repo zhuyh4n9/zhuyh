@@ -32,6 +32,7 @@ namespace zhuyh
       _name = "Scheduler";
     else
       _name = name;
+    m_lgThread = SingletonPtr<LogThread>::getInstance();
     _pcsQue.resize(_minThread);
   }
   

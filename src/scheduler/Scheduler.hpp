@@ -12,6 +12,7 @@
 #include <vector>
 #include "TimerManager.hpp"
 #include "../Singleton.hpp"
+#include "../LogThread.hpp"
 
 namespace zhuyh
 {
@@ -94,6 +95,9 @@ namespace zhuyh
     std::atomic<bool> _stopping {false};
     std::atomic<bool> _stop {true};
     std::string _name = "Scheduler";
+
+    //
+    LogThread::ptr m_lgThread;
   };
   
 }

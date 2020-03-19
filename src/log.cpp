@@ -12,6 +12,7 @@
 #include<sstream>
 #include"util.hpp"
 #include"macro.hpp"
+#include"LogThread.hpp"
 
 namespace zhuyh
 {
@@ -499,15 +500,16 @@ namespace zhuyh
 	      std::shared_ptr<Logger> logger,
 	      LogEvent::ptr event)
   {
-    ss << Thread::thisName();
+    ss << event->m_threadName;
   }
   LogEvent::LogEvent(std::shared_ptr<Logger> _logger,LogLevel::Level level,
 		     time_t elapse,time_t times,pid_t pid,pid_t tid,
 		     uint32_t lines,const std::string& files,uint32_t cid,
-		     const std::string& func,const std::string& logname)
+		     const std::string& func,const std::string& logname,
+		     const std::string& threadName)
     :l_level(level),u_eplapse(elapse),u_times(times),
      p_pid(pid),p_tid(tid),u_cid(cid),u_lines(lines),s_file(files),
-    s_func(func),s_logname(logname),logger(_logger)
+     s_func(func),s_logname(logname),m_threadName(threadName),logger(_logger)
   {
    if(s_logname == "" || s_logname.empty())
      {
@@ -777,4 +779,10 @@ namespace zhuyh
     }
   };
   static LogIniter __log_initer_;
+
+  LogWrapper::~LogWrapper() {
+      SingletonPtr<LogThread>::getInstance()->sendLog(l_event);
+      // l_event->logger->log(l_event->l_level,l_event);
+      //std::cout<<"HERE\n";
+  }
 } 

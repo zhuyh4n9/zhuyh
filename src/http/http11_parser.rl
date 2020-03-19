@@ -38,6 +38,10 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <string>
+#include <iostream>
+
+//#include <dbg.h>
 
 #define LEN(AT, FPC) (FPC - buffer - parser->AT)
 #define MARK(M,FPC) (parser->M = (FPC) - buffer)
@@ -134,11 +138,13 @@
 
   pct_encoded   = ( "%" xdigit xdigit ) ;
 
-  pchar         = ( unreserved | pct_encoded | sub_delims | ":" | "@" ) ;
+# pchar         = ( unreserved | pct_encoded | sub_delims | ":" | "@" ) ;
+# add (any -- ascii) support chinese
+  pchar         = ( (any -- ascii) | unreserved | pct_encoded | sub_delims | ":" | "@" ) ;
 
-  fragment      = ( ( pchar | "/" | "?" )* ) >mark %fragment ;
+  fragment      = ( ( pchar | "/" | "?" | "|")* ) >mark %fragment ;
 
-  query         = ( ( pchar | "/" | "?" )* ) %query_string ;
+  query         = ( ( pchar | "/" | "?" | "|")* ) %query_string ;
 
   # non_zero_length segment without any colon ":" ) ;
   segment_nz_nc = ( ( unreserved | pct_encoded | sub_delims | "@" )+ ) ;
@@ -191,7 +197,14 @@
   userinfo      = ( ( unreserved | pct_encoded | sub_delims | ":" )* ) ;
   authority     = ( ( userinfo "@" )? host ( ":" port )? ) ;
 
-  scheme        = ( alpha ( alpha | digit | "+" | "-" | "." )* ) ;
+  action save_scheme
+    {
+       if(parser->request_scheme != NULL)
+      	parser->request_scheme(parser->data, PTR_TO(mark), LEN(mark,fpc));
+    }
+
+  scheme = (alpha (alpha | digit | "+" | "-" | ".")*)>mark %save_scheme ;
+
 
   relative_part = ( "//" authority path_abempty
                   | path_absolute
@@ -209,7 +222,7 @@
   absolute_URI  = ( scheme ":" hier_part ( "?" query )? ) ;
 
   relative_ref  = ( (relative_part %request_path ( "?" %start_query query )?) >mark %request_uri ( "#" fragment )? ) ;
-  URI           = ( scheme ":" (hier_part  %request_path ( "?" %start_query query )?) >mark %request_uri ( "#" fragment )? ) ;
+  URI           = ( scheme ":" ( hier_part  %request_path ( "?" %start_query query )?) >mark %request_uri ( "#" fragment )? ) ;
 
   URI_reference = ( URI | relative_ref ) ;
 
@@ -277,11 +290,11 @@ int http_parser_init(http_parser *parser) {
 size_t http_parser_execute(http_parser *parser, const char *buffer, size_t len, size_t off)  
 {
   if(len == 0) return 0;
-  parser->nread = 0;
-  parser->mark = 0;
-  parser->field_len = 0;
-  parser->field_start = 0;
-  
+   parser->nread = 0;
+   parser->mark = 0;
+   parser->field_len = 0;
+   parser->field_start = 0;
+
   const char *p, *pe;
   int cs = parser->cs;
 
@@ -329,3 +342,4 @@ int http_parser_has_error(http_parser *parser) {
 int http_parser_is_finished(http_parser *parser) {
   return parser->cs >= http_parser_first_final;
 }
+
