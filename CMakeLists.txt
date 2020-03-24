@@ -11,6 +11,7 @@ set(LIB_SRC
   src/concurrent/Thread.cpp
   src/latch/lock.cpp
   src/util.cpp
+  src/LogThread.cpp
   src/concurrent/fiber.cpp
   src/asm/make_x86_64_sysv_elf_gas.S
   src/asm/jump_x86_64_sysv_elf_gas.S
@@ -30,7 +31,13 @@ set(LIB_SRC
   src/http/Http.cpp
   src/http/http11_parser.rl.cpp
   src/http/httpclient_parser.rl.cpp
-  src/http/HttpParser.cpp)
+  src/http/HttpParser.cpp
+  src/http/HttpSession.cpp
+  src/http/HttpConnection.cpp
+  src/http/HttpServer.cpp
+  src/http/Servlet.cpp
+  src/stream/Stream.cpp
+  src/stream/SocketStream.cpp)
 
 set(LIBS 
     zhuyh  
@@ -108,6 +115,11 @@ target_link_libraries(test_tcpserver zhuyh ${LIBS})
 add_executable(echo_server example/echo_server.cpp)
 target_link_libraries(echo_server zhuyh ${LIBS})
 
+add_executable(test_httpServer test/test_httpServer.cpp)
+target_link_libraries(test_httpServer zhuyh ${LIBS})
+
+add_executable(test_httpConnection test/test_httpConnection.cpp)
+target_link_libraries(test_httpConnection zhuyh ${LIBS})
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 

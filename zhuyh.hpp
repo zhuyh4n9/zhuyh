@@ -18,4 +18,7 @@
 #include "src/socket/TcpServer.hpp"
 #include "src/bytearray/ByteArray.hpp"
 #include "src/http/Http.hpp"
+#include "src/http/HttpSession.hpp"
+#include "src/http/HttpConnection.hpp"
 #include "src/http/HttpParser.hpp"
+#include "src/http/HttpServer.hpp"
