@@ -27,7 +27,7 @@ namespace http
      */
     while(1)
       {
-	int len = read(data,header_size-remain);
+	int len = read(data + remain,header_size-remain);
 	if(len <= 0)
 	  {
 	    close();
@@ -62,12 +62,12 @@ namespace http
 	int len = 0;
 	if(length >= remain)
 	  {
-	    body.append(data,remain);
+	    memcpy(&body[0],data,remain);
 	    len = remain;
 	  }
 	else
 	  {
-	    body.append(data,length);
+	    memcpy(&body[0],data,length);
 	    len = length;
 	  }
 	length -= remain;

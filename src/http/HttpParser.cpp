@@ -15,7 +15,7 @@ namespace http
   static ConfigVar<uint64_t>::ptr s_http_request_body_size =
     Config::lookUp<uint64_t>("http.request.body_size",64*1024*1024ull,
 			     "http max request body size");
-
+  
   static ConfigVar<uint64_t>::ptr s_http_response_header_size =
     Config::lookUp<uint64_t>("http.response.header_size",4*1024ull,"http max response header size");
   
@@ -139,7 +139,7 @@ namespace
     if(flen == 0)
       {
 	LOG_WARN(s_logger) << "Invalid flied length : length = 0";
-	parser->setError(FIELD_NOT_VALID);
+	//parser->setError(FIELD_NOT_VALID);
 	return;
       }
     parser->getData()->setHeader(std::string(field,flen),
@@ -259,7 +259,7 @@ namespace
     if(flen == 0)
       {
 	LOG_WARN(s_logger) << "Invalid flied length : length = 0";
-	parser->setError(FIELD_NOT_VALID);
+	//parser->setError(FIELD_NOT_VALID);
 	return;
       }
     parser->getData()->setHeader(std::string(field,flen),

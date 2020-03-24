@@ -205,7 +205,7 @@ namespace http
       }
     if(!m_body.empty())
       {
-	os << "content-length :"<<m_body.size()
+	os << "Content-length :"<<m_body.size()
 	   <<"\r\n\r\n"<< m_body;
       }
     else

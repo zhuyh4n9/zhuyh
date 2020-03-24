@@ -11,6 +11,32 @@ void run()
     {
       sleep(2);
     }
+  auto dispatch = server->getServletDispatch();
+  dispatch->addServlet("/",[](http::HttpRequest::ptr req,
+			      http::HttpResponse::ptr resp,
+			      http::HttpSession::ptr session)
+			   {
+			     resp->setStatus(http::HttpStatus::MOVED_PERMANENTLY);
+			     resp->setHeader("Location","/zhuyh/xx");
+			     resp->setBody(req->toString());
+			     return 0;
+			   });
+  dispatch->addServlet("/zhuyh/xx",[](http::HttpRequest::ptr req,
+				      http::HttpResponse::ptr resp,
+				      http::HttpSession::ptr session)
+				   {
+				     resp->setStatus(http::HttpStatus::OK);
+				     resp->setBody(req->toString());
+				     return 0;
+				   });
+  dispatch->addGlobServlet("/zhuyh/*",[](http::HttpRequest::ptr req,
+					 http::HttpResponse::ptr resp,
+					 http::HttpSession::ptr session)
+				      {
+					resp->setStatus(http::HttpStatus::OK);
+					resp->setBody("Glob\r\n"+req->toString());
+					return 0;
+				      });
   server->start();
 }
 

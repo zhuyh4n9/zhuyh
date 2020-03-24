@@ -35,6 +35,10 @@ namespace http
     {
       return m_data;
     }
+    const http_parser& getParser() const
+    {
+      return m_parser;
+    }
     static uint64_t getMaxHeaderSize();
     static uint64_t getMaxBodySize();
   private:
@@ -62,6 +66,10 @@ namespace http
     HttpResponse::ptr getData() const
     {
       return m_data;
+    }
+    const httpclient_parser& getParser() const
+    {
+      return m_parser;
     }
   private:
     httpclient_parser m_parser;

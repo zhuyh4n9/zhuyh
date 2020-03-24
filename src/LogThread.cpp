@@ -143,8 +143,9 @@ namespace zhuyh
   }
   void LogThread::close()
   {
-    if(m_close == true && m_thread.joinable())
+    if(m_close != true && m_thread.joinable())
       {
+	m_close = true;
 	//写一个空消息，唤醒epoll_wait
 	int rt = write(m_notifyFd[1],"",1);
 	if(rt < 0)

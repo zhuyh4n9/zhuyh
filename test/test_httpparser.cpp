@@ -21,7 +21,7 @@ char request_test2[] = "GET /5bU_dTmfKgQFm2e88IuM_a/w.gif?q=ragel%BD%E2%CE%F6htt
   "Accept-Language: zh-CN,zh;q=0.9\r\n"
   "Cookie: BIDUPSID=73EBD0D7D9B774D47A1D510A32AF9AC5; PSTM=1583065479; BAIDUID=CBAEDA3694434F41A8BA2F6026CA803C:FG=1; BDORZ=B490B5EBF6F3CD402E515D22BCDA1598; H_PS_PSSID=30970_1430_21095_30825_30824_26350_30717; delPer=0; PSINO=3; ZD_ENTRY=bai\r\n";
 
-char request_test3[]  = "GET /hm.gif?cc=1&ck=1&cl=24-bit&ds=1920x1080&vl=1250&et=0&ja=0&ln=zh-cn&lo=0&lt=1584330098&rnd=1961655666&si=3eec0b7da6548cf07db3bc477ea905ee&v=1.2.68&lv=3&sn=43421&ct=!!&tt=C%20%E5%BA%93%E5%87%BD%E6%95%B0%20%E2%80%93%20atoi()%20%7C%20%E8%8F%9C%E9%B8%9F%E6%95%99%E7%A8%8B HTTP/1.1\r\n"
+char request_test3[]  = "GET http://www.baidu.com/hm.gif?cc=1&ck=1&cl=24-bit&ds=1920x1080&vl=1250&et=0&ja=0&ln=zh-cn&lo=0&lt=1584330098&rnd=1961655666&si=3eec0b7da6548cf07db3bc477ea905ee&v=1.2.68&lv=3&sn=43421&ct=!!&tt=C%20%E5%BA%93%E5%87%BD%E6%95%B0%20%E2%80%93%20atoi()%20%7C%20%E8%8F%9C%E9%B8%9F%E6%95%99%E7%A8%8B HTTP/1.1\r\n"
 "Host: hm.baidu.com\r\n"
 "Connection: keep-alive\r\n"
 "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36\r\n"
