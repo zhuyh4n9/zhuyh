@@ -19,6 +19,6 @@ namespace http
     int sendRequest(HttpRequest::ptr req);
     HttpResponse::ptr recvResponse();
   };
-  
+
 }
 }
