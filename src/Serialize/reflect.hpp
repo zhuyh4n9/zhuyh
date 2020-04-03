@@ -8,6 +8,7 @@
 #include"../Singleton.hpp"
 #include<fstream>
 #include<unordered_map>
+#include"Serializer.hpp"
 
 //获取类偏移
 #define OffsetOf(C,MV) ((size_t) &(static_cast<C*>(nullptr)->MV))
@@ -52,7 +53,6 @@ namespace reflection
        m_type(type),
        m_private(pvt),
        m_offset(-1)
-       
     {
     }
     const std::string& getName() const  { return m_name;}
@@ -72,6 +72,7 @@ namespace reflection
     //是否为私有
     bool m_private;
     size_t m_offset;
+    bool m_container;
   };
   //类型定义
   class ObjectDefine
@@ -102,6 +103,7 @@ namespace reflection
     void generateMethods(std::ostream& os) const;
     //生产序列化对象代码
     void generateSerialize(std::ostream& os) const;
+    void generateDeSerialize(std::ostream& os) const;
     //初始化
     void generateInit(std::ostream& os) const;
   private:

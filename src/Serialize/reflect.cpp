@@ -107,7 +107,7 @@ namespace reflection
       {
 	name = m_name.substr(2,m_name.size());
       }
-    os << "  void set_"<<name<<"("<<m_type<<" v)\n";
+    os << "  void set_"<<name<<"( const "<<m_type<<"& v)\n";
     os << "  {\n";
     os << "    "<<m_name<<" = v;\n";
     os << "  }\n";
@@ -169,14 +169,33 @@ namespace reflection
       
       for(auto& item : m_members)
 	{
-	  os << prefix << "Serialize<"<<item->getType()<<">::serialize("
-	     << item->getName()<<", ba);\n";
+	    os << prefix << "Serialize<"<<item->getType()<<">::work("
+	       << item->getName()<<", ba);\n";
 	}
       prefix = tmp;
     }
     os << prefix << "}\n";
   }
-  
+  void ObjectDefine::generateDeSerialize(std::ostream& os) const
+  {
+    std::string prefix = "  ";
+    //TODO : 待修改，和ByteArray结合改为二进制数组，目前简单起见使用ostream
+    os << prefix << "bool read(zhuyh::ByteArray::ptr ba) const\n";
+    os << prefix << "{\n";
+    {
+      auto tmp = prefix;
+      prefix += prefix;
+      //对每个成员序列化
+      
+      for(auto& item : m_members)
+	{
+	    os << prefix << "DeSerialize<"<<item->getType()<<">::work("
+	       << item->getName()<<", ba);\n";
+	}
+      prefix = tmp;
+    }
+    os << prefix << "}\n";
+  }
   const void ObjectDefine::generate(std::ostream& os,bool newfile)
   {
     //新文件
@@ -188,7 +207,7 @@ namespace reflection
 	os << "#include<functional>\n";
 	os << "#include\"bytearray/ByteArray.hpp\"";
 	os << "//序列化对象文件\n";
-	os << "#include\"serializer.hpp\"\n";    
+	os << "#include\"Serializer.hpp\"\n";    
 	os << "\n";
 	os << "//计算类内部偏移宏\n";
 	os << "#define OffsetOf(C,MV) ((size_t) &(static_cast<C*>(nullptr)->MV))\n\n";
@@ -200,6 +219,7 @@ namespace reflection
     os <<"  typedef std::shared_ptr<"<<m_name<<"> ptr\n";
     generateMethods(os);
     generateSerialize(os);
+    generateDeSerialize(os);
     generateVariable(os);
     os<<"};\n";
   }

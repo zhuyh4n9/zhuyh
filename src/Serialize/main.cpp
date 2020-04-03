@@ -1,6 +1,6 @@
 #include<bits/stdc++.h>
 #include"reflect.hpp"
-
+#include<fstream>
 int main(int argc,char* argv[])
 {
   if(argc != 2)
@@ -15,8 +15,13 @@ int main(int argc,char* argv[])
   bool newfile = true;
   auto cb = [](zhuyh::reflection::ObjectDefine::ptr obj,void* arg)
 	    {
+	      std::ofstream fout;
+	      std::cout<<obj->getName()<<std::endl;
+	      fout.open(obj->getName()+".hpp");
 	      bool newfile = *((bool*)arg);
 	      obj->generate(std::cout,newfile);
+	      obj->generate(fout,newfile);
+	      fout.close();
 	      newfile = false;
 	      return true;
 	    };
