@@ -116,5 +116,19 @@ uint64_t to = client->getRecvTimeout();
 bool rc = client->setSendTimeout(uint64_t ms);
 //获取写超时时间
 uint64_t to = client->getSendTimeout();
-
+```
+##序列化
+- 例如文件Objs.xml
+```xml
+ <?xml version="1.0" encoding="utf-8"?>
+<classes>
+  <class name = "A">
+    <member name = "m_id" type = "int8_t" attr = "private"></member>
+    <member name = "m_name" type = "std::string" attr = "private"></member>
+    <member name = "m_map" type = "std::map<std::string,int>" attr = "private"></member>
+  </class>
+</classes>
+```
+```shell
+bin/Serialize Objs.xml即可
 ```
