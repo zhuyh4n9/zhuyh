@@ -3,7 +3,7 @@
   - 编辑器   : emacs
   - 编译工具 : g++ 8.3.0 , cmake 3.10.2 , make 4.1
 ## 使用
-  - 需要安装Boost库和yaml-cpp库
+  - 需要安装Boost库,yaml-cpp,tinyxml2库
   - 需要配置环境变量PATH_CFG,必须是一个目录
 ## 日志模块
 ```C++
@@ -117,7 +117,7 @@ bool rc = client->setSendTimeout(uint64_t ms);
 //获取写超时时间
 uint64_t to = client->getSendTimeout();
 ```
-##序列化
+## 序列化
 - 例如文件Objs.xml
 ```xml
  <?xml version="1.0" encoding="utf-8"?>
