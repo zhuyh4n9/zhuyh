@@ -44,9 +44,14 @@ set(LIBS
     dl
     pthread
     yaml-cpp)
+SET(SERIALIZE_LIBS
+    src/Serialize/reflect.cpp)
 
 add_library(zhuyh SHARED ${LIB_SRC})
 add_library(libzhuyh STATIC  ${LIB_SRC})
+
+add_executable(Serialize src/Serialize/main.cpp ${SERIALIZE_LIBS})
+target_link_libraries(Serialize tinyxml2)
 
 #add_executable(logtest test/logtest.cpp)
 #target_link_libraries(logtest zhuyh ${LIBS})

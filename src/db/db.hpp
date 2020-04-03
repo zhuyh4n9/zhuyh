@@ -34,9 +34,6 @@ namespace db
     int getErrno() const final { return m_errno;}
     const std::string& getStrerr() const final{ return m_strerr; }
   protected:
-    //负责设置errno与strerr
-    virtual void setError(int v) = 0;
-  protected:
     virtual connect() = 0;
     virtual close() = 0;
   protected:
@@ -98,8 +95,6 @@ namespace db
     int getErrno() const { return m_errno;}
     const std::string&  getStrerr() const { retrun m_strerr;}
   protected:
-    virtual void setError(int v) = 0;
-  protected:
     int m_errno;
     std::string m_strerr;
   };
@@ -113,10 +108,8 @@ namespace db
     /*
      *brief: 获取错误信息
      */
-    int getErrno() const;
-    const std::string& getStrerr() const;
-  protected:
-    virtual void setError(int v) = 0;
+    int getErrno() const { return m_errno; }
+    const std::string& getStrerr() const { return m_strerr;}
   public:
     virtual ~IDBResult() {}
     //获取数据大小
