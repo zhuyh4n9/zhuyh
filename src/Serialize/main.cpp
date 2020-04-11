@@ -16,7 +16,6 @@ int main(int argc,char* argv[])
   auto cb = [](zhuyh::reflection::ObjectDefine::ptr obj,void* arg)
 	    {
 	      std::ofstream fout;
-	      std::cout<<obj->getName()<<std::endl;
 	      fout.open(obj->getName()+".hpp");
 	      bool newfile = *((bool*)arg);
 	      obj->generate(std::cout,newfile);

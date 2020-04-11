@@ -48,22 +48,20 @@ namespace zhuyh
   {
     size_t size = 0;
     int status = 0;
-    std::string rt;
-    rt.resize(256);
+    std::shared_ptr<char> data(new char[256],[](char* ptr){ delete [] ptr;});
+    auto buff = data.get();
+    //std::string rt;
+    //rt.resize(256);
     // %[..]表示读取一个字符集合,%[^...]表示读取不包含该字符集的字符
-    if(sscanf(str,"%*[^(]%*[(]%255[^)+]",&rt[0]) == 1)
+    if(sscanf(str,"%*[^(]%*[(]%255[^)+]",buff) == 1)
       {
-	char* s = abi::__cxa_demangle(&rt[0],nullptr,&size,&status);
+	char* s = abi::__cxa_demangle(buff,nullptr,&size,&status);
 	if(status == 0)
 	  {
 	    std::string res(s);
 	    free(s);
 	    return res;
 	  }
-      }
-    if(sscanf(str,"%255s",&rt[0]) == 1)
-      {
-	return rt;
       }
     return str;
   }
@@ -103,5 +101,14 @@ namespace zhuyh
     if(str == nullptr) return "";
     std::string env(str);
     return env;
+  }
+
+  time_t str2Time(const char* str,const char* fmt)
+  {
+    if(str == nullptr) return (time_t)-1;
+    struct tm tm;
+    auto rt = strptime(str,fmt,&tm);
+    if(rt == nullptr) return (time_t)-1;
+    return mktime(&tm);
   }
 }

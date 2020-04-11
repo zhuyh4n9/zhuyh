@@ -10,7 +10,7 @@
 #include <cxxabi.h>
 #include "log.hpp"
 #include <fcntl.h>
-
+#include <boost/lexical_cast.hpp>
 namespace zhuyh
 {
   pid_t getThreadId();
@@ -23,4 +23,20 @@ namespace zhuyh
   void BackTrace(std::vector<std::string>& bt,int size,int skip);
   std::string Bt2Str(int size,int skip,const std::string& prefix);
   std::string getEnv(const std::string& envName);
+  time_t str2Time(const char* str,const char* fmt);
+  template<class T,class V = std::string>
+  T getParamValue(const std::map<std::string,V>& mp,const std::string& key,const T& dft=T())
+  {
+    auto it = mp.find(key);
+    if(it == mp.end())
+      return dft;
+    try
+      {
+	return boost::lexical_cast<T>(it->second);
+      }
+    catch(...)
+      {
+	return dft;
+      }
+  }
 }
