@@ -37,13 +37,15 @@ set(LIB_SRC
   src/http/HttpServer.cpp
   src/http/Servlet.cpp
   src/stream/Stream.cpp
-  src/stream/SocketStream.cpp)
+  src/stream/SocketStream.cpp
+  src/db/mysql.cpp)
 
 set(LIBS 
     zhuyh  
     dl
     pthread
-    yaml-cpp)
+    yaml-cpp
+    mysqlclient)
 SET(SERIALIZE_LIBS
     src/Serialize/reflect.cpp)
 
@@ -125,6 +127,10 @@ target_link_libraries(test_httpServer zhuyh ${LIBS})
 
 add_executable(test_httpConnection test/test_httpConnection.cpp)
 target_link_libraries(test_httpConnection zhuyh ${LIBS})
+
+add_executable(test_mysql test/test_mysql.cpp)
+target_link_libraries(test_mysql zhuyh ${LIBS})
+
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 

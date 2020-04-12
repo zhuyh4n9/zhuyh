@@ -133,6 +133,8 @@ namespace db
   class MySQLCommand : public IDBCommand
   {
   public:
+    MySQLCommand(MySQLConn::ptr conn)
+      :IDBCommand(conn){}
     bool command(const std::string& sql) override;
     bool command(const char* fmt,va_list ap) override;
     bool command(const char* fmt,...) override;

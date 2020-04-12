@@ -22,3 +22,5 @@
 #include "src/http/HttpConnection.hpp"
 #include "src/http/HttpParser.hpp"
 #include "src/http/HttpServer.hpp"
+#include "src/db/db.hpp"
+#include "src/db/mysql.hpp"

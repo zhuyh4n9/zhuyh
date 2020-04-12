@@ -212,16 +212,26 @@ namespace db
 		     int eno)
     :IDBRes(err,eno)
   {
-    m_data.reset(res,mysql_free_result);
-    m_rowCnt = mysql_num_rows(m_data.get());
-    m_colCnt = mysql_num_fields(m_data.get());
-    
-    m_fields = mysql_fetch_fields(m_data.get());
-    if(m_fields == nullptr) throw std::logic_error(err);
+    if(res == nullptr)
+      {
+	m_data = nullptr;
+	m_rowCnt = m_colCnt = 0;
+	m_fields = nullptr;
+      }
+    else
+      {
+	m_data.reset(res,mysql_free_result);
+	m_rowCnt = mysql_num_rows(m_data.get());
+	m_colCnt = mysql_num_fields(m_data.get());
+	
+	m_fields = mysql_fetch_fields(m_data.get());
+	if(m_fields == nullptr) throw std::logic_error(err);
+      }
   }
   
   bool MySQLRes::foreach(CbType cb)
   {
+    if(m_data == nullptr) return false;
     int cols = getColumnCount();
     MYSQL_ROW row = nullptr;
     uint32_t id = 0;
@@ -241,16 +251,14 @@ namespace db
 
   int MySQLRes::getColumnType(int idx) const
   {
-    if(m_curLength == nullptr
-       || m_fields == nullptr
+    if( m_fields == nullptr
        ||m_colCnt <= idx)
       return -1;
     return m_fields[idx].type;
   }
   std::string MySQLRes::getColumnName(int idx) const
   {
-    if(m_curLength == nullptr
-       || m_fields == nullptr
+    if(m_fields == nullptr
        ||m_colCnt <= idx)
       return "ERROR";
     return std::string(m_fields[idx].name);
