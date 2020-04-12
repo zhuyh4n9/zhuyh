@@ -93,7 +93,8 @@ namespace db
     //连接丢失是否自动重连
     mysql_options(mysql,MYSQL_OPT_RECONNECT,&close);
     //设置字符集
-    mysql_options(mysql,MYSQL_SET_CHARSET_NAME,"UTF8");
+    std::string charset = getParamValue<std::string>(params,"charset","UTF8");
+    mysql_options(mysql,MYSQL_SET_CHARSET_NAME,charset.c_str());
 
     int port = getParamValue<int>(params,"port");
     std::string host = getParamValue<std::string>(params,"host");
@@ -179,7 +180,7 @@ namespace db
   {
     if(m_conn == nullptr) return false;
     MySQLConn::ptr conn = MySQLUtils::ptrTypeCast<IDBConn,MySQLConn>(m_conn);
-    int rt = mysql_query(conn->get(),sql.c_str());
+    int rt = mysql_real_query(conn->get(),sql.c_str(),sql.size());
     if(rt)
       {
 	m_hasError = true;
@@ -225,6 +226,7 @@ namespace db
 	m_colCnt = mysql_num_fields(m_data.get());
 	
 	m_fields = mysql_fetch_fields(m_data.get());
+	
 	if(m_fields == nullptr) throw std::logic_error(err);
       }
   }
@@ -237,7 +239,8 @@ namespace db
     uint32_t id = 0;
     while(( row = mysql_fetch_row(m_data.get()) ))
       {
-	if(cb(row,cols,id++) == false) return false;
+	m_curLength = mysql_fetch_lengths(m_data.get());
+	if(cb(row,cols,id++,m_curLength) == false) return false;
       }
     return true;
   }

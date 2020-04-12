@@ -19,19 +19,21 @@ void printDelimiter(int cols)
 {
   std::cout<<"+";
   for(int i = 0;i<cols+1;i++)
-    std::cout<<std::setfill('-')<< std::setw(13)<<"+"<<std::setfill(' ')<<std::setw(0);
+    std::cout<<std::setfill('-')<< std::setw(21)<<"+"<<std::setfill(' ')<<std::setw(0);
   std::cout<<std::endl;
 }
 
-bool processRow(MYSQL_ROW row,int cols,int id)
+bool processRow(MYSQL_ROW row,int cols,int id,unsigned long* lens)
 {
   if(row == nullptr) return false;
-  printf("|%12d|",id);
+  std::cout<<'|'<<std::setw(20)<<id<<std::setw(0)<<'|';
   for(int i=0;i<cols;i++)
     {
-      printf("%12s|",row[i]);
+      
+      std::cout<< std::setw(20)<<std::string(row[i],lens[i])
+	       <<std::setw(0)<<'|';
     }
-  printf("\n");
+  std::cout<<std::endl;
   printDelimiter(cols);
   return true;
 }
@@ -39,10 +41,10 @@ bool processRow(MYSQL_ROW row,int cols,int id)
 void printHeader(int cols,db::MySQLRes::ptr res)
 {
   printDelimiter(cols);
-  printf("|%12s|","");
+  std::cout<<'|'<<std::setw(20)<<' '<<std::setw(0)<<'|';
   for(int i = 0;i<cols;i++)
-    printf("%12s|",res->getColumnName(i).c_str());
-  putchar('\n');
+    std::cout<< std::setw(20)<<res->getColumnName(i)<<std::setw(0)<<'|';
+  std::cout<<std::endl;
   printDelimiter(cols);
   
 }

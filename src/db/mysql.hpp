@@ -53,8 +53,9 @@ namespace db
   public:
     friend MySQLCommand;
     typedef std::shared_ptr<MySQLRes> ptr;
-    typedef std::function<bool(MYSQL_ROW,
-			       int,int)> CbType;
+    typedef std::function<bool(MYSQL_ROW row,
+			       int cols,int id,
+			       unsigned long* len)> CbType;
   private:
     MySQLRes(MYSQL_RES* res,const std::string& err,int eno);
   public:
