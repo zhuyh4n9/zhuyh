@@ -24,6 +24,7 @@ namespace zhuyh
   std::string Bt2Str(int size,int skip,const std::string& prefix);
   std::string getEnv(const std::string& envName);
   time_t str2Time(const char* str,const char* fmt);
+  std::string time2Str(time_t t,const char* fmt);
   template<class T,class V = std::string>
   T getParamValue(const std::map<std::string,V>& mp,const std::string& key,const T& dft=T())
   {

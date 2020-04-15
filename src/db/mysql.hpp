@@ -120,7 +120,6 @@ namespace db
     }
   private:
     int m_rowCnt;
-    int m_colCnt;
     //当前行每一列长度
     unsigned long* m_curLength = 0;
     //当前行
@@ -136,22 +135,16 @@ namespace db
   public:
     MySQLCommand(MySQLConn::ptr conn)
       :IDBCommand(conn){}
-    bool command(const std::string& sql) override;
-    bool command(const char* fmt,va_list ap) override;
-    bool command(const char* fmt,...) override;
-    /*
-    bool commandStmt(const std::string& sql) const override;
-    bool commandStmt(const char* fmt,va_list ap) const override;
-    bool commandStmt(const char* fmt,...) const override;
-    */
-    IDBRes::ptr getRes() override;
-    //std::shared_ptr<MySQLStmtRes> getStmtRes() const override;
+    IDBRes::ptr command(const std::string& sql) override;
+    IDBRes::ptr command(const char* fmt,va_list ap) override;
+    IDBRes::ptr command(const char* fmt,...) override;
     
     int getAffectedRow() override;
   };
+
   
-  /*
-  class MySQLStmt : public IDBStmt
+  class MySQLStmt : public IDBStmt,
+		    public enable_shared_from_this<MySQLStmt>
   {
   public:
     typedef std::shared_ptr<MySQLStmt> ptr;
@@ -160,21 +153,21 @@ namespace db
     ~MySQLStmt();
   private:
     MySQLStmt(MySQLConn::ptr conn,
-	      const std::string& stmt);
+	      MYSQL_STMT* stmt);
   public:
-    int bind(int idx,const int_& v);
-    int bind(int idx,const int_& v);
-    int bind(int idx,const int_& v);
-    int bind(int idx,const int_& v);
+    
+    int bind(int idx,const int8_t& v);
+    int bind(int idx,const int16_t& v);
+    int bind(int idx,const int32_t& v);
+    int bind(int idx,const int64_t& v);
 
-    int bind(int idx,const uint_& v);
-    int bind(int idx,const uint_& v);
-    int bind(int idx,const uint_& v);
-    int bind(int idx,const uint_& v);
-    int bind(int idx,const uint_& v);
+    int bind(int idx,const uint8_t& v);
+    int bind(int idx,const uint16_t& v);
+    int bind(int idx,const uint32_t& v);
+    int bind(int idx,const uint64_t& v);
 
     int bind(int idx,const float& v);
-    int bind(int idx,const double& v);
+    int bind(int idx,const double& v);w
 
     int bind(int idx,const std::string& v);
     
@@ -194,49 +187,84 @@ namespace db
     int  bindFloat(int idx,float v) override;
     int  bindDouble(int idx,double v) override;
     int  bindString(int idx,const std::string& v) override;
+    int  bindString(int idx,const char* v) override;
     int  bindBlob(int idx,const std::string& v) override;
+    int  bindBlob(int idx,const char* v,uint64_t size) override
     int  bindTime(int idx,time_t v) override;
     int  bindNull(int idx) override;
     
     int execute() override;
-    int getLastInsertId() override;
-    std::shared_ptr<IDBRes> query() override;
+    int64_t getLastInsertId() override;
+    std::shared_ptr<IDBRes> command() override;
 
-    MYSQL_STMT* getRaw() const
+    MYSQL_STMT* get() const
     {
       return m_stmt;
+    }
+
+    int getErrno() const override
+    {
+      if(m_mysql == nullptr)
+	{
+	  return -1;
+	}
+      return mysql_stmt_errno(m_mysql);
+    }
+    std::string getError() const override
+    {
+      if(m_mysql == nullptr)
+	{
+	  return std::string("UNKNOWN ERROR");
+	}
+      return std::string(mysql_stmt_error(m_mysql));
     }
   private:
     MYSQL_STMT* m_stmt;
     MySQLConn::ptr m_conn;
     std::vector<MYSQL_BIND> m_binds;
+    int m_rowCnt;
   };
 
   class MySQLStmtRes : public IDBRes
   {
   public:
     typedef std::shared_ptr<MySQLStmtRes> ptr;
-
+    
     static MySQLStmtRes::ptr Create(std::shared_ptr<MySQLStmt> stmt);
     ~MySQLStmtRes();
   private:
     MySQLStmtRes(std::shared_ptr<MySQLStmt> stmt,
-		 int err,const char* strerr);
+		 const std::string& err,
+		 int eno);
     struct Data
     {
-      Data();
-      ~Data();
-      void alloc(size_t size);
-
-      my_bool is_null;
-      my_bool error;
-      enum_field_types type;
-      uint32_t len;
-      int32_t data_len;
-      char* data;
+      ~Buffer()
+      {
+	if(buffer != nullptr) free(buffer);
+      }
+      void alloc(size_t size)
+      {
+	if(buffer)
+	  free(buffer);
+	buffer = (char*)malloc(size);
+	if(buffer == nullptr)
+	  {
+	    throw std::out_of_memory("out of memory");
+	  }
+	memset(buffer,0,sizeof(char)*size);
+	length = buffer_len = size;
+      }
+      
+      my_bool is_null = false;
+      my_bool error = false;
+      enum_field_types type{0};
+      uint32_t length = 0;
+      //缓冲区长度
+      int32_t buffer_len = 0;
+      char* buffer = nullptr;
     };
   public:
-    int getDataCount() const override;
+    int getRowCount() const override;
     int getColumnCount() const override;
     //当前第k列字节数
     int getColumnBytes(int idx) const override;
@@ -244,21 +272,18 @@ namespace db
     int getColumnType(int idx) const override;
     //获取列名
     std::string getColmnName(int idx) const override;
-    //获取所有列名
-    std::vector<std::string> getColumnNames() const override;
-
     //第k列是否为null
-    bool isNull(int idx) override;
+    bool isNull(int idx) const override;
     //获取各种类型
     int8_t  getInt8 (int idx) const override;
     int16_t getInt16(int idx) const override;
     int32_t getInt32(int idx) const override;
     int64_t getInt64(int idx) const override;
     
-    uint8_t  getInt8 (int idx) const override;
-    uint16_t getInt16(int idx) const override;
-    uint32_t getInt32(int idx) const override;
-    uint64_t getInt64(int idx) const override;
+    uint8_t  getUint8 (int idx) const override;
+    uint16_t getUint16(int idx) const override;
+    uint32_t getUint32(int idx) const override;
+    uint64_t getUint64(int idx) const override;
     
     float  getFloat(int idx) const override;
     double getDoube(int idx) const override;
@@ -268,11 +293,13 @@ namespace db
     
     time_t getTime(int idx) const override;
     //获取下一个
-    bool next() const override;
+    bool nextRow() const override;
   private:
     std::shared_ptr<MySQLStmt> m_stmt;
     std::vector<MYSQ_BIND> m_binds;
     std::vector<Data> m_datas;
+    MYSQL_FIELD* m_fields;
+    int m_rowCnt;
   };
   
   //Mysql管理器
@@ -310,6 +337,5 @@ namespace db
     
   };
 
-  */  
 }
 }

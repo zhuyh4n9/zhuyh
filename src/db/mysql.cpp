@@ -159,7 +159,7 @@ namespace db
     return true;
   }
 
-  bool MySQLCommand::command(const char* fmt,...)
+  MySQLRes::ptr MySQLCommand::command(const char* fmt,...)
   {
     va_list ap;
     va_start(ap,fmt);
@@ -168,7 +168,7 @@ namespace db
     return rt;
   }
 
-  bool MySQLCommand::command(const char* fmt,va_list ap)
+  MySQLRes::ptr MySQLCommand::command(const char* fmt,va_list ap)
   {
     char* buf = nullptr;
     int len = vasprintf(&buf,fmt,ap);
@@ -176,20 +176,25 @@ namespace db
     free(buf);
     return command(sql);
   }
-  bool MySQLCommand::command(const std::string& sql)
+  MySQLRes::ptr MySQLCommand::command(const std::string& sql)
   {
-    if(m_conn == nullptr) return false;
+    if(m_conn == nullptr) return nullptr;
     MySQLConn::ptr conn = MySQLUtils::ptrTypeCast<IDBConn,MySQLConn>(m_conn);
     int rt = mysql_real_query(conn->get(),sql.c_str(),sql.size());
     if(rt)
       {
 	m_hasError = true;
 	LOG_ERROR(s_logger) << "sql : " <<sql << " failed,error :" << getError();
-	return false;
+	throw std::logic_error(sql + std::string(" execute failed"));
       }
     m_hasError = false;
     m_cmdStr = sql;
-    return true;
+    auto conn = MySQLUtils::ptrTypeCast<IDBConn,MySQLConn>(m_conn);
+    MYSQL_RES* tmp = mysql_store_result(conn->get());
+    if(tmp == nullptr)
+      throw std::logic_error(sql + std::string(" execute failed,result is null"));
+    MySQLRes::ptr res(new MySQLRes(tmp,getError(),getErrno()));
+    return res;
   }
 
   int MySQLCommand::getAffectedRow()
@@ -378,6 +383,416 @@ namespace db
     return m_row != nullptr;
   }
 
+
+  MySQLStmt::ptr MySQLStmt::Create(MySQLConn::ptr conn,
+				   const std::string& stmt)
+  {
+    MYSQL_STMT* st = mysql_stmt_init(conn->get());
+    if(st == nullptr) return nullptr;
+    int rt = mysql_stmt_prepare(st,stmt.c_str(),stmt.size());
+    if(rt != 0)
+      {
+	LOG_ERROR(s_logger)<<"stmt prepare failed : " << stmt
+			   <<" errno : "<<mysql_stmt_errno(st)
+			   <<" error : "<<mysql_stmt_error(st);
+	mysql_stmt_close(st);
+	return nullptr;
+      }
+    //获取参数个数
+    int count = mysql_stmt_prama_count(st);
+    MySQLStmt::ptr res(new MySQLStmt(conn,st));
+    res->m_binds.resize(count);
+    memset(&rt->m_binds[0],0,sizeof(rt->m_binds[0])*count);
+    return res;
+  }
+  MySQLStmt::MySQLStmt(MySQLConn::ptr conn,
+		       MYSQL_STMT* stmt)
+    :m_stmt(stmt),
+     m_conn(conn)
+  {
+  }
+
+  ~MySQLStmt::MySQLStmt()
+  {
+    if(m_stmt) mysql_stmt_close(m_stmt);
+
+    for(auto& item : m_binds)
+      {
+	if(item.buffer != nullptr)
+	  free(item.buffer);
+      }
+  }
+  
+  int MySQLStmt::bind(int idx,const int8_t& v)
+  {
+    return bindInt8(idx,v);
+  }
+  int MySQLStmt::bind(int idx,const int16_t& v)
+  {
+    return bindInt16(idx,v);
+  }
+  int MySQLStmt::bind(int idx,const int32_t& v)
+  {
+    return bindInt32(idx,v);
+  }
+  int MySQLStmt::bind(int idx,const int64_t& v)
+  {
+    return bindInt64(idx,v);
+  }
+
+  int MySQLStmt::bind(int idx,const uint8_t& v)
+  {
+    return bindUint8(idx,v);
+  }
+  int MySQLStmt::bind(int idx,const uint16_t& v)
+  {
+    return bindUint16(idx,v);
+  }
+  int MySQLStmt::bind(int idx,const uint32_t& v)
+  {
+    return bindUint32(idx,v);
+  }
+  int MySQLStmt::bind(int idx,const uint64_t& v)
+  {
+    return bindUint64(idx,v);
+  }
+
+  int MySQLStmt::bind(int idx,const char* v)
+  {
+    return bindString(idx,v);
+  }
+  int MySQLStmt::bind(int idx,const void* v,int len)
+  {
+    return bindBlob(idx,v,len);
+  }
+  
+  int MySQLStmt::bind(int idx)
+  {
+    return bindNull(idx);
+  }
+  
+#define ALLOC_AND_COPY(ptr,size)		        \
+  if(m_binds[idx] == nullptr)				\
+  {							\
+    m_binds[idx].buffer = malloc(size);			\
+    if(m_binds[idx].buffer == nullptr)			\
+      throw std::out_of_memory("out of memory");	\
+  }							\
+  else if(m_binds[idx].buffer_length < size)		\
+    {							\
+      free(m_binds[idx].buffer);			\
+      m_binds[idx].buffer = malloc(size);		\
+      if(m_binds[idx].buffer == nullptr)		\
+	throw std::out_of_memory("out of memory");	\
+    }							\
+  memcpy(&m_binds[0],ptr,size);
+
+#define BIND_VALUE(v,type,ptr,size,unsign)	\
+  m_bins[idx].buffer_type = type;		\
+  ALLOC_AND_COPY(ptr,size);			\
+  m_binds[idx].is_unsigned = unsign;		\
+  m_bind[idx].buffer_length = size;		
+  
+  int  MySQLStmt::bindInt8(int idx,int8_t v)
+  {
+    BIND_VALUE(v,MSQL_TYPE_TINY,&v,sizeof(v),false);
+    return 0;
+  }
+  int  MySQLStmt::bindInt16(int idx,int16_t v)
+  {
+    BIND_VALUE(v,MYSQL_TYPE_SHORT,&v,sizeof(v),false);
+    return 0;
+  }
+  int  MySQLStmt::bindInt32(int idx,int32_t v)
+  {
+    BIND_VALUE(v,MYSQL_TYPE_LONG,&v,sizeof(v),false);
+    return 0;
+  }
+  int  MySQLStmt::bindInt64(int idx,int64_t v)
+  {
+    BIND_VALUE(v,MYSQL_TYPE_LONGLONG,&v,sizeof(v),false);
+    return 0;
+  }
+  
+  int  MySQLStmt::bindUint8(int idx,uint8_t v)
+  {
+    BIND_VALUE(v,MYSQL_TYPE_TINY,&v,sizeof(v),true);
+    return 0;
+  }
+  int  MySQLStmt::bindUint16(int idx,uint16_t v)
+  {
+    BIND_VALUE(v,MYSQL_TYPE_SHORT,&v,sizeof(v),true);
+    return 0;
+  }
+  int  MySQLStmt::bindUint32(int idx,uint32_t v)
+  {
+    BIND_VALUE(v,MYSQL_TYPE_LONG,&v,sizeof(v),true);
+    return 0;
+  }
+  int  MySQLStmt::bindUint64(int idx,uint64_t v)
+  {
+    BIND_VALUE(v,MYSQL_TYPE_LONGLONG,&v,sizeof(v),true);
+    return 0;
+  }
+  int  MySQLStmt::bindFloat(int idx,float v)
+  {
+    BIND_VALUE(v,MYSQL_TYPE_FLOAT,&v,sizeof(v),false);
+    return 0;
+  }
+  int  MySQLStmt::bindDouble(int idx,double v) override
+  {
+    BIND_VALUE(v,MYSQL_TYPE_DOUBLE,&v,sizeof(v),false);
+    return 0;
+  }
+
+  int  MySQLStmt::bindString(int idx,const std::string& v)
+  {
+    BIND_VALUE(v,MYSQL_TYPE_STRING,v.c_str(),v.size(),false);
+    return 0;
+  }
+
+  int  MySQLStmt::bindString(int idx,const char* v)
+  {
+    BIND_VALUE(v,MYSQL_TYPE_STRING,v,strlen(v),false);
+    return 0;
+  }
+  int  MySQLStmt::bindBlob(int idx,const char* v,uint64_t size)
+  {
+    BIND_VALUE(v,MYSQL_TYPE_BLOB,v,size,false);
+    return 0;
+  }
+
+  int  MySQLStmt::bindBlob(int idx,const std::string& v)
+  {
+    BIND_VALUE(v,MYSQL_TYPE_BLOB,v.c_str(),v.size(),false);
+    return 0;
+  }
+  int  MySQLStmt::bindTime(int idx,time_t v)
+  {
+    std::string timeStr = time2Str(v,"%Y-%m-%d %H:%M:%S");
+    return bindString(idx,timeStr);
+  }
+  int  MySQLStmt::bindNull(int idx)
+  {
+    m_binds[idx].buffer_type = MYSQL_TYPE_NULL;
+    return 0;
+  }
+
+  int64_t MySQLStmt::getLastInsertId()
+  {
+    return mysql_stmt_insert_id(m_stmt);
+  }
+  int MySQLStmt::execute()
+  {
+    mysql_bind_param(m_stmt,&m_binds[0]);
+    return mysql_stmt_execute(m_stmt);
+  }
+
+  MySQLStmtRes::ptr MySQLStmt::command()
+  {
+    mysql_bind_param(m_stmt,&m_binds[0]);
+    return MySQLStmtRes::Create(shared_from_this());
+  }
+
+  MySQLStmtRes::ptr MySQLStmtRes::Create(std::shared_ptr<MySQLStmt> stmt)
+  {
+    int eno = mysql_stmt_errno(stmt->get());
+    std::string err = mysql_stmt_error(stmt->get());
+    MySQLStmtRes::ptr res(new MySQLStmtRes(stmt,err,eno));
+    if(eno != 0)
+      {
+	return MySQLStmtRes::ptr(new MySQLStmtRes(stmt,mysql_stmt_error(stmt)
+						  ,mysql_stmt_errno(stmt)));
+      }
+    //获取元数据
+    MYSQL_RES* rs = mysql_stmt_result_metadata(stmt->get());
+    if(rs == nullptr)
+      {
+	return MySQLStmtRes::ptr(new MySQLStmtRes(stmt,mysql_stmt_error(stmt)
+						  ,mysql_stmt_errno(stmt)));
+      }
+
+    auto&  binds = res -> m_binds;
+    auto&  datas = res -> m_datas;
+    auto*& field = res->m_fields;
+
+    int cnt = mysql_num_fields(rs);
+    MYSQL_FIELD* m_field = mysql_fetch_fields(rs);
+    
+    binds.resize(cnt);
+    memset(&binds[0],0,sizeof(binds[0])*cnt);
+    datas.resize(cnt);
+    
+    for(int i = 0;i<num;i++)
+      {
+	datas[i].type = field[i].type;
+#define XX(enum_type,type)			\
+	case enum_type :			\
+	  datas[i].alloc(sizeof(type));		\
+	  break
+
+	switch(field[i].type)
+	  {
+	    XX(MYSQL_TYPE_TINY,int8_t);
+	    XX(MYSQL_TYPE_SHORT,int16_t);
+	    XX(MYSQL_TYPE_LONG,int32_t);
+	    XX(MYSQL_TYPE_LONGLONG,int64_t);
+	    XX(MYSQL_TYPE_FLOAT,float);
+	    XX(MYSQL_TYPE_DOUBLE,double);
+	    XX(MYSQL_TYPE_TIMESTAMP,MYSQL_TIME);
+	    XX(MYSQL_TYPE_DATETIME,MYSQL_TIME);
+	    XX(MYSQL_TYPE_DATE,MYSQL_TIME);
+	    XX(MYSQL_TYPE_TIME,MYSQL_TIME);
+	  default:
+	    datas[i].alloc(field[i].length);
+	  }
+#undef XX
+
+	binds[i].buffer_type = datas[i].type;
+	binds[i].buffer = datas[i].buffer;
+	binds[i].buffer_length = datas[i].buffer_length;
+	binds[i].length = &datas[i].len;
+	binds[i].is_null = &datas[i].is_null;
+	binds[i].error = &datas[i].error;
+      }
+    //绑定结果
+    int rt = mysql_stmt_bind_result(stmt->get(),&binds[0]);
+    if(rt != 0)
+      {
+	return MySQLStmtRes::ptr(new MySQLStmtRes(stmt,mysql_stmt_error(stmt)
+						  ,mysql_stmt_errno(stmt)));
+      }
+    //执行预处理
+    rt = stmt->execute();
+    if(rt != 0)
+      {
+	return MySQLStmtRes::ptr(new MySQLStmtRes(stmt,mysql_stmt_error(stmt)
+						  ,mysql_stmt_errno(stmt)));
+      }
+
+    rt = mysql_stmt_store_result(stmt->get());
+    if(rt != 0)
+      {
+	return MySQLStmtRes::ptr(new MySQLStmtRes(stmt,mysql_stmt_error(stmt)
+						  ,mysql_stmt_errno(stmt)));
+      }
+    m_rowCnt = mysql_stmt_num_rows(stmt->get());
+    return res;
+  }
+  
+  MySQLStmtRes::MySQLStmtRes(MySQLStmt::ptr stmt,
+			     const std::string& err,
+			     int eno)
+    :IDBRes(err,eno),
+     m_stmt(stmt)
+  {
+  }
+
+  int MySQLStmtRes::getRowCount() const
+  {
+    return m_rowCnt;
+  }
+
+  int MySQLStmtRes::getColumnCount() const
+  {
+    return m_binds.size();
+  }
+
+  int MySQLStmtRes::getColumnBytes(int idx) const
+  {
+    if(idx >= getColumnCount())
+      throw std::logic_error("getColumnBytes("+std::to_string(idx)+
+			     ") out of bound("+std::to_string(getColumnCount()));
+    return m_datas[idx].len;
+  }
+
+  int MySQLStmtRes::getColumnType(int idx) const
+  {
+    if(idx >= getColumnCount())
+      throw std::logic_error("getColumnType("+std::to_string(idx)+
+			     ") out of bound("+std::to_string(getColumnCount()));
+    return m_datas[idx].type;
+  }
+
+  std::string MySQLStmtRes::getColmnName(int idx) const
+  {
+    if(idx >= getColumnCount() || m_fields == nullptr)
+      throw std::logic_error("getColumnName("+std::to_string(idx)+
+			     ") out of bound("+std::to_string(getColumnCount()));
+    return std::string(m_fields[idx].name);
+  }
+
+  bool MySQLStmtRes::isNull(int idx) const
+  {
+    if(idx >= getColumnCount() )
+      throw std::logic_error("isNull("+std::to_string(idx)+
+			     ") out of bound("+std::to_string(getColumnCount()));
+    return m_datas[idx].is_null;
+  }
+
+  int8_t  MySQLStmtRes::getInt8 (int idx) const
+  {
+    return *(int8_t*)m_datas[idx].buffer;
+  }
+
+  int16_t MySQLStmtRes::getInt16(int idx) const
+  {
+    return *(int16_t*)m_datas[idx].buffer;
+  }
+  int32_t MySQLStmtRes::getInt32(int idx) const
+  {
+    return *(int32_t*)m_datas[idx].buffer;
+  }
+  
+  int64_t MySQLStmtRes::getInt64(int idx) const
+  {
+    return *(int64_t*)m_datas[idx].buffer;
+  }
+    
+  uint8_t  MySQLStmtRes::getUint8 (int idx) const
+  {
+    return *(uint8_t*)m_datas[idx].buffer;
+  }
+  uint16_t MySQLStmtRes::getUint16(int idx) const
+  {
+    return *(uint16_t*)m_datas[idx].buffer;
+  }
+  uint32_t MySQLStmtRes::getUint32(int idx) const
+  {
+    return *(uint32_t*)m_datas[idx].buffer;
+  }
+  uint64_t MySQLStmtRes::getUint64(int idx) const
+  {
+    return *(uint64_t*)m_datas[idx].buffer;
+  }
+    
+  float  MySQLStmtRes::getFloat(int idx) const
+  {
+    return *(float*)m_datas[idx].buffer;
+  }
+  double MySQLStmtRes::getDoube(int idx) const
+  {
+    return *(double*)m_datas[idx].buffer;
+  }
+
+  std::string MySQLStmtRes::getString(int idx) const
+  {
+    return std::string(m_datas[idx].buffer,m_datas[idx].len);
+  }
+  std::string MySQLStmtRes::getBlob(int idx) const
+  {
+    return std::string(m_datas[idx].buffer,m_datas[idx].len);
+  }
+
+  time_t MySQLStmtRes::getTime(int idx) const
+  {
+    return fromMySQLTime(*(MYSQL_TIME*)m_datas[idx].buffer);
+  }
+
+  bool MySQLStmtRes::nextRow() const
+  {
+    return !mysql_stmt_fetch(m_stmt->get());
+  }
   
 }
 }

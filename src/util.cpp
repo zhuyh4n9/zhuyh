@@ -105,10 +105,19 @@ namespace zhuyh
 
   time_t str2Time(const char* str,const char* fmt)
   {
-    if(str == nullptr) return (time_t)-1;
+    if(str == nullptr || fmt == nullptr) return (time_t)-1;
     struct tm tm;
     auto rt = strptime(str,fmt,&tm);
     if(rt == nullptr) return (time_t)-1;
     return mktime(&tm);
+  }
+
+  std::string time2Str(time_t t,const char* fmt)
+  {
+    if(str == nullptr || fmt == nullptr) return (time_t)-1;
+    struct tm tm;
+    char buf[128];
+    strftime(buf,128,fmt,&tm);
+    return std::string(buf);
   }
 }

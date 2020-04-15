@@ -153,11 +153,11 @@ namespace db
     virtual int  bindNull(int idx) = 0;
 
     virtual int execute() = 0;
-    virtual int getLastInsertId() = 0;
+    virtual int64_t getLastInsertId() = 0;
     virtual std::shared_ptr<IDBRes> query() = 0;
 
-    int getErrno() const { return m_errno;}
-    const std::string&  getStrerr() const { return m_error;}
+    virtual int getErrno() const = 0;
+    virtual std::string  getError() const = 0;
   protected:
     int m_errno;
     std::string m_error;
