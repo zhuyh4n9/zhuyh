@@ -174,7 +174,7 @@ namespace zhuyh
       YAML::Node node(YAML::NodeType::Map);
       for(auto& val:v)
 	{
-	  node[v.first] = YAML::Load(Lexical_Cast<F,std::string>() (val->second) );
+	  node[val.first] = YAML::Load(Lexical_Cast<F,std::string>() (val.second) );
 	}
       std::stringstream ss;
       ss<<node;
@@ -219,7 +219,7 @@ namespace zhuyh
       YAML::Node node(YAML::NodeType::Map);
       for(auto& val:v)
 	{
-	  node[v.first] = YAML::Load(Lexical_Cast<F,std::string>() (val->second) );
+	  node[val.first] = YAML::Load(Lexical_Cast<F,std::string>() (val.second) );
 	}
       std::stringstream ss;
       ss<<node;

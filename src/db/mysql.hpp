@@ -5,6 +5,10 @@
 #include"db.hpp"
 #include"../latch/lock.hpp"
 #include<map>
+#include"../Singleton.hpp"
+#include<vector>
+#include<unordered_map>
+#include<deque>
 
 namespace zhuyh
 {
@@ -15,12 +19,19 @@ namespace db
   class MySQLRes;
   class MySQLCommand;
   
-  class MySQLConn : public IDBConn
+  class MySQLConn : public IDBConn,
+		    public std::enable_shared_from_this<MySQLConn>
   {
   public:
     typedef std::shared_ptr<MySQLConn> ptr;
-  public:
+    friend class MySQLManager;
+  private:
     MySQLConn(const std::map<std::string,std::string>& params);
+  public:
+    //从连接池获取一个连接
+    static MySQLConn::ptr Create();
+    
+    ~MySQLConn();
     bool connect() override;
     void close() override;
     bool ping() override;
@@ -101,7 +112,7 @@ namespace db
     
     time_t getTime(int idx) const override;
     //获取下一个
-    bool nextRow()  override;
+    bool nextRow() override;
   private:
     int64_t  toInt64(const char* str) const
     {
@@ -120,6 +131,7 @@ namespace db
     }
   private:
     int m_rowCnt;
+    int m_colCnt;
     //当前行每一列长度
     unsigned long* m_curLength = 0;
     //当前行
@@ -144,7 +156,7 @@ namespace db
 
   
   class MySQLStmt : public IDBStmt,
-		    public enable_shared_from_this<MySQLStmt>
+		    public std::enable_shared_from_this<MySQLStmt>
   {
   public:
     typedef std::shared_ptr<MySQLStmt> ptr;
@@ -167,12 +179,12 @@ namespace db
     int bind(int idx,const uint64_t& v);
 
     int bind(int idx,const float& v);
-    int bind(int idx,const double& v);w
+    int bind(int idx,const double& v);
 
     int bind(int idx,const std::string& v);
     
     int bind(int idx,const char* v);
-    int bind(int idx,const void* v,int len);
+    int bind(int idx,const char* v,int len);
 
     int bind(int idx);
     
@@ -189,13 +201,14 @@ namespace db
     int  bindString(int idx,const std::string& v) override;
     int  bindString(int idx,const char* v) override;
     int  bindBlob(int idx,const std::string& v) override;
-    int  bindBlob(int idx,const char* v,uint64_t size) override
+    int  bindBlob(int idx,const char* v,uint64_t size) override;
     int  bindTime(int idx,time_t v) override;
     int  bindNull(int idx) override;
     
     int execute() override;
     int64_t getLastInsertId() override;
-    std::shared_ptr<IDBRes> command() override;
+    
+    std::shared_ptr<IDBRes> command();
 
     MYSQL_STMT* get() const
     {
@@ -204,19 +217,19 @@ namespace db
 
     int getErrno() const override
     {
-      if(m_mysql == nullptr)
+      if(m_stmt == nullptr)
 	{
 	  return -1;
 	}
-      return mysql_stmt_errno(m_mysql);
+      return mysql_stmt_errno(m_stmt);
     }
     std::string getError() const override
     {
-      if(m_mysql == nullptr)
+      if(m_stmt == nullptr)
 	{
 	  return std::string("UNKNOWN ERROR");
 	}
-      return std::string(mysql_stmt_error(m_mysql));
+      return std::string(mysql_stmt_error(m_stmt));
     }
   private:
     MYSQL_STMT* m_stmt;
@@ -238,7 +251,7 @@ namespace db
 		 int eno);
     struct Data
     {
-      ~Buffer()
+      ~Data()
       {
 	if(buffer != nullptr) free(buffer);
       }
@@ -249,18 +262,18 @@ namespace db
 	buffer = (char*)malloc(size);
 	if(buffer == nullptr)
 	  {
-	    throw std::out_of_memory("out of memory");
+	    throw std::logic_error("out of memory");
 	  }
 	memset(buffer,0,sizeof(char)*size);
-	length = buffer_len = size;
+	length = buffer_length = size;
       }
       
       my_bool is_null = false;
       my_bool error = false;
-      enum_field_types type{0};
-      uint32_t length = 0;
+      enum_field_types type{(enum_field_types)0};
+      unsigned long length = 0;
       //缓冲区长度
-      int32_t buffer_len = 0;
+      int32_t buffer_length = 0;
       char* buffer = nullptr;
     };
   public:
@@ -271,7 +284,7 @@ namespace db
     //当前第k列类型
     int getColumnType(int idx) const override;
     //获取列名
-    std::string getColmnName(int idx) const override;
+    std::string getColumnName(int idx) const override;
     //第k列是否为null
     bool isNull(int idx) const override;
     //获取各种类型
@@ -292,11 +305,11 @@ namespace db
     std::string getBlob(int idx) const override;
     
     time_t getTime(int idx) const override;
-    //获取下一个
-    bool nextRow() const override;
+
+    bool nextRow() override;
   private:
     std::shared_ptr<MySQLStmt> m_stmt;
-    std::vector<MYSQ_BIND> m_binds;
+    std::vector<MYSQL_BIND> m_binds;
     std::vector<Data> m_datas;
     MYSQL_FIELD* m_fields;
     int m_rowCnt;
@@ -307,34 +320,30 @@ namespace db
   {
   public:
     friend class Singleton<MySQLManager>;
+    friend class MySQLConn;
     typedef Singleton<MySQLManager> Mgr;
     typedef std::shared_ptr<MySQLManager> ptr;
     using MutexType = Mutex;
-    
-    //由于需要加锁，使用unordered_map来管理连接有可能会导致独占使用时间过长
-    using Map = std::map<std::string,std::list<MySQLConn::ptr> >;
-    MySQLConn::ptr getConn(const std::string& conn);
-    bool addConn(const std::string& name,MySQLConn::ptr conn);
+    using Map = std::unordered_map<std::string,std::deque<MySQLConn::ptr> >;
 
-    int execute(const std::string& name,const char* fmt,...);
-    int execute(const std::string& name,const char* fmt,va_list ap);
-    int execute(const std::string& name,const char* sql);
+    MySQLConn::ptr getConn(const std::string& name,bool newName = true);
+    bool addConn(const std::string& name,MySQLConn::ptr conn,bool newName = true);
     
-    MySQLRes::ptr query(const std::string& name,const char* fmt,...);
-    MySQLRes::ptr query(const std::string& name,const char* fmt,va_list ap);
-    MySQLRes::ptr query(const std::string& name,const char* sql);
-    bool init();
+    IDBRes::ptr command(const std::string& name,const char* fmt,...);
+    IDBRes::ptr command(const std::string& name,const char* fmt,va_list ap);
+    IDBRes::ptr command(const std::string& name,const char* sql);
+
+    
   private:
     MySQLManager(const MySQLManager&) = delete;
     MySQLManager& operator=(const MySQLManager&) = delete;
     //单例
     MySQLManager();
   private:
+    uint32_t m_maxConns;
     MutexType m_mx;
     Map m_conns;
-    uint64_t m_timeout;
-    std::map<std::string,std::map<std::string,std::string>> m_dbDefine;
-    
+    std::map<std::string,std::string> m_dbDefine;
   };
 
 }

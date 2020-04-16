@@ -54,9 +54,9 @@ namespace db
     {}
     virtual ~IDBCommand() {} 
     //负责执行sql
-    virtual bool command(const std::string& sql) = 0;
-    virtual bool command(const char* fmt,...)  = 0;
-    virtual bool command(const char* fmt,va_list ap) = 0;
+    virtual std::shared_ptr<IDBRes> command(const std::string& sql) = 0;
+    virtual std::shared_ptr<IDBRes> command(const char* fmt,...)  = 0;
+    virtual std::shared_ptr<IDBRes> command(const char* fmt,va_list ap) = 0;
     /*
     virtual bool commandStmt(const std::string& sql) const = 0;
     virtual bool commandStmt(const char* fmt,va_list ap) const = 0;
@@ -148,13 +148,15 @@ namespace db
     virtual int  bindFloat(int idx,float v) = 0;
     virtual int  bindDouble(int idx,double v) = 0;
     virtual int  bindString(int idx,const std::string& v) = 0;
+    virtual int  bindString(int idx,const char* v) = 0;
     virtual int  bindBlob(int idx,const std::string& v) = 0;
+    virtual int  bindBlob(int idx,const char* v,uint64_t size) = 0;
     virtual int  bindTime(int idx,time_t v) = 0;
     virtual int  bindNull(int idx) = 0;
 
     virtual int execute() = 0;
     virtual int64_t getLastInsertId() = 0;
-    virtual std::shared_ptr<IDBRes> query() = 0;
+    virtual std::shared_ptr<IDBRes> command() = 0;
 
     virtual int getErrno() const = 0;
     virtual std::string  getError() const = 0;

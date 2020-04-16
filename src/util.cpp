@@ -114,9 +114,9 @@ namespace zhuyh
 
   std::string time2Str(time_t t,const char* fmt)
   {
-    if(str == nullptr || fmt == nullptr) return (time_t)-1;
+    if( fmt == nullptr) throw std::logic_error("fmt is nullptr");
     struct tm tm;
-    char buf[128];
+    char buf[128] = {0};
     strftime(buf,128,fmt,&tm);
     return std::string(buf);
   }
