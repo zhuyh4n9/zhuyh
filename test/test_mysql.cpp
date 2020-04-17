@@ -6,15 +6,6 @@
 const std::string prompt = "mysql>";
 using namespace zhuyh;
 
-const std::map<std::string,std::string>
-params = {
-	  {"user","root"},
-	  {"passwd","169074291"},
-	  {"host","127.0.0.1"},
-	  {"port","3306"},
-	  {"dbname","prac"}
-};
-
 void printDelimiter(int cols)
 {
   std::cout<<"+";
@@ -50,12 +41,11 @@ void printHeader(int cols,db::MySQLRes::ptr res)
 }
 void run()
 {
-  db::MySQLConn::ptr conn = std::make_shared<db::MySQLConn>(params);
-  int rt = conn->connect();
-  if(rt == false)
+  db::MySQLConn::ptr conn = db::MySQLConn::Create("root");
+  db::MySQLConnGuard cg(conn);
+  if(conn == nullptr)
     {
-      LOG_ROOT_ERROR() << "failed to connect to mysql server : "<<conn->getError();
-      conn->close();
+      LOG_ROOT_ERROR() << "failed to create mysql connection";
       return;
     }
   std::string sql;
@@ -64,24 +54,29 @@ void run()
       std::cout<<prompt;
       getline(std::cin,sql);
       if(strncasecmp(sql.c_str(),"exit",4) == 0) break;
-      db::MySQLRes::ptr res;
+      db::MySQLRes::ptr res = nullptr;
       try
 	{
 	  db::MySQLCommand::ptr cmd(new db::MySQLCommand(conn));
-	  cmd->command(sql);
-	  res = std::dynamic_pointer_cast<db::MySQLRes>(cmd->getRes());
-	  if(res == nullptr) throw std::logic_error("cast failed");
+	  auto tmp = cmd->command(sql);
+	  if(tmp)
+	    {
+	      res = std::dynamic_pointer_cast<db::MySQLRes>(tmp);
+	      if(res == nullptr) throw std::logic_error("cast failed");
+	    }
 	}
       catch(std::exception& e)
 	{
 	  LOG_ROOT_ERROR() << e.what();
 	  break;
 	}
-      int cols = res->getColumnCount();
-      printHeader(cols,res);
-      res->foreach(processRow);
+      if(res)
+	{
+	  int cols = res->getColumnCount();
+	  printHeader(cols,res);
+	  res->foreach(processRow);
+	}
     }
-  conn->close();
 }
 
 int main()

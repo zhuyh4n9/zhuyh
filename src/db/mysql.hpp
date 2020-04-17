@@ -14,6 +14,7 @@ namespace zhuyh
 {
 namespace db
 {
+  class MySQLConnGuard;
   class MySQLManager;
   class MySQLStmtRes;
   class MySQLRes;
@@ -24,12 +25,13 @@ namespace db
   {
   public:
     typedef std::shared_ptr<MySQLConn> ptr;
+    friend class MySQLConnGuard;
     friend class MySQLManager;
   private:
     MySQLConn(const std::map<std::string,std::string>& params);
   public:
     //从连接池获取一个连接
-    static MySQLConn::ptr Create();
+    static MySQLConn::ptr Create(const std::string& name);
     
     ~MySQLConn();
     bool connect() override;
@@ -56,6 +58,7 @@ namespace db
     MYSQL* m_mysql = nullptr;
     std::map<std::string,std::string> m_params;
     uint64_t m_lastUsedTime = 0;
+    std::string m_name;
   };
 
   //只可以通过MySQLCommand创获取
@@ -244,7 +247,12 @@ namespace db
     typedef std::shared_ptr<MySQLStmtRes> ptr;
     
     static MySQLStmtRes::ptr Create(std::shared_ptr<MySQLStmt> stmt);
-    ~MySQLStmtRes();
+    ~MySQLStmtRes() {
+      if(!m_errno)
+	{
+	  mysql_stmt_free_result(m_stmt->get());
+	}
+    }
   private:
     MySQLStmtRes(std::shared_ptr<MySQLStmt> stmt,
 		 const std::string& err,
@@ -346,5 +354,19 @@ namespace db
     std::map<std::string,std::string> m_dbDefine;
   };
 
+  class MySQLConnGuard 
+  {
+  public:
+    MySQLConnGuard(const MySQLConn::ptr& conn)
+      :m_conn(conn){}
+    ~MySQLConnGuard()
+    {
+      auto mgr = MySQLManager::Mgr::getInstance();
+      mgr->addConn(m_conn->m_name,m_conn);
+    }
+  private:
+    MySQLConn::ptr m_conn;
+  };
+  
 }
 }

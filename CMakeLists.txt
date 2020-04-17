@@ -131,6 +131,9 @@ target_link_libraries(test_httpConnection zhuyh ${LIBS})
 add_executable(test_mysql test/test_mysql.cpp)
 target_link_libraries(test_mysql zhuyh ${LIBS})
 
+add_executable(test_stmt test/test_stmt.cpp)
+target_link_libraries(test_stmt ${LIBS})
+
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 

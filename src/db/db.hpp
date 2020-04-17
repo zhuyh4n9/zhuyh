@@ -66,8 +66,6 @@ namespace db
     virtual int getAffectedRow()  { return -1;}
     int getErrno() const { return m_conn->getErrno();}
     std::string getError() const { return m_conn->getError();}
-
-    virtual std::shared_ptr<IDBRes> getRes() = 0;
     
     const std::string& getCmdStr() const { return m_cmdStr; }
   protected:
