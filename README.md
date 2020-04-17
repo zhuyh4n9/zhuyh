@@ -117,18 +117,37 @@ bool rc = client->setSendTimeout(uint64_t ms);
 //获取写超时时间
 uint64_t to = client->getSendTimeout();
 ```
-## 序列化
-- 例如文件Objs.xml
-```xml
- <?xml version="1.0" encoding="utf-8"?>
-<classes>
-  <class name = "A">
-    <member name = "m_id" type = "int8_t" attr = "private"></member>
-    <member name = "m_name" type = "std::string" attr = "private"></member>
-    <member name = "m_map" type = "std::map<std::string,int>" attr = "private"></member>
-  </class>
-</classes>
+## Http
+```C++
+//解析Http请求
+HttpRequestParser::ptr parser(new HttpRequestParser())
+while(!parser->isFinished())
+{
+  //自动移动以读取数据
+    parser->execute(buff);
+}
+HttpRequest::ptr req = parser->getData();
+
+//解析Http响应
+HttpResponseParser::ptr parser(new HttpResponse());
+while(!parser->isFinished())
+{
+  //自动移动以读取数据
+    parser->execute(buff);
+}
+HttpResponse::ptr resp = parser->getData();
 ```
-```shell
-bin/Serialize Objs.xml即可
+## MySQL
+```C++
+
+//连接池中获取一个连接
+MySQLConn::ptr conn = MySQLConn::Create(name);
+//RAII资源管理,析构时交给MySQLManager管理
+MySQLConnGuard::ptr connGuard(conn);
+//执行SQL语句
+MySQLCommand::ptr cmd(new MySQLCommand(conn));
+MySQLRes::ptr res = cmd->command(fmt,...);
+MySQLStmtRes::ptr res = cmd->commandStmt(stmt,args);
+MySQLStmtRes::ptr res = cmd->commandStmtStr(stmtStr,args);
+
 ```

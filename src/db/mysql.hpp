@@ -9,13 +9,15 @@
 #include<vector>
 #include<unordered_map>
 #include<deque>
-
+#include"../macro.hpp"
+#include"../logs.hpp"
 namespace zhuyh
 {
 namespace db
 {
   class MySQLConnGuard;
   class MySQLManager;
+  class MySQLStmt;
   class MySQLStmtRes;
   class MySQLRes;
   class MySQLCommand;
@@ -148,11 +150,18 @@ namespace db
   class MySQLCommand : public IDBCommand
   {
   public:
+    typedef std::shared_ptr<MySQLCommand> ptr;
     MySQLCommand(MySQLConn::ptr conn)
       :IDBCommand(conn){}
     IDBRes::ptr command(const std::string& sql) override;
     IDBRes::ptr command(const char* fmt,va_list ap) override;
     IDBRes::ptr command(const char* fmt,...) override;
+    
+    template<class... Args>
+    std::shared_ptr<MySQLStmtRes> commandStmtStr(const std::string& str,Args&&... args);
+    
+    template<class... Args>
+    std::shared_ptr<MySQLStmtRes> commandStmt(std::shared_ptr<MySQLStmt> stmt,Args&&... args);
     
     int getAffectedRow() override;
   };
@@ -367,6 +376,27 @@ namespace db
   private:
     MySQLConn::ptr m_conn;
   };
+
+
+  
+  template<class... Args>
+  MySQLStmtRes::ptr MySQLCommand::commandStmtStr(const std::string& str,Args&&... args)
+  {
+    auto conn = std::dynamic_pointer_cast<MySQLConn>(m_conn);
+    ASSERT( conn!= nullptr );
+    auto stmt = MySQLStmt::Create(conn,str);
+    return commandStmt(stmt,std::forward(args)...);
+  }
+
+
+  template<class... Args>
+  std::shared_ptr<MySQLStmtRes> MySQLCommand::commandStmt(std::shared_ptr<MySQLStmt> stmt,Args&&... args)
+  {
+    int idx = 0;
+    (stmt->bind(idx++,args),...);
+    auto res = MySQLStmtRes::Create(stmt);
+    return res;
+  }
   
 }
 }
