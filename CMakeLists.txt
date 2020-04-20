@@ -49,12 +49,17 @@ set(LIBS
 SET(SERIALIZE_LIBS
     src/Serialize/reflect.cpp)
 
+SET(PROXY_LIBS
+    src/httpProxy/LogInServlet.cpp
+    src/httpProxy/main.cpp)	
 add_library(zhuyh SHARED ${LIB_SRC})
 add_library(libzhuyh STATIC  ${LIB_SRC})
 
 add_executable(Serialize src/Serialize/main.cpp ${SERIALIZE_LIBS})
 target_link_libraries(Serialize tinyxml2)
 
+add_executable(Proxy ${PROXY_LIBS})
+target_link_libraries(Proxy ${LIBS})
 #add_executable(logtest test/logtest.cpp)
 #target_link_libraries(logtest zhuyh ${LIBS})
 
@@ -133,6 +138,7 @@ target_link_libraries(test_mysql zhuyh ${LIBS})
 
 add_executable(test_stmt test/test_stmt.cpp)
 target_link_libraries(test_stmt ${LIBS})
+
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)

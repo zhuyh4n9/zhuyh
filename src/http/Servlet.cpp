@@ -144,5 +144,17 @@ namespace http
     resp->setBody(m_content);
     return 0;
   }
+
+  int32_t MethodNotAllowedServlet::handle(HttpRequest::ptr req,
+					  HttpResponse::ptr resp,
+					  HttpSession::ptr session)
+  {
+    resp->setStatus(HttpStatus::METHOD_NOT_ALLOWED);
+    resp->setHeader("Server","HttpServer/1.0.0");
+    resp->setHeader("Content-Type","text/html");
+    resp->setBody(m_content);
+    return 0;
+  }
+  
 }
 }

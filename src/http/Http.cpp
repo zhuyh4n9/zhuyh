@@ -124,7 +124,39 @@ namespace http
     auto it = m_cookies.find(key);
     return it == m_cookies.end() ? dft : it->second;
   }
-  
+
+  bool HttpRequest::getForm(std::unordered_map<std::string,std::string>& mp)
+  {
+#define KEY 0
+#define VALUE 1
+    if(m_body.empty()) return false;
+    std::string kv[2];
+    //type = 0 : key , type = 1 : value
+    int type = KEY;
+    for(size_t i=0;i<m_body.size();i++)
+      {
+	if(m_body[i] == '&')
+	  {
+	    mp[kv[KEY]] = kv[VALUE];
+	    kv[KEY].clear();
+	    kv[VALUE].clear();
+	    type = KEY;
+	  }
+	else if(m_body[i] == '=')
+	  {
+	    type = VALUE;
+	  }
+	else
+	  {
+	    kv[type]+=m_body[i];
+	  }
+      }
+    if(type != VALUE) return false;
+    mp[kv[KEY]] = kv[VALUE];
+    return true;
+#undef KEY
+#undef VALUE
+  }
   void HttpRequest::setHeader(const std::string& key,const std::string& val)
   {
     m_headers[key] = val;

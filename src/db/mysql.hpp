@@ -21,6 +21,7 @@ namespace db
   class MySQLStmtRes;
   class MySQLRes;
   class MySQLCommand;
+  class MySQLTranscation;
   
   class MySQLConn : public IDBConn,
 		    public std::enable_shared_from_this<MySQLConn>
@@ -40,6 +41,7 @@ namespace db
     void close() override;
     bool ping() override;
     MYSQL* get() { return m_mysql;}
+    const std::string getName() const override { return m_name;}
     int getErrno() const override
     {
       if(m_mysql == nullptr)
@@ -150,22 +152,54 @@ namespace db
   class MySQLCommand : public IDBCommand
   {
   public:
+    friend class MySQLTranscation;
     typedef std::shared_ptr<MySQLCommand> ptr;
-    MySQLCommand(MySQLConn::ptr conn)
-      :IDBCommand(conn){}
-    IDBRes::ptr command(const std::string& sql) override;
-    IDBRes::ptr command(const char* fmt,va_list ap) override;
-    IDBRes::ptr command(const char* fmt,...) override;
     
+    MySQLCommand(MySQLConn::ptr conn,bool close = false)
+      :IDBCommand(conn),
+       m_close(close){}
+    ~MySQLCommand();
+    IDBRes::ptr command(const std::string& sql) override final;
+    IDBRes::ptr command(const char* fmt,va_list ap) override final;
+    IDBRes::ptr command(const char* fmt,...) override final;
+
+    int getAffectedRow() override;
+    
+    bool getClose() { return m_close;}
+    void setClose(bool close) { m_close = close; }
+
+    template<class... Args>
+    int executeStmtStr(const std::string& str,Args&&... args);
+
     template<class... Args>
     std::shared_ptr<MySQLStmtRes> commandStmtStr(const std::string& str,Args&&... args);
-    
-    template<class... Args>
-    std::shared_ptr<MySQLStmtRes> commandStmt(std::shared_ptr<MySQLStmt> stmt,Args&&... args);
-    
-    int getAffectedRow() override;
+  private:
+    //是否是事务
+    bool m_close = false;
+    int m_row = 0;
   };
 
+  class MySQLStmtCommand
+  {
+  public:
+    typedef std::shared_ptr<MySQLStmtCommand> ptr;
+    MySQLStmtCommand(std::shared_ptr<MySQLStmt> stmt)
+      :m_stmt(stmt) {
+    }
+    template<class... Args>
+    std::shared_ptr<MySQLStmtRes> command(Args&&... args);
+    
+    template<class... Args>
+    int execute(Args&&... args);
+
+    inline int getErrno() const;
+    inline std::string getError() const;
+
+    int getAffectedRow() const  { return m_row;}
+  private:
+    int m_row;
+    std::shared_ptr<MySQLStmt> m_stmt;
+  };
   
   class MySQLStmt : public IDBStmt,
 		    public std::enable_shared_from_this<MySQLStmt>
@@ -221,7 +255,7 @@ namespace db
     int64_t getLastInsertId() override;
     
     std::shared_ptr<IDBRes> command();
-
+    
     MYSQL_STMT* get() const
     {
       return m_stmt;
@@ -243,12 +277,18 @@ namespace db
 	}
       return std::string(mysql_stmt_error(m_stmt));
     }
+
+    MySQLConn::ptr getConn()
+    {
+      return m_conn;
+    }
   private:
     MYSQL_STMT* m_stmt;
     MySQLConn::ptr m_conn;
     std::vector<MYSQL_BIND> m_binds;
     int m_rowCnt;
   };
+
 
   class MySQLStmtRes : public IDBRes
   {
@@ -363,6 +403,26 @@ namespace db
     std::map<std::string,std::string> m_dbDefine;
   };
 
+  class MySQLTranscation : public IDBTranscation,
+			   public MySQLCommand
+  {
+  public:
+    typedef std::shared_ptr<MySQLTranscation> ptr;
+    friend class MySQLCommand;
+    static MySQLTranscation::ptr Create(const std::string& name);
+    bool begin() override;
+    bool commit() override;
+    bool rollback() override;
+  private:
+    MySQLTranscation(MySQLConn::ptr conn)
+      :MySQLCommand(conn,false),
+       m_isFinished(true)
+    {
+    }
+  private:
+    bool m_isFinished = false;
+  };
+  
   class MySQLConnGuard 
   {
   public:
@@ -382,21 +442,62 @@ namespace db
   template<class... Args>
   MySQLStmtRes::ptr MySQLCommand::commandStmtStr(const std::string& str,Args&&... args)
   {
-    auto conn = std::dynamic_pointer_cast<MySQLConn>(m_conn);
-    ASSERT( conn!= nullptr );
-    auto stmt = MySQLStmt::Create(conn,str);
-    return commandStmt(stmt,std::forward(args)...);
-  }
-
-
-  template<class... Args>
-  std::shared_ptr<MySQLStmtRes> MySQLCommand::commandStmt(std::shared_ptr<MySQLStmt> stmt,Args&&... args)
-  {
     int idx = 0;
+    auto conn = std::dynamic_pointer_cast<MySQLConn>(m_conn);
+    ASSERT(conn != nullptr);
+    auto stmt = MySQLStmt::Create(conn,str);
+    if(stmt == nullptr) return nullptr;
     (stmt->bind(idx++,args),...);
-    auto res = MySQLStmtRes::Create(stmt);
-    return res;
+    auto res = stmt->command();
+
+    m_row  = mysql_stmt_affected_rows(stmt->get());
+    return std::dynamic_pointer_cast<MySQLStmtRes>(res);
   }
   
+  template<class... Args>
+  int MySQLCommand::executeStmtStr(const std::string& str,
+				Args&&... args)
+  {
+    int idx = 0;
+    if(m_conn == nullptr) return -1;
+    auto conn = std::dynamic_pointer_cast<MySQLConn>(m_conn);
+    ASSERT(conn != nullptr);
+    auto stmt = MySQLStmt::Create(conn,str);
+    if(stmt == nullptr) return nullptr;
+    
+    (stmt->bind(idx++,args),...);
+    int rt = stmt->execute();
+    m_row  = mysql_stmt_affected_rows(stmt->get());
+    return rt;
+  }
+  
+  template<class... Args>
+  std::shared_ptr<MySQLStmtRes> MySQLStmtCommand::command(Args&&... args)
+  {
+    int idx = 0;
+    (m_stmt->bind(idx++,args),...);
+    auto res = m_stmt->command();
+    m_row  = mysql_stmt_affected_rows(m_stmt->get());
+    return std::dynamic_pointer_cast<MySQLStmtRes>(res);
+  }
+
+  template<class... Args>
+  int MySQLStmtCommand::execute(Args&&... args)
+  {
+    int idx = 0;
+    (m_stmt->bind(idx++,args),...);
+    int rt = m_stmt->execute();
+    m_row  = mysql_stmt_affected_rows(m_stmt->get());
+    return rt;
+  }
+
+  int MySQLStmtCommand::getErrno() const
+  {
+    return mysql_stmt_errno(m_stmt->get());
+  }
+  std::string MySQLStmtCommand::getError() const
+  {
+    return mysql_stmt_error(m_stmt->get());
+  }
 }
 }

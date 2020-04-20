@@ -184,6 +184,18 @@ namespace db
     return true;
   }
 
+  MySQLCommand::~MySQLCommand()
+  {
+    //如果不是事务则归还给
+    if(m_close)
+      {
+	auto mgr = MySQLManager::Mgr::getInstance();
+	auto conn = std::dynamic_pointer_cast<MySQLConn>(m_conn);
+	ASSERT( conn != nullptr);
+	mgr->addConn(conn->getName(),conn);
+      }
+  }
+
   IDBRes::ptr MySQLCommand::command(const char* fmt,...)
   {
     va_list ap;
@@ -216,14 +228,18 @@ namespace db
     m_cmdStr = sql;
     MYSQL_RES* tmp = mysql_store_result(conn->get());
     MySQLRes::ptr res(new MySQLRes(tmp,getError(),getErrno()));
+    if(m_conn == nullptr) m_row = 0;
+    else
+      {
+	auto conn = MySQLUtils::ptrTypeCast<IDBConn,MySQLConn>(m_conn);
+	m_row  = mysql_affected_rows(conn->get());
+      }
     return res;
   }
 
   int MySQLCommand::getAffectedRow()
   {
-    if(m_conn == nullptr) return 0;
-    auto conn = MySQLUtils::ptrTypeCast<IDBConn,MySQLConn>(m_conn);
-    return mysql_affected_rows(conn->get());
+    return m_row;
   }
 
   MySQLRes::MySQLRes(MYSQL_RES* res,
@@ -890,6 +906,59 @@ namespace db
     deq.push_back(conn);
     return true;
   }
+
+  bool MySQLTranscation::begin()
+  {
+    try
+      {
+	command("BEGIN");
+	m_isFinished = false;
+      }
+    catch(std::exception& e)
+      {
+	LOG_ERROR(s_logger) << e.what();
+	return false;
+      }
+    return true;
+  }
   
+  bool MySQLTranscation::commit()
+  {
+    if(m_isFinished == true) return false;
+    try
+      {
+	command("COMMIT");
+	m_isFinished = true;
+      }
+    catch(std::exception& e)
+      {
+	LOG_ERROR(s_logger) << e.what();
+	return false;
+      }
+    return true;
+  }
+  bool MySQLTranscation::rollback()
+  {
+    if(m_isFinished == true) return false;
+    try
+      {
+	command("ROLLBACK");
+	m_isFinished = true;
+      }
+    catch(std::exception& e)
+      {
+	LOG_ERROR(s_logger) << e.what();
+	return false;
+      }
+    return true;
+  }
+
+  MySQLTranscation::ptr MySQLTranscation::Create(const std::string& name)
+  {
+    auto mgr = MySQLManager::Mgr::getInstance();
+    auto conn = mgr->getConn(name);
+
+    return MySQLTranscation::ptr(new MySQLTranscation(conn));
+  }
 }
 }

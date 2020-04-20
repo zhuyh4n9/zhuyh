@@ -31,6 +31,7 @@ namespace db
     
     //获取错误信息
     virtual int getErrno() const = 0;
+    virtual const std::string getName() const = 0;
     //C++11有move优化
     virtual std::string getError() const = 0;
     virtual bool connect() = 0;
@@ -57,11 +58,6 @@ namespace db
     virtual std::shared_ptr<IDBRes> command(const std::string& sql) = 0;
     virtual std::shared_ptr<IDBRes> command(const char* fmt,...)  = 0;
     virtual std::shared_ptr<IDBRes> command(const char* fmt,va_list ap) = 0;
-    /*
-    virtual bool commandStmt(const std::string& sql) const = 0;
-    virtual bool commandStmt(const char* fmt,va_list ap) const = 0;
-    virtual bool commandStmt(const char* fmt,...) const = 0;
-    */
     
     virtual int getAffectedRow()  { return -1;}
     int getErrno() const { return m_conn->getErrno();}
@@ -74,7 +70,9 @@ namespace db
     IDBConn::ptr m_conn;
     bool m_hasError = false;
   };
-    //结果集
+
+  
+  //结果集
   class IDBRes
   {
   public:
@@ -163,10 +161,10 @@ namespace db
     std::string m_error;
   };
   
-  class IDBTranscation : public IDBCommand
+  class IDBTranscation
   {
   public:
-    typedef std::shared_ptr<IDBTranscation> ptr;
+    typedef std::shared_ptr<IDBTranscation> ptr;   
     virtual ~IDBTranscation() {}
     virtual bool begin() = 0;
     virtual bool commit() = 0;

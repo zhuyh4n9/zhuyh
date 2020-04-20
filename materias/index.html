@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+<meta charset="utf-8">
+<title>HttpProxy登录</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="content">
+      <form action="login" method="post">
+        <div class="form sign-in">
+          <h2>欢迎回来</h2>
+          <label>
+            <span>用户名(邮箱)</span>
+            <input type="username" name="username"/>
+          </label>
+          <label>
+            <span>密码</span>
+            <input type="password" name="passwd" />
+          </label>
+          <p class="forgot-pass"><a href="javascript:">忘记密码？</a></p>
+          <button type="button submit" class="submit">登 录</button>
+        </div>
+      </form>
+      <div class="sub-cont">
+        <div class="img">
+          <div class="img__text m--up">
+            <h2>还未注册？</h2>
+          </div>
+          <div class="img__text m--in">
+            <h2>已有帐号？</h2>
+            </div>
+          <div class="img__btn">
+            <span class="m--up">注 册</span>
+            <span class="m--in">登 录</span>
+          </div>
+        </div>
+        <div class="form sign-up">
+	  <form action="register" method="post">
+            <h2>立即注册</h2>
+            <label>
+              <span>用户名</span>
+              <input type="text" name="username"/>
+            </label>
+            <label>
+              <span>邮箱</span>
+              <input type="email" name="email" />
+            </label>
+            <label>
+              <span>密码</span>
+              <input type="password" name="passwd"/>
+            </label>
+            <button type="button submit" class="submit">注 册</button>
+	  </form>
+        </div>
+      </div>
+    </div>
+    
+    <script src="js/script.js"></script>
+</body>
+
+</html>

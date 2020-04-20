@@ -362,6 +362,8 @@ namespace http
     std::ostream& dump(std::ostream& os) const;
     std::string toString() const;
 
+    bool getForm(std::unordered_map<std::string,std::string>& kv);
+    
     void init();
     void initParam();
     void initQueryParam();

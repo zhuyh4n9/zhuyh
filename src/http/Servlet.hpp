@@ -14,6 +14,7 @@ namespace zhuyh
 namespace http
 {
 
+
   class Servlet
   {
   public:
@@ -32,6 +33,66 @@ namespace http
   private:
     std::string m_name;
   };
+  
+
+  
+  class MethodNotAllowedServlet : public Servlet
+  {
+  public :
+    typedef std::shared_ptr<MethodNotAllowedServlet> ptr;
+    MethodNotAllowedServlet(const std::string& name = "HttpServer/1.0.0")
+      :Servlet("MethodNotAllowedServlet")
+    {
+      m_content = "<html><head><title>405 Method Not Allowed"
+        "</title></head><body><center><h1>405 Method Not Allowed</h1></center>"
+        "<hr><center>" + name + "</center></body></html>";
+    }
+    virtual int32_t handle(HttpRequest::ptr req,
+			   HttpResponse::ptr resp,
+			   HttpSession::ptr session) override;
+  private:
+    std::string m_content;
+  };
+  
+  class MethodServlet : public Servlet
+  {
+  public:
+    typedef std::shared_ptr<MethodServlet> ptr;
+    typedef std::function<int32_t(HttpRequest::ptr,
+				  HttpResponse::ptr,
+				  HttpSession::ptr)> CbType;
+    MethodServlet(const std::string& name)
+      :Servlet(name),
+       m_methodNotAllowed(new MethodNotAllowedServlet())
+    {
+    }
+
+    virtual int32_t handle(HttpRequest::ptr req,
+			   HttpResponse::ptr resp,
+			   HttpSession::ptr session) override
+    {
+      HttpMethod method = req->getMehod();
+      auto it = m_servlets.find((uint32_t)method);
+      if(it == m_servlets.end())
+	{
+	  return m_methodNotAllowed->handle(req,resp,session);
+	}
+      return it->second->handle(req,resp,session);
+    }
+
+    void addServlet(HttpMethod method,Servlet::ptr servlet)
+    {
+      m_servlets[(uint32_t)method] = servlet;
+    }
+    void setMethodNotAllowed(Servlet::ptr servlet)
+    {
+      m_methodNotAllowed = servlet;
+    }
+  private:
+    std::map<uint32_t,Servlet::ptr> m_servlets;
+    Servlet::ptr m_methodNotAllowed;
+  };
+
 
   class FunctionServlet : public Servlet
   {
@@ -55,7 +116,7 @@ namespace http
   private:
     CbType m_cb;
   };
-
+  
   class ServletDispatch : public Servlet
   {
   public:
@@ -115,5 +176,6 @@ namespace http
   private:
     std::string m_content;
   };
+
 }
 }

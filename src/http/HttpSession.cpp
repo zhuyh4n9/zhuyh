@@ -58,7 +58,6 @@ namespace http
       {
 	std::string body;
 	body.resize(length);
-	length -= remain;
 	int len = 0;
 	if(length >= remain)
 	  {

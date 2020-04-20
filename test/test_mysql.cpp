@@ -41,13 +41,6 @@ void printHeader(int cols,db::MySQLRes::ptr res)
 }
 void run()
 {
-  db::MySQLConn::ptr conn = db::MySQLConn::Create("root");
-  db::MySQLConnGuard cg(conn);
-  if(conn == nullptr)
-    {
-      LOG_ROOT_ERROR() << "failed to create mysql connection";
-      return;
-    }
   std::string sql;
   while(true)
     {
@@ -57,7 +50,13 @@ void run()
       db::MySQLRes::ptr res = nullptr;
       try
 	{
+	  auto conn = db::MySQLConn::Create("root");
 	  db::MySQLCommand::ptr cmd(new db::MySQLCommand(conn));
+	  if(cmd == nullptr)
+	    {
+	      LOG_ROOT_ERROR() << "failed to create command";
+	      break;
+	    }
 	  auto tmp = cmd->command(sql);
 	  if(tmp)
 	    {
