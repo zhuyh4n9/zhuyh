@@ -37,6 +37,7 @@ namespace http
 	//当前剩余未paser的数据总长度
 	len += remain;
 	data[len] = 0;
+	//std::cout<<data<<std::endl;
 	//LOG_ROOT_INFO() << data;
 	nparser = parser->execute(data,len,false);
 	if(parser->hasError())
@@ -62,6 +63,7 @@ namespace http
     std::string body;
     if(client_parser.chunked)
       {
+	parser->getData()->delHeader("Transfer-Encoding");
 	int len = remain;
 	int left = 0;
 	do

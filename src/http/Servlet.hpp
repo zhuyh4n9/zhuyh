@@ -24,7 +24,7 @@ namespace http
     {}
     virtual ~Servlet() {}
     virtual int32_t handle(HttpRequest::ptr req,
-			   HttpResponse::ptr resp,
+			   HttpResponse::ptr& resp,
 			   HttpSession::ptr session) = 0;
     const std::string& getName() const
     {
@@ -48,7 +48,7 @@ namespace http
         "<hr><center>" + name + "</center></body></html>";
     }
     virtual int32_t handle(HttpRequest::ptr req,
-			   HttpResponse::ptr resp,
+			   HttpResponse::ptr& resp,
 			   HttpSession::ptr session) override;
   private:
     std::string m_content;
@@ -58,24 +58,21 @@ namespace http
   {
   public:
     typedef std::shared_ptr<MethodServlet> ptr;
-    typedef std::function<int32_t(HttpRequest::ptr,
-				  HttpResponse::ptr,
-				  HttpSession::ptr)> CbType;
     MethodServlet(const std::string& name)
       :Servlet(name),
-       m_methodNotAllowed(new MethodNotAllowedServlet())
+       m_dft(new MethodNotAllowedServlet())
     {
     }
 
     virtual int32_t handle(HttpRequest::ptr req,
-			   HttpResponse::ptr resp,
+			   HttpResponse::ptr& resp,
 			   HttpSession::ptr session) override
     {
       HttpMethod method = req->getMehod();
       auto it = m_servlets.find((uint32_t)method);
       if(it == m_servlets.end())
 	{
-	  return m_methodNotAllowed->handle(req,resp,session);
+	  return m_dft->handle(req,resp,session);
 	}
       return it->second->handle(req,resp,session);
     }
@@ -84,13 +81,13 @@ namespace http
     {
       m_servlets[(uint32_t)method] = servlet;
     }
-    void setMethodNotAllowed(Servlet::ptr servlet)
+    void setDefault(Servlet::ptr servlet)
     {
-      m_methodNotAllowed = servlet;
+      m_dft = servlet;
     }
   private:
     std::map<uint32_t,Servlet::ptr> m_servlets;
-    Servlet::ptr m_methodNotAllowed;
+    Servlet::ptr m_dft;
   };
 
 
@@ -108,7 +105,7 @@ namespace http
     {
     }
     virtual int32_t handle(HttpRequest::ptr req,
-			   HttpResponse::ptr resp,
+			   HttpResponse::ptr& resp,
 			   HttpSession::ptr session) override
     {
       return m_cb(req,resp,session);
@@ -125,7 +122,7 @@ namespace http
     ServletDispatch(Servlet::ptr dft = nullptr,const std::string& name = "ServletDispatch");
     
     virtual int32_t handle(HttpRequest::ptr req,
-			   HttpResponse::ptr resp,
+			   HttpResponse::ptr& resp,
 			   HttpSession::ptr session) override;
     
     void addServlet(const std::string& uri,Servlet::ptr slt);
@@ -171,7 +168,7 @@ namespace http
         "<hr><center>" + name + "</center></body></html>";
     }
     virtual int32_t handle(HttpRequest::ptr req,
-			   HttpResponse::ptr resp,
+			   HttpResponse::ptr& resp,
 			   HttpSession::ptr session) override;
   private:
     std::string m_content;

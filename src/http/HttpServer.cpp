@@ -28,6 +28,10 @@ namespace http
 			       <<" errno : "<<errno<<" client : "<<client;
 	    break;
 	  }
+	// std::cout<<*req<<std::endl;
+	// std::cout<<"uri : "<<req->getUri()<<std::endl;
+	// std::cout<<"scheme :"<<req->getScheme()<<std::endl;
+	// std::cout<<"Path :"<<req->getPath()<<std::endl;
 	//LOG_ROOT_INFO() <<*req;
 	HttpResponse::ptr resp =
 	  std::make_shared<HttpResponse>(req->getVersion(),

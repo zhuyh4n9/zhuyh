@@ -1,4 +1,5 @@
 #include"LogInServlet.hpp"
+#include"WorkServlet.hpp"
 #include"../config.hpp"
 #include<string>
 #include"../http/HttpServer.hpp"
@@ -44,6 +45,13 @@ void run()
   auto reg = std::make_shared<zhuyh::proxy::RegisterServlet>(s_pathPrefix->getVar());
   registerServlet->addServlet(zhuyh::http::HttpMethod::POST,reg);
   dispatch->addServlet("/register",registerServlet);
+
+
+  auto proxyServlet = std::make_shared<zhuyh::http::MethodServlet>
+    ("ProxyServlet");
+  auto proxy = std::make_shared<zhuyh::proxy::ProxyServlet>();
+  proxyServlet->setDefault(proxy);
+  dispatch->addGlobServlet("*",proxyServlet);
   
   server->start();
 }

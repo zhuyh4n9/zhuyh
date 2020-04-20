@@ -51,6 +51,7 @@ SET(SERIALIZE_LIBS
 
 SET(PROXY_LIBS
     src/httpProxy/LogInServlet.cpp
+    src/httpProxy/WorkServlet.cpp
     src/httpProxy/main.cpp)	
 add_library(zhuyh SHARED ${LIB_SRC})
 add_library(libzhuyh STATIC  ${LIB_SRC})

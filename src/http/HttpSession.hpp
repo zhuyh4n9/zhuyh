@@ -15,6 +15,16 @@ namespace http
     HttpSession(Socket::ptr sock,bool owner = true);
     HttpRequest::ptr recvRequest();
     int sendResponse(HttpResponse::ptr resp);
+    bool recvRequest(HttpRequest::ptr& resp)
+    {
+      auto tmp = recvRequest();
+      if(tmp == nullptr) return false;
+      resp = tmp;
+      return true;
+    }
+    uint64_t getId() const { return m_id;}
+  private:
+    uint64_t m_id;
   };
 }
 }

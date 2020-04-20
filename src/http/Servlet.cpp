@@ -14,7 +14,7 @@ namespace http
 	m_dft.reset(new NotFoundServlet("httpServer/1.0.0"));
     }
   int32_t ServletDispatch::handle(HttpRequest::ptr req,
-				  HttpResponse::ptr resp,
+				  HttpResponse::ptr& resp,
 				  HttpSession::ptr session)
   {
     auto slt = getMatchServlet(req->getPath());
@@ -115,6 +115,7 @@ namespace http
   
   Servlet::ptr ServletDispatch::getMatchServlet(const std::string& uri)
   {
+    //LOG_ROOT_ERROR() << uri;
     RDLockGuard lg(m_lk);
     auto it = m_datas.find(uri);
     if(it != m_datas.end())
@@ -135,7 +136,7 @@ namespace http
   }
 
   int32_t NotFoundServlet::handle(HttpRequest::ptr req,
-				  HttpResponse::ptr resp,
+				  HttpResponse::ptr& resp,
 				  HttpSession::ptr session)
   {
     resp->setStatus(HttpStatus::NOT_FOUND);
@@ -146,7 +147,7 @@ namespace http
   }
 
   int32_t MethodNotAllowedServlet::handle(HttpRequest::ptr req,
-					  HttpResponse::ptr resp,
+					  HttpResponse::ptr& resp,
 					  HttpSession::ptr session)
   {
     resp->setStatus(HttpStatus::METHOD_NOT_ALLOWED);

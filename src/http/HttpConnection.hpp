@@ -18,6 +18,13 @@ namespace http
     HttpConnection(Socket::ptr sock,bool owner = true);
     int sendRequest(HttpRequest::ptr req);
     HttpResponse::ptr recvResponse();
+    bool recvResponse(HttpResponse::ptr& resp)
+    {
+      auto tmp = recvResponse();
+      if(tmp == nullptr) return false;
+      resp = tmp;
+      return true;
+    }
   };
 
 }

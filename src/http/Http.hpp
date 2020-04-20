@@ -213,9 +213,9 @@ namespace http
       return m_query;
     }
 
-    const std::string& getUri() const
+    std::string getUri() const
     {
-      return m_uri;
+      return (!m_scheme.empty() ?(m_scheme+":") : "")  + m_uri;
     }
     const std::string& getScheme() const
     {
@@ -392,7 +392,7 @@ namespace http
   {
   public:
     typedef std::shared_ptr<HttpResponse> ptr;
-    HttpResponse(uint8_t version = 11,bool close  = false);
+    HttpResponse(uint8_t version = 11,bool close  = true);
     HttpStatus getStatus() const
     {
       return m_status;

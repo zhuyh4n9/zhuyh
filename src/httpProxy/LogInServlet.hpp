@@ -1,3 +1,5 @@
+#pragma once
+
 #include"../logs.hpp"
 #include"../http/Http.hpp"
 #include"../http/HttpSession.hpp"
@@ -17,7 +19,7 @@ namespace proxy
       :Servlet("MainServlet"),
        m_path(path){}
     int32_t handle(http::HttpRequest::ptr req,
-		   http::HttpResponse::ptr resp,
+		   http::HttpResponse::ptr& resp,
 		   http::HttpSession::ptr session) override;
   private:
     std::string m_path;
@@ -31,7 +33,7 @@ namespace proxy
       :Servlet("MateriaServlet"),
        m_path(path){}
     int32_t handle(http::HttpRequest::ptr req,
-		   http::HttpResponse::ptr resp,
+		   http::HttpResponse::ptr& resp,
 		   http::HttpSession::ptr session) override;
   private:
     std::string m_path;
@@ -52,7 +54,7 @@ namespace proxy
       ASSERT(m_stmt != nullptr);
     }
     int32_t handle(http::HttpRequest::ptr req,
-		   http::HttpResponse::ptr resp,
+		   http::HttpResponse::ptr& resp,
 		   http::HttpSession::ptr session) override;
   private:
     db::MySQLStmt::ptr m_stmt;
@@ -75,7 +77,7 @@ namespace proxy
     }
 
     int32_t handle(http::HttpRequest::ptr req,
-		   http::HttpResponse::ptr resp,
+		   http::HttpResponse::ptr& resp,
 		   http::HttpSession::ptr session) override;
   private:
     db::MySQLStmt::ptr m_stmt;

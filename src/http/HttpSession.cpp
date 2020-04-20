@@ -1,12 +1,15 @@
 #include "HttpSession.hpp"
 #include "HttpParser.hpp"
+#include <atomic>
 
 namespace zhuyh
 {
 namespace http
 {
+  static std::atomic<uint64_t> s_id{0};
   HttpSession::HttpSession(Socket::ptr sock,bool owner)
-    :SocketStream(sock,owner)
+    :SocketStream(sock,owner),
+     m_id(s_id++)
   {
   }
 
@@ -14,7 +17,7 @@ namespace http
   {
     HttpRequestParser::ptr parser = std::make_shared<HttpRequestParser>();
     int64_t header_size = HttpRequestParser::getMaxHeaderSize();
-    std::shared_ptr<char> buff(new char[header_size],[](char* data) { delete [] data; });
+    std::shared_ptr<char> buff(new char[header_size+1],[](char* data) { delete [] data; });
     char* data = buff.get();
     int64_t remain = 0;
     int64_t nparser = 0;
@@ -28,6 +31,8 @@ namespace http
     while(1)
       {
 	int len = read(data + remain,header_size-remain);
+	data[len] = 0;
+	//std::cout<<data<<std::endl;
 	if(len <= 0)
 	  {
 	    close();
@@ -87,7 +92,6 @@ namespace http
   {
     std::stringstream ss;
     ss<<*resp;
-    //LOG_ROOT_INFO() << *resp;
     return writeFixSize(ss.str().c_str(),ss.str().size());
   }
   

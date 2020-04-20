@@ -15,7 +15,7 @@ namespace proxy
     return true;
   }
   int32_t IndexServlet::handle(http::HttpRequest::ptr req,
-			      http::HttpResponse::ptr resp,
+			       http::HttpResponse::ptr& resp,
 			      http::HttpSession::ptr session)
   {
     std::string content;
@@ -25,15 +25,13 @@ namespace proxy
 	resp->setStatus(http::HttpStatus::NOT_FOUND);
 	content = "<html><head><title>404 Not Found"
 	  "</title></head><body><center><h1>404 Not Found</h1></center>"
-	  "<hr><center>Index.html NOT FOUND</center></body></html>";
+	  "<hr><center>Http Proxy Server</center></body></html>";
 	resp->setBody(content);
 	return 0;
       }
     
     auto remain = fin.tellg();
     auto off = 0;
-    // std::cout<<"file size : "<<remain<<std::endl
-    // 	     <<"path : "  << m_path<<std::endl;
     content.resize(remain);
     while(!fin.eof() && remain != 0)
       {
@@ -66,7 +64,7 @@ namespace proxy
   }
 
   int32_t MateriaServlet::handle(http::HttpRequest::ptr req,
-				 http::HttpResponse::ptr resp,
+				 http::HttpResponse::ptr& resp,
 				 http::HttpSession::ptr session)
   {
     std::string path = m_path;
@@ -125,7 +123,7 @@ namespace proxy
 
 
   int32_t LogInServlet::handle(http::HttpRequest::ptr req,
-			       http::HttpResponse::ptr resp,
+			       http::HttpResponse::ptr& resp,
 			       http::HttpSession::ptr session)
   {
     std::unordered_map<std::string,std::string> form;
@@ -166,7 +164,7 @@ namespace proxy
   }
 
   int32_t RegisterServlet::handle(http::HttpRequest::ptr req,
-				  http::HttpResponse::ptr resp,
+				  http::HttpResponse::ptr& resp,
 				  http::HttpSession::ptr session)
   {
     std::unordered_map<std::string,std::string> form;
