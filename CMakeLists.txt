@@ -51,6 +51,7 @@ SET(SERIALIZE_LIBS
 
 SET(PROXY_LIBS
     src/httpProxy/LogInServlet.cpp
+    src/httpProxy/ProxyUser.cpp
     src/httpProxy/WorkServlet.cpp
     src/httpProxy/main.cpp)	
 add_library(zhuyh SHARED ${LIB_SRC})
@@ -85,8 +86,8 @@ target_link_libraries(Proxy ${LIBS})
 #Add_Executable(test_processer test/test_processer.cpp)
 #target_link_libraries(test_processer zhuyh  ${LIBS})
 
-#add_executable(test_iomgr test/test_iomgr.cpp )
-#target_link_libraries(test_iomgr zhuyh  ${LIBS})
+add_executable(test_iomgr test/test_iomgr.cpp )
+target_link_libraries(test_iomgr zhuyh  ${LIBS})
 
 #add_executable(test_co test/test_co.cpp)
 #target_link_libraries(test_co zhuyh  ${LIBS})

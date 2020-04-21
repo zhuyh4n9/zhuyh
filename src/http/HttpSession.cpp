@@ -32,7 +32,7 @@ namespace http
       {
 	int len = read(data + remain,header_size-remain);
 	data[len] = 0;
-	//std::cout<<data<<std::endl;
+	//LOG_ROOT_ERROR()<<data<<std::endl;
 	if(len <= 0)
 	  {
 	    close();

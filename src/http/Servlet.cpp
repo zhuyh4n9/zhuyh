@@ -102,7 +102,7 @@ namespace http
   }
   Servlet::ptr ServletDispatch::getGlobServlet(const std::string& uri)
   {
-    WRLockGuard lg(m_lk);
+    RDLockGuard lg(m_lk);
     for(auto it = m_globs.begin();it!=m_globs.end();it++)
       {
 	if(it->first == uri)

@@ -303,7 +303,7 @@ namespace zhuyh
     const int MaxTimeOut = 500;
     while(1)
       {
-	//LOG_INFO(sys_log) << "Holding : " << _holdCount << " Total  : " << _scheduler->totalTask;
+	//LOG_WARN(sys_log) << "Holding : " << _holdCount << " Total  : " << _scheduler->totalTask;
 	if(isStopping())
 	  {
 	    //LOG_INFO(sys_log) << "IOManager : " << _name << " stopped!";

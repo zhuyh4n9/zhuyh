@@ -29,6 +29,7 @@ namespace zhuyh
 	  return;
 	}
       _holdQue.push_back(Fiber::getThis());
+      //告诉调度器不能结束
       scheduler->addHold();
       //--(scheduler->totalTask);
     }

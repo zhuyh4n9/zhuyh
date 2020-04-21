@@ -10,7 +10,7 @@ namespace zhuyh
   static ConfigVar<int>::ptr __max_thread = Config::lookUp<int>("scheduler.maxthread",
 							   32,"scheduler max thread");
   static ConfigVar<int>::ptr __min_thread = Config::lookUp<int>("scheduler.minthread",
-								16,"scheduler min thread");
+								8,"scheduler min thread");
   static ConfigVar<int>::ptr __limit_payload = Config::lookUp<int>("scheduler.limitpayload",
 							      20,"scheduler limitpayload");
   
@@ -29,7 +29,7 @@ namespace zhuyh
     :_minThread(threads),_maxThread(threads)
   {
     if(name == "")
-      _name = "Scheduler";
+      _name = "root";
     else
       _name = name;
     m_lgThread = SingletonPtr<LogThread>::getInstance();
@@ -70,7 +70,7 @@ namespace zhuyh
     //设置为自己
     setThis(this);
     //LOG_INFO(sys_log) << "HERE";
-    _ioMgr.reset(new IOManager("",getThis()));
+    _ioMgr.reset(new IOManager(_name+"_schd",getThis()));
     _currentThread = _minThread;
     for(int i=0;i<_minThread;i++)
       {

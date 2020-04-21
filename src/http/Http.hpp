@@ -60,6 +60,7 @@ namespace http
   XX(206,  PARTIAL_CONTENT,                 "Partial Content")		\
   XX(207,  MULTI_STATUS,                    "Multi Status")		\
   XX(208,  ALREADY_REPORTED,                "Already reported")		\
+  XX(209,  CONNECTION_ESTABLISHED,           "Connection Established")	\
   XX(226,  IM_USED,                         "IM-Used")			\
   XX(300,  MULTI_CHOICES,                   "Multi Choices")		\
   XX(301,  MOVED_PERMANENTLY,               "Moved Permanently")	\
@@ -395,6 +396,7 @@ namespace http
     HttpResponse(uint8_t version = 11,bool close  = true);
     HttpStatus getStatus() const
     {
+      if(m_status == HttpStatus::CONNECTION_ESTABLISHED) return HttpStatus::OK;
       return m_status;
     }
     uint8_t getVersion() const

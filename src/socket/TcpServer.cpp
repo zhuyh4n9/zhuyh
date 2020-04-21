@@ -138,6 +138,7 @@ namespace zhuyh
 	Socket::ptr client = sock->accept();
 	if(client)
 	  {
+	    LOG_ROOT_ERROR() << client;
 	    client->setRecvTimeout(m_recvTimeout);
 	    //shared_from_this防止TcpServer再处理时被释放
 	    m_schd->addNewTask(std::bind(&TcpServer::handleClient,
@@ -148,6 +149,11 @@ namespace zhuyh
 	    LOG_ERROR(s_logger) << "accept failed , errno : "<<errno
 				<< " error : "<<strerror(errno);
 	  }
+	else
+	  {
+	    LOG_ERROR(s_logger) << "accept timedout , errno : "<<errno
+				<< " error : "<<strerror(errno);
+	  }
       }
   }
   //启动accept
@@ -155,7 +161,6 @@ namespace zhuyh
   {
     if(!m_stop) return true;
     m_stop = false;
-    LOG_ROOT_INFO() << "size : "<<m_socks.size();
     for(auto& sock:m_socks)
       m_acceptSchd->addNewTask(std::bind(&TcpServer::startAccept,
 					 shared_from_this(),sock));

@@ -222,7 +222,7 @@
   absolute_URI  = ( scheme ":" hier_part ( "?" query )? ) ;
 
   relative_ref  = ( (relative_part %request_path ( "?" %start_query query )?) >mark %request_uri ( "#" fragment )? ) ;
-  URI           = ( scheme ":" ( hier_part  %request_path ( "?" %start_query query )?) >mark %request_uri ( "#" fragment )? ) ;
+  URI           = ( scheme "://" ( hier_part  %request_path ( "?" %start_query query )?) >mark %request_uri ( "#" fragment )? ) ;
 
   URI_reference = ( URI | relative_ref ) ;
 

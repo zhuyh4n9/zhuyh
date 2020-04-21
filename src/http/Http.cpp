@@ -222,12 +222,18 @@ namespace http
   
   std::ostream& HttpRequest::dump(std::ostream& os) const
   {
-    os << httpMethodToString(m_method)<<" "
-       << (m_scheme.empty() ? "" : m_scheme+"://")<<m_path
-       << (m_query.empty() ? "":"?")<<m_query
-       << (m_fragment.empty() ? "":"#")<<m_fragment
-       << " HTTP/"<<m_version/10<<"."<<m_version%10<<"\r\n";
-    
+    os << httpMethodToString(m_method)<<" ";
+    if(getMehod() == HttpMethod::CONNECT)
+      {
+	os <<  m_scheme +":"<<m_path;
+      }
+    else
+      {
+	os<< (m_scheme.empty() ? "" : m_scheme+"://")<<m_path
+	  << (m_query.empty() ? "":"?")<<m_query
+	  << (m_fragment.empty() ? "":"#")<<m_fragment;
+      }
+    os << " HTTP/"<<m_version/10<<"."<<m_version%10<<"\r\n";
     os << "Connection: "<<(m_close ? "close" : "keep-alive")<<"\r\n";
     for(auto& item : m_headers)
       {

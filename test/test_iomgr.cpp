@@ -48,7 +48,7 @@ void test_co()
   for(int i=0;i<10;++i)
     {
       sem.wait();
-      LOG_ROOT_INFO() << "a = "<<++a;
+      LOG_ROOT_ERROR() << "a = "<<++a;
       sem.notify();
       co_yield;
     }
@@ -64,27 +64,27 @@ int main()
   scheduler->start();
   for(int i =0 ;i<400;++i)
     {
-      TEST* test = new TEST();
+      //TEST* test = new TEST();
       co test_co;
-      int rt=pipe(test->fd);
+      // int rt=pipe(test->fd);
       
-      ASSERT2(rt >= 0,strerror(errno));
-      scheduler->addReadEvent(test->fd[0],
-       			      std::bind(&TEST::funcRead,test) );
-      scheduler->addWriteEvent(test->fd[1],
-			       std::bind(&TEST::funcWrite,test) );
-      rt = 0;
-      if((rt=scheduler->addTimer(Timer::ptr(new Timer(5)),Alarm) < 0))
-      	{
-       	  LOG_ROOT_ERROR() << "Failed : rt = "<<rt;
-      	}
-      co [scheduler](){
+      // ASSERT2(rt >= 0,strerror(errno));
+      // scheduler->addReadEvent(test->fd[0],
+      //  			      std::bind(&TEST::funcRead,test) );
+      // scheduler->addWriteEvent(test->fd[1],
+      // 			       std::bind(&TEST::funcWrite,test) );
+      // rt = 0;
+      // if((rt=scheduler->addTimer(Timer::ptr(new Timer(5)),Alarm) < 0))
+      // 	{
+      //  	  LOG_ROOT_ERROR() << "Failed : rt = "<<rt;
+      // 	}
+      // co [scheduler](){
 	
-      	for(int i=0;i<1000;i++) co_yield;
-      	usleep(700*1000);
-      	for(int i=0;i<1000;i++) co_yield;
-      	LOG_ROOT_INFO() << "back to coroutine";
-      };
+      // 	for(int i=0;i<1000;i++) co_yield;
+      // 	usleep(700*1000);
+      // 	for(int i=0;i<1000;i++) co_yield;
+      // 	LOG_ROOT_INFO() << "back to coroutine";
+      // };
       //LOG_ROOT_ERROR() <<" ADD TIMER : "<<i;
     }
   LOG_ROOT_INFO() << "HOOK STATE : "<<zhuyh::Hook::isHookEnable();

@@ -17,7 +17,7 @@ namespace zhuyh
 
     virtual int write(const void* buff,size_t length) override;
     virtual int write(ByteArray::ptr ba,size_t length) override;
-
+    
     virtual void close() override;
 
     Socket::ptr getSocket() const

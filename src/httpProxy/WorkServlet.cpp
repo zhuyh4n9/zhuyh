@@ -1,5 +1,6 @@
 #include"WorkServlet.hpp"
 #include"../http/HttpConnection.hpp"
+#include"ProxyUser.hpp"
 
 namespace zhuyh
 {
@@ -11,9 +12,6 @@ namespace proxy
 			       http::HttpSession::ptr session)
   {
     std::string host = req->getHeader("Host","");
-    auto scheme = req->getScheme();
-    //    LOG_ROOT_ERROR() << "Host : " << host;
-
     if(strcasecmp(req->getHeader("connection","close").c_str(), "keep-alive") == 0)
       req->setClose(false);
     if(host.empty())
@@ -43,8 +41,6 @@ namespace proxy
       {
 	return std::make_shared<http::NotFoundServlet>()->handle(req,resp,session);
       }
-    LOG_ROOT_INFO()<<"\r\n"<<*req<<std::endl;
-    LOG_ROOT_INFO()<<"\r\n"<<*resp<<std::endl;
     return 0;
   }
 
@@ -52,8 +48,35 @@ namespace proxy
 				 http::HttpResponse::ptr& resp,
 				 http::HttpSession::ptr session)
   {
+    //LOG_ROOT_ERROR() << std::endl << *req;
+    //LOG_ROOT_ERROR() << std::endl << "scheme : " <<req->getScheme();
+    std::string host = req->getHeader("Host","");
+    if(host.empty())
+      {
+	return std::make_shared<http::NotFoundServlet>()->handle(req,resp,session);
+      }
+    Socket::ptr sock = Socket::newTCPSocket();
+    IPAddress::ptr addr = IAddress::newAddressByHostAnyIp(host);
+    if(addr == nullptr)
+      {
+	return std::make_shared<http::NotFoundServlet>()->handle(req,resp,session);
+      }
+    //默认连接443端口
+    if(addr->getPort() == 0) addr->setPort(443);
+    int rt = sock->connect(addr);
+    if(rt == false)
+      {
+	sock->close();
+	return std::make_shared<http::NotFoundServlet>()->handle(req,resp,session);
+      }
+    //LOG_ROOT_ERROR() << "Connection Established";
+    auto server = std::make_shared<SocketStream>(sock);
+
+    auto user = ProxyUser::Create(session,server);
+    user->start();
+    
     resp->setStatus(http::HttpStatus::OK);
-    resp->setBody(req->toString());
+    //resp->setBody(req->toString());
     return 0;
   }
 }

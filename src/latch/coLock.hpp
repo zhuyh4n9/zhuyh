@@ -30,5 +30,23 @@ namespace zhuyh
     std::deque<Fiber::ptr> _holdQue;
     int _value;
   };
+
+  class CoMutex : public ILock
+  {
+  public:
+    CoMutex()
+      :m_sm(1){}
+
+    void lock() override
+    {
+      m_sm.wait();
+    }
+    void unlock()
+    {
+      m_sm.notify();
+    }
+  private:
+    CoSemaphore m_sm;
+  };
   
 }
