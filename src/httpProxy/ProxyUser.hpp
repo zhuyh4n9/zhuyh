@@ -1,4 +1,5 @@
 #pragma once
+
 #include"../Singleton.hpp"
 #include<map>
 #include"../latch/lock.hpp"

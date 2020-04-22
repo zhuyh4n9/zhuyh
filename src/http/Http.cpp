@@ -223,7 +223,7 @@ namespace http
   std::ostream& HttpRequest::dump(std::ostream& os) const
   {
     os << httpMethodToString(m_method)<<" ";
-    if(getMehod() == HttpMethod::CONNECT)
+    if(getMethod() == HttpMethod::CONNECT)
       {
 	os <<  m_scheme +":"<<m_path;
       }

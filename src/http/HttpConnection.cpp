@@ -76,7 +76,7 @@ namespace http
 		    int rt = read(data + len,header_size - len);
 		    if(rt <= 0)
 		      {
-			LOG_ROOT_INFO() << "closed1";
+			//LOG_ROOT_INFO() << "closed1";
 			close();
 			return nullptr;
 		      }
@@ -89,7 +89,7 @@ namespace http
 		// 		<<" nparser :"<<nparser;
 		if(parser->hasError())
 		  {
-		    LOG_ROOT_INFO() << "closed2";
+		    //LOG_ROOT_INFO() << "closed2";
 		    close();
 		    return nullptr;
 		  }
@@ -104,7 +104,7 @@ namespace http
 		//剩余数据包含所有内容
 	      }
 	    while(!parser->isFinished());
-	    LOG_ROOT_INFO() << " len : "<<len << " client_parser.content_len : " <<client_parser.content_len;
+	    //LOG_ROOT_INFO() << " len : "<<len << " client_parser.content_len : " <<client_parser.content_len;
 	    if(client_parser.content_len +2<= len)
 		  {
 		    body.append(data,client_parser.content_len);

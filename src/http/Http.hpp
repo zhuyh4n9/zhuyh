@@ -197,7 +197,7 @@ namespace http
     typedef std::shared_ptr<HttpRequest> ptr;
     HttpRequest(uint8_t version = 11,bool close = true);
     
-    HttpMethod getMehod() const
+    HttpMethod getMethod() const
     {
       return m_method;
     }

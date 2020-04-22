@@ -68,7 +68,7 @@ namespace http
 			   HttpResponse::ptr& resp,
 			   HttpSession::ptr session) override
     {
-      HttpMethod method = req->getMehod();
+      HttpMethod method = req->getMethod();
       auto it = m_servlets.find((uint32_t)method);
       if(it == m_servlets.end())
 	{

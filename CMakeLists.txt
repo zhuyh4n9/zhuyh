@@ -52,7 +52,8 @@ SET(SERIALIZE_LIBS
 SET(PROXY_LIBS
     src/httpProxy/LogInServlet.cpp
     src/httpProxy/ProxyUser.cpp
-    src/httpProxy/WorkServlet.cpp
+    src/httpProxy/HttpProxyServer.cpp
+    src/httpProxy/SecureHttpProxyServer.cpp
     src/httpProxy/main.cpp)	
 add_library(zhuyh SHARED ${LIB_SRC})
 add_library(libzhuyh STATIC  ${LIB_SRC})
@@ -141,6 +142,8 @@ target_link_libraries(test_mysql zhuyh ${LIBS})
 add_executable(test_stmt test/test_stmt.cpp)
 target_link_libraries(test_stmt ${LIBS})
 
+add_executable(test_proxy test/test_proxy.cpp)
+target_link_libraries(test_proxy ${LIBS})
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
