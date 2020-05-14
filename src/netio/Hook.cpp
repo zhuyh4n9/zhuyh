@@ -39,6 +39,7 @@ namespace zhuyh
     recvfrom_func recvfrom_f;
     recvmsg_func recvmsg_f;
     close_func close_f;
+    shutdown_func shutdown_f;
     pipe_func pipe_f;
     pipe2_func pipe2_f;
     dup_func dup_f;
@@ -86,6 +87,7 @@ namespace zhuyh
   XX(sendmsg);					\
   XX(send);					\
   XX(close);					\
+  XX(shutdown)					\
   XX(pipe);					\
   XX(pipe2)					\
   XX(dup)					\
@@ -150,10 +152,11 @@ static int do_io(int fd,const char* funcName,OriFunc oriFunc,
   do{
     //LOG_ROOT_WARN() << "call function "<<"do_io<"<<funcName<<">" << " fd = "<<fd;
     int n = 0;
-    do{  
+    do{
+      int f = fcntl_f(fd,F_GETFL);
+      ASSERT2(f&O_NONBLOCK,std::to_string(fd)+" is Blocking");
       n = oriFunc(fd,std::forward<Args>(args)...);
     }while(n == -1 && errno == EINTR);
-    
     if(n == -1 && errno != EAGAIN )
       {
 	//LOG_ROOT_ERROR() << "errno = " << errno << " error = "<<strerror(errno);
@@ -161,6 +164,7 @@ static int do_io(int fd,const char* funcName,OriFunc oriFunc,
       }
     if(n >= 0)
       {
+	//LOG_ROOT_ERROR() << "IO Success rt : "<<n;
 	errno = 0;
 	return n;
       }
@@ -184,9 +188,17 @@ static int do_io(int fd,const char* funcName,OriFunc oriFunc,
       }
     int rt = 0;
     if(event == zhuyh::IOManager::READ)
-      rt = scheduler->addReadEvent(fd);
+      {
+	rt = scheduler->addReadEvent(fd);
+	//LOG_ROOT_ERROR() << "add Read Event fd : " << fd;
+      }
     else if(event == zhuyh::IOManager::WRITE)
-      rt = scheduler->addWriteEvent(fd);
+      {
+	rt = scheduler->addWriteEvent(fd);
+	//LOG_ROOT_ERROR() << "add Write Event fd : " << fd;
+      }
+    else
+      LOG_ROOT_ERROR() << "NOT VALID STATUS";
     if(rt == 0)
       {
 	zhuyh::Fiber::YieldToHold();
@@ -203,6 +215,18 @@ static int do_io(int fd,const char* funcName,OriFunc oriFunc,
       {
 	LOG_ERROR(sys_log) << "Failed to add Event in function : "
 			   << funcName <<" rt = "<<rt << " error = "<< strerror(errno);
+	struct stat stat;
+	if(fstat(fd,&stat) != -1)
+	  {
+	    if(S_ISSOCK(stat.st_mode) )
+	      {
+		LOG_ROOT_ERROR() << " IS SOCKET";
+	      }
+	    if(S_ISFIFO(stat.st_mode))
+	      {
+		LOG_ROOT_ERROR() << "IS PIPE";
+	      }
+	  } 
 	if(timer)
 	  timer->cancle();
 	return -1;
@@ -470,9 +494,29 @@ extern "C"
 	scheduler->cancleAllEvent(fd);
 	fdmanager->del(fd);
       }
+    LOG_ROOT_ERROR() << "closing fd : " << fd;
     return close_f(fd);
   }
 
+  int __close(int fd)
+  {
+    do_init();
+    if(zhuyh::Hook::isHookEnable() == false)
+      {
+	return close_f(fd);
+      }
+    auto fdmanager = zhuyh::FdManager::FdMgr::getInstance();
+    auto fdInfo = fdmanager->lookUp(fd,false);
+    if(fdInfo)
+      {
+	auto scheduler = zhuyh::Scheduler::getThis();
+	scheduler->cancleAllEvent(fd);
+	fdmanager->del(fd);
+      }
+    LOG_ROOT_ERROR() << "__closing fd : " << fd;
+    return close_f(fd);
+  }
+  
   int fcntl(int fd, int cmd, ... /* arg */ )
   {
     do_init();
@@ -489,9 +533,12 @@ extern "C"
 	    {
 	      return fcntl_f(fd,cmd,arg);
 	    }
+	  LOG_ROOT_ERROR() << "User Set Nonb fd : "<<fd<<" arg : "<<arg<<std::endl
+			   <<zhuyh::Bt2Str(100,0,"       ");
 	  fdInfo->setUserNonBlock(arg & O_NONBLOCK);
 	  if(fdInfo->isSysNonBlock())
 	    {
+	      
 	      arg |= O_NONBLOCK;
 	    }
 	  else
@@ -698,5 +745,11 @@ extern "C"
     auto mgr = zhuyh::FdManager::FdMgr::getInstance();
     mgr->lookUp(newfd,true);
     return rt;
+  }
+
+  int shutdown(int sockfd, int how)
+  {
+    //LOG_ROOT_ERROR()<< " shuting down fd : "<<sockfd;
+    return shutdown_f(sockfd,how);
   }
 }

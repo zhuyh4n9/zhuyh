@@ -24,7 +24,7 @@ namespace zhuyh
     :m_close(true)
   {
     m_notifyFd[0] = m_notifyFd[1] = -1;
-    int rt = pipe(m_notifyFd);
+    int rt = pipe_f(m_notifyFd);
     if(rt <0 )
       {
 	std::cout<<"Failed to create pipe for LogThread rt : "<<rt
@@ -99,7 +99,7 @@ namespace zhuyh
 	    event->logger->log(event->l_level,event);
 	    //TODO:如果是致命错误则触发断言,可能不妥，待修改
 	    if(event->l_level == LogLevel::FATAL)
-	      assert(0);
+		assert(0);
 	  }
       }
   }
@@ -127,7 +127,7 @@ namespace zhuyh
 	  {
 	    while(1)
 	      {
-		int rt = read(m_notifyFd[0],buff,1023);
+		int rt = read_f(m_notifyFd[0],buff,1023);
 		if(rt == -1)
 		  {
 		    if(errno == EAGAIN || errno == EWOULDBLOCK)
@@ -147,7 +147,7 @@ namespace zhuyh
       {
 	m_close = true;
 	//写一个空消息，唤醒epoll_wait
-	int rt = write(m_notifyFd[1],"",1);
+	int rt = write_f(m_notifyFd[1],"",1);
 	if(rt < 0)
 	  {
 	    std::cout<<"write notifyFd[1] : "<<m_notifyFd[1]<<" failed"
@@ -156,9 +156,9 @@ namespace zhuyh
 	  }
 	m_thread.join();
 	if(m_notifyFd[0] >= 0)
-	  ::close(m_notifyFd[0]);
+	  ::close_f(m_notifyFd[0]);
 	if(m_notifyFd[1] >= 0)
-	  ::close(m_notifyFd[1]);
+	  ::close_f(m_notifyFd[1]);
       }
   }
 
@@ -173,7 +173,7 @@ namespace zhuyh
     m_que.push_back(event);
     if(m_notifyFd[1] > 0)
       {
-	int rt = write(m_notifyFd[1],"",1);
+	int rt = write_f(m_notifyFd[1],"",1);
 	if(rt < 0)
 	  {
 	    std::cout<<"read notifyFd[1] : "<<m_notifyFd[0]<<" failed"

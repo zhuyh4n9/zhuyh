@@ -2,16 +2,5 @@
 
 namespace zhuyh
 {
-  struct _SchedulerInit
-  {
-    _SchedulerInit()
-    {
-      Fiber::getThis();
-      Thread::setName("Main");
-      Scheduler* _scheduler = Scheduler::Schd::getInstance();
-      _scheduler->start();
-    }
-  };
-  static struct _SchedulerInit __scheduler_initer;
 
 }

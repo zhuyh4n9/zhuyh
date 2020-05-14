@@ -203,6 +203,7 @@ namespace zhuyh
 			       <<family<<","
 			       <<sockType<<","<<protocol<<") error = "<<gai_strerror(error)
 			       <<"errno = "<<errno;
+	    freeaddrinfo(addrRes);
 	    return false;
 	  }
 	auto nxt = addrRes;

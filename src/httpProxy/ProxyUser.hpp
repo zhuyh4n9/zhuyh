@@ -19,7 +19,6 @@ namespace proxy
 				 SocketStream::ptr server);
 
     //~ProxyUser() { LOG_ROOT_INFO() << "ProxyUser Destroyed";}
-    void handleClient();
     void handleServer();
 
     void start();

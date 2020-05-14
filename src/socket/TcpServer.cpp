@@ -132,13 +132,13 @@ namespace zhuyh
   }
   void TcpServer::startAccept(Socket::ptr sock)
   {
-    LOG_ROOT_INFO() << "start accept";
+    //LOG_ROOT_INFO() << "start accept : "<<sock->getSockFd();
     while(!m_stop)
       {
 	Socket::ptr client = sock->accept();
 	if(client)
 	  {
-	    LOG_ROOT_ERROR() << client;
+	    //LOG_ROOT_ERROR() << client;
 	    client->setRecvTimeout(m_recvTimeout);
 	    //shared_from_this防止TcpServer再处理时被释放
 	    m_schd->addNewTask(std::bind(&TcpServer::handleClient,

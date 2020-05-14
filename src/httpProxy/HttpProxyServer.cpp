@@ -1,9 +1,24 @@
 #include"HttpProxyServer.hpp"
+#include"../scheduler/Scheduler.hpp"
+#include"../macro.hpp"
+#include"../socket/Address.hpp"
 
 namespace zhuyh
 {
 namespace proxy
 {
+  Scheduler::ptr dns_schd;
+  namespace{
+    struct DNS_INITER{
+      DNS_INITER()
+      {
+	dns_schd.reset(new Scheduler("dns_schd",4));
+	dns_schd->start();
+      }
+    };
+    DNS_INITER __dns_initer;
+  }
+  
   http::HttpSession::ptr HttpProxyServer::makeSession(Socket::ptr sock)
   {
     auto session = std::make_shared<http::HttpSession>(sock);
@@ -12,7 +27,15 @@ namespace proxy
   http::HttpConnection::ptr HttpProxyServer::makeConnection(const std::string& host,uint16_t dft)
   {
     auto sock = Socket::newTCPSocket();
-    auto addr = IAddress::newAddressByHostAnyIp(host);
+    IPAddress::ptr addr;
+    auto schd = Scheduler::getThis();
+    auto fb = Fiber::getThis();
+    addr = IAddress::newAddressByHostAnyIp(host);
+    dns_schd->addNewTask([schd,fb,&addr,&host]() {
+    			   addr = IAddress::newAddressByHostAnyIp(host);
+    			   schd->addNewTask(fb);
+    			 });
+    zhuyh::Fiber::YieldToHold();
     if(addr == nullptr)
       {
 	LOG_ROOT_ERROR() << "host : " << host << " is not valid";
@@ -23,6 +46,13 @@ namespace proxy
     auto connection = std::make_shared<http::HttpConnection>(sock);
     return connection;
   }
+
+  void HttpProxyServer::getDNS(Scheduler* schd,Fiber::ptr fb,
+			       IAddress::ptr& addr,const std::string& host)
+  {
+
+  }
+  
   void HttpProxyServer::handleClient(Socket::ptr client)
   {
     auto session = makeSession(client);
@@ -47,6 +77,8 @@ namespace proxy
 	LOG_ROOT_ERROR() << "Failed to send response, error : "<<strerror(errno)
 			 <<",errno : "<<errno;
       }
+
+    
   }
 
   void HttpProxyServer::handleNotFound(http::HttpSession::ptr session,const std::string& msg)

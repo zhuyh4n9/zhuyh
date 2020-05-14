@@ -96,33 +96,33 @@ target_link_libraries(test_iomgr zhuyh  ${LIBS})
 #add_executable(test_timer test/test_timer.cpp)
 #target_link_libraries(test_timer zhuyh ${LIBS})
 
-add_executable(test_hook test/test_hook.cpp)
-target_link_libraries(test_hook zhuyh ${LIBS})
+#add_executable(test_hook test/test_hook.cpp)
+#target_link_libraries(test_hook zhuyh ${LIBS})
 
-add_executable(test_client test/test_client.cpp)
-target_link_libraries(test_client zhuyh ${LIBS})
+#add_executable(test_client test/test_client.cpp)
+#target_link_libraries(test_client zhuyh ${LIBS})
 
-add_executable(test_http test/test_http.cpp)
-target_link_libraries(test_http zhuyh ${LIBS})
+#add_executable(test_http test/test_http.cpp)
+#target_link_libraries(test_http zhuyh ${LIBS})
 
-add_executable(test_address test/test_address.cpp)
-target_link_libraries(test_address zhuyh ${LIBS})
+#add_executable(test_address test/test_address.cpp)
+#target_link_libraries(test_address zhuyh ${LIBS})
 
-add_executable(test_pipe test/test_pipe.cpp)
-target_link_libraries(test_pipe zhuyh ${LIBS})
+#add_executable(test_pipe test/test_pipe.cpp)
+#target_link_libraries(test_pipe zhuyh ${LIBS})
 
-add_executable(test_socket test/test_socket.cpp)
-target_link_libraries(test_socket zhuyh ${LIBS})
+#add_executable(test_socket test/test_socket.cpp)
+#target_link_libraries(test_socket zhuyh ${LIBS})
 
-add_executable(test_bytearray test/test_bytearray.cpp)
-target_link_libraries(test_bytearray zhuyh ${LIBS})
+#add_executable(test_bytearray test/test_bytearray.cpp)
+#target_link_libraries(test_bytearray zhuyh ${LIBS})
 
 
-add_executable(http_test test/http_test.cpp)
-target_link_libraries(http_test zhuyh ${LIBS})
+#add_executable(http_test test/http_test.cpp)
+#target_link_libraries(http_test zhuyh ${LIBS})
 
-add_executable(test_httpparser test/test_httpparser.cpp)
-target_link_libraries(test_httpparser zhuyh ${LIBS})
+#add_executable(test_httpparser test/test_httpparser.cpp)
+#target_link_libraries(test_httpparser zhuyh ${LIBS})
 
 add_executable(test_tcpserver test/test_tcpserver.cpp)
 target_link_libraries(test_tcpserver zhuyh ${LIBS})

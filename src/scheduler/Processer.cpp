@@ -97,6 +97,7 @@ namespace zhuyh
 
   bool Processer::addTask(Task::ptr task)
   {
+    //LOG_ROOT_ERROR() << "ADD NEW TASK1";
     ASSERT(_scheduler != nullptr);
     if(task == nullptr) return false;
     if(task->cb || task -> fiber)
@@ -127,9 +128,9 @@ namespace zhuyh
 	_readyTask.push_front(task);
 	++_payLoad;
 	notify();
+	//LOG_ROOT_ERROR() << "ADD NEW TASK2";
 	return true;
       }
-    ASSERT(false);
     return false;
   }
   
@@ -192,6 +193,7 @@ namespace zhuyh
 	//LOG_INFO(sys_log) << " totalTask : "<<_readyTask.size();
 	while(_readyTask.try_pop_back(task))
 	  {
+	    //LOG_ROOT_ERROR() << "Get New Task";
 	    ASSERT(task != nullptr);
 	    worked++;
 	    if(task->fiber)
@@ -201,7 +203,7 @@ namespace zhuyh
 		  // ASSERT2(task -> fiber->getState() == Fiber::EXEC,
 		  // 	  Fiber::getState(task->fiber->getState()));
 		//Take Care,Maybe Bugs
-		if(task -> fiber->getState() == Fiber::EXEC)
+		 if(task -> fiber->getState() == Fiber::EXEC)
 		  {
 		    _readyTask.push_front(task);
 		    continue;
@@ -224,6 +226,8 @@ namespace zhuyh
 	    ASSERT(fiber->_stack != nullptr);
 	    ASSERT2(fiber->getState() == Fiber::READY,Fiber::getState(fiber->getState()));
 	    fiber->swapIn();
+
+	    //LOG_ROOT_ERROR() << "Swapped Out";
 	    ASSERT(fiber->getState() != Fiber::INIT);
 	    if(fiber->getState() == Fiber::READY)
 	      {
@@ -262,11 +266,12 @@ namespace zhuyh
 	       && _readyTask.empty()
 	       && _scheduler->getHold() <= 0)
 	      {
+		//LOG_INFO(sys_log) << "EXIT PROCESSOR1";
 		return;
 	      }
 	  }
 	
-	static const int MaxTimeOut = 10;
+	static const int MaxTimeOut = 1000;
 	int rt = 0;
 	while(1)
 	  {
@@ -287,7 +292,7 @@ namespace zhuyh
 	rt = 0;
 	while( (rt = read(_notifyFd[0],buf,63)) )
 	  {
-	    //LOG_DEBUG(sys_log) << "Recieved Notify! rt = "<<rt;
+	    //LOG_ERROR(sys_log) << "Recieved Notify! rt = "<<rt;
 	    if(rt < 0)
 	      {
 		if(errno == EWOULDBLOCK || errno == EAGAIN )
@@ -304,7 +309,7 @@ namespace zhuyh
 	       && _readyTask.empty()
 	       && _scheduler->getHold() <= 0)
 	      {
-		//LOG_INFO(sys_log) << "EXIT PROCESS";
+		//LOG_INFO(sys_log) << "EXIT PROCESSOR";
 		//退出run函数
 		return;
 	      }

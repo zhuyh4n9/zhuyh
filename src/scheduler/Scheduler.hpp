@@ -50,6 +50,7 @@ namespace zhuyh
     //供外界添加新任务
     void addNewTask(CbType cb);
     void addNewTask(std::shared_ptr<Task> task);
+    void addNewTask(Fiber::ptr fiber);
     int addReadEvent(int fd,std::function<void()> cb = nullptr);
     int addWriteEvent(int fd,std::function<void()> cb = nullptr);
     //static Scheduler* getThis();

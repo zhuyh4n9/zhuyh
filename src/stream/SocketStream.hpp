@@ -2,6 +2,8 @@
 
 #include"Stream.hpp"
 #include"../socket/Socket.hpp"
+#include<thread>
+#include<mutex>
 
 namespace zhuyh
 {
@@ -32,6 +34,7 @@ namespace zhuyh
   protected:
     //为true则析构时关闭socket
     bool m_owner;
+    std::once_flag flag;
     Socket::ptr m_sock;
   };
 }

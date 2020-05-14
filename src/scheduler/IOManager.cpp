@@ -106,6 +106,7 @@ namespace zhuyh
   }
   int IOManager::addEvent(int fd,Task::ptr task,EventType type)
   {
+    
     ASSERT( type == READ  || type == WRITE);
     RDLockGuard lg(_lk);
     struct epoll_event ev;
@@ -125,6 +126,8 @@ namespace zhuyh
 	resizeMap(_eventMap.size()*2);
 	epEv = _eventMap[fd];
       }
+    //LOG_ROOT_ERROR() << "adding Event,  fd : "<<fd<< " type : "
+    //                 <<(type == READ ? "READ" : "WRITE");
     LockGuard lg2(epEv->lk);
     int rt = setNonb(fd);
     if(rt < 0)
@@ -136,10 +139,10 @@ namespace zhuyh
     auto op = epEv->event == NONE ? EPOLL_CTL_ADD : EPOLL_CTL_MOD;
     if(type & epEv->event)
       {
-	//ASSERT(0);
 	LOG_ERROR(sys_log) << "type : " << type << " Exist"
 			   << "current : " << epEv->event
 			   <<" fd = " <<fd;
+	
 	return -1;
       }
     ev.events = epEv->event | EPOLLET | type;
@@ -184,9 +187,11 @@ namespace zhuyh
     lg.unlock();
     
     LockGuard lg2(epEv->lk);
+    //LOG_ROOT_ERROR() << "deleting Event,  fd : "<<fd<< " type : "
+    //		     <<(type == READ ? "READ" : "WRITE");
     if( (EventType)(type & epEv->event) == NONE )
       {
-	LOG_WARN(sys_log) << "type : " << type << " Not Exist";
+	LOG_ERROR(sys_log) << "type : " << type << " Not Exist";
 	return -1;
       }
     auto tevent = ~type & epEv->event;
@@ -226,6 +231,8 @@ namespace zhuyh
       }
     FdEvent* epEv = _eventMap[fd];
     lg.unlock();
+    //LOG_ROOT_ERROR() << "cancle Event,  fd : "<<fd<< " type : "
+    //               <<(type == READ ? "READ" : "WRITE");
     LockGuard lg2(epEv->lk);
     if( (EventType)(epEv->event & type) == NONE )
       {
@@ -257,7 +264,7 @@ namespace zhuyh
       }
     FdEvent* epEv = _eventMap[fd];
     lg.unlock();
-    
+    //LOG_ROOT_ERROR() << "deleting Event,  fd : "<<fd<< " type : ALL";
     LockGuard lg2(epEv->lk);
     if(epEv->event == NONE) return false;
     int rt = epoll_ctl(_epfd,EPOLL_CTL_DEL,fd,nullptr);
@@ -300,13 +307,13 @@ namespace zhuyh
     const int MaxEvent = 1000;
     struct epoll_event* events = new epoll_event[1001];
     //毫秒
-    const int MaxTimeOut = 500;
+    const int MaxTimeOut = 1000;
     while(1)
       {
 	//LOG_WARN(sys_log) << "Holding : " << _holdCount << " Total  : " << _scheduler->totalTask;
 	if(isStopping())
 	  {
-	    //LOG_INFO(sys_log) << "IOManager : " << _name << " stopped!";
+	    LOG_INFO(sys_log) << "IOManager : " << _name << " stopped!";
 	    delete [] events;
 	    break;
 	  }
@@ -345,6 +352,7 @@ namespace zhuyh
 			LOG_ERROR(sys_log) << "read notifyFd failed,rt : "<<rt
 					   << " error : "<<strerror(errno)
 					   << " errno : "<<errno;
+			break;
 		      }
 		  }while(1);
 	      }
@@ -400,7 +408,7 @@ namespace zhuyh
     epEv->event =(EventType)(epEv-> event & ~type);
     if(type & READ)
       {
-	//LOG_ROOT_INFO() << "Triggle READ Event";
+	//LOG_ROOT_INFO() << "Triggle READ Event : "<<epEv->fd;
 	ASSERT(epEv->rdtask != nullptr);
 	Task::ptr task = nullptr;
 	task.swap(epEv->rdtask);
@@ -408,7 +416,7 @@ namespace zhuyh
       }
     else if(type & WRITE)
       {
-	//LOG_ROOT_INFO() << "Triggle WRITE Event";
+	//LOG_ROOT_INFO() << "Triggle WRITE Event : " << epEv->fd;
 	Task::ptr task = nullptr;
 	task.swap(epEv->wrtask);
 	//LOG_ROOT_INFO() << "added task"<<(unsigned long long)task.get();

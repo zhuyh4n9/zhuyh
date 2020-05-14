@@ -9,11 +9,12 @@ namespace zhuyh
   }
   SocketStream::~SocketStream()
   {
-    if(m_owner && m_sock) m_sock->close();
+    if(m_owner && m_sock) close();
   }
   int SocketStream::read(void* buff,size_t length)
   {
     if(m_sock == nullptr || !isConnected()) return -1;
+    //LOG_ROOT_ERROR() << "start sockstream read";
     return m_sock->recv(buff,length);
   }
   int SocketStream::read(ByteArray::ptr ba,size_t length)
@@ -46,6 +47,8 @@ namespace zhuyh
   void SocketStream::close()
   {
     if(m_sock)
-      m_sock->close();
+      {
+	std::call_once(flag,std::bind(&Socket::close,m_sock));
+      }
   }
 }

@@ -48,12 +48,16 @@ namespace zhuyh
 	int flags = 0;
 	if((flags = fcntl_f(_fd,F_GETFL))!=-1)
 	  {
-	    if( (flags & O_NONBLOCK) == 0)
-	      {
-		int rt = fcntl_f(_fd,F_SETFL,flags | O_NONBLOCK);
-		if(rt < 0)
-		  return -1;
-	      }
+	    //LOG_ROOT_ERROR() << "Set Nonb Success, rt : " <<flags << "fd : "<<_fd<<std::endl;
+	    //LOG_ROOT_ERROR() << "Set Nonb Success, rt : " <<flags << "fd : "<<_fd<<std::endl;
+	    int rt = fcntl_f(_fd,F_SETFL,flags | O_NONBLOCK);
+	    //LOG_ROOT_ERROR() << "Set Nonb Success, rt : " <<flags << "fd : "<<_fd<<std::endl;
+	    if(rt < 0)
+	      return -1;
+	  }
+	else
+	  {
+	    LOG_ROOT_ERROR() << "Failed to GET flag , rt : " <<flags << "fd : "<<_fd;
 	  }
 	_sysBlocking = false;
       }
@@ -73,6 +77,10 @@ namespace zhuyh
   
   FdInfo::ptr FdManager::lookUp(int fd,bool create)
   {
+    if(create == true)
+      {
+	//LOG_ROOT_ERROR() << "Create fd : " << fd;
+      }
     if(fd < 0 ) return nullptr;
     {
       RDLockGuard lg(_mx);
@@ -82,7 +90,7 @@ namespace zhuyh
 	}
       else
 	{
-	  if(create == false  || _fds[fd] != nullptr)
+	  if(create == false)
 	    return _fds[fd];
 	}
       //lg.unlock();

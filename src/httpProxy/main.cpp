@@ -6,6 +6,7 @@
 #include"../co.hpp"
 #include"HttpProxyServer.hpp"
 #include"SecureHttpProxyServer.hpp"
+#include<sys/signal.h>
 zhuyh::ConfigVar<std::string>::ptr s_pathPrefix =
   zhuyh::Config::lookUp<std::string>("proxy.path_prefix","/home/zhuyh/Code/GraduationDesign/zhuyh/materias/","proxy path prefix");
 
@@ -84,11 +85,24 @@ void run()
 
 int main()
 {
-  accept_schd.reset(new zhuyh::Scheduler("accept",1));
-  accept_schd->start();
+  sigset_t set;
+
+  /* Block SIGQUIT and SIGUSR1; other threads created by main()
+     will inherit a copy of the signal mask. */
   
-  web_schd.reset(new zhuyh::Scheduler("web",8));
+  sigemptyset(&set);
+  sigaddset(&set, SIGPIPE);
+  int rt  = pthread_sigmask(SIG_BLOCK, &set, NULL);
+  if(rt < 0)
+    {
+      LOG_ROOT_ERROR() << "failed to BLOCK SIG_PIPE";
+      exit(1);
+    }
+  accept_schd.reset(new zhuyh::Scheduler("accept",1));  
+  web_schd.reset(new zhuyh::Scheduler("web",32));
+  
   web_schd->start();
+  accept_schd->start();
   co run;
   while(1) sleep(1);
   return 0;

@@ -137,6 +137,7 @@ namespace zhuyh
     bool getSockOption(int level, int optname,
 		       void *res, socklen_t* optlen);
   private:
+    Mutex m_mx;
     int m_sockfd = -1;
     int m_family;
     int m_protocol;

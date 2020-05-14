@@ -5,6 +5,7 @@
 #include <time.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include"../util.hpp"
 
 namespace zhuyh
 {
@@ -116,4 +117,6 @@ extern "C"
   using dup3_func = int (*)(int oldfd, int newfd, int flags);
   extern dup3_func dup3_f;
 
+  using shutdown_func =  int(*)(int sockfd, int how);
+  extern shutdown_func shutdown_f;
 }

@@ -173,10 +173,12 @@ namespace zhuyh
 
   bool Socket::close()
   {
-    if(!m_connect || m_sockfd == -1)
+    if(!m_connect && m_sockfd == -1)
       {
-	return false;
+	return true;
       }
+    m_connect = false;
+    LockGuard lg(m_mx);
     if(m_sockfd != -1)
       {
 	int rt = ::close(m_sockfd);
@@ -187,7 +189,6 @@ namespace zhuyh
 	    return false;
 	  }
 	m_sockfd = -1;
-	m_connect = false;
 	return true;
       }
     return false;
@@ -327,6 +328,7 @@ namespace zhuyh
     if(m_type != SOCK_STREAM) return -1;
     if(m_connect)
       {
+	//LOG_ROOT_ERROR() << "recving .. m_sockfd : "<< m_sockfd;
 	return ::recv(m_sockfd,buff,length,flags);
       }
     return -1;
