@@ -8,6 +8,8 @@
 #include <sys/socket.h>
 #include <vector>
 #include "../Singleton.hpp"
+#include <sys/stat.h>
+#include <sys/types.h>
 
 namespace zhuyh
 {
@@ -25,12 +27,18 @@ namespace zhuyh
     FdInfo(int fd);
     bool isPipe() const
     {
-      return _fdType == PIPE;
+      struct stat _stat;
+      if(fstat(_fd,&_stat) != -1)
+	return S_ISFIFO(_stat.st_mode);
+      return false;
     }
     
     bool isSocket() const
     {
-      return _fdType == SOCKET;
+      struct stat _stat;
+      if(fstat(_fd,&_stat) != -1)
+	return S_ISSOCK(_stat.st_mode);
+      return false;
     }
     
     bool isFile() const
@@ -128,7 +136,7 @@ namespace zhuyh
     //static FdManager::ptr getThis();
   private:
     std::vector<FdInfo::ptr> _fds;
-    RWLock _mx;
+    Mutex _mx;
   };
   
 }

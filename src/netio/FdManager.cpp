@@ -41,7 +41,7 @@ namespace zhuyh
 	    //LOG_ROOT_INFO() << "IS PIPE";
 	    _fdType = PIPE;
 	  }
-      }
+      } 
     //设置非阻塞,目前只处理Socket描述符
     if(_fdType != NONE)
       {
@@ -77,25 +77,18 @@ namespace zhuyh
   
   FdInfo::ptr FdManager::lookUp(int fd,bool create)
   {
-    if(create == true)
-      {
-	//LOG_ROOT_ERROR() << "Create fd : " << fd;
-      }
     if(fd < 0 ) return nullptr;
-    {
-      RDLockGuard lg(_mx);
-      if((unsigned)fd >= _fds.size())
-	{
-	  if(!create) return nullptr;	
-	}
-      else
-	{
-	  if(create == false)
-	    return _fds[fd];
-	}
-      //lg.unlock();
-    }
-    WRLockGuard lg(_mx);
+    LockGuard lg(_mx);
+    if((unsigned)fd >= _fds.size())
+      {
+	if(!create) return nullptr;	
+      }
+    else
+      {
+	if(create == false)
+	  return _fds[fd];
+      }
+    //lg.unlock();
     //_fds[fd] == nullptr 且 create == true
     if((unsigned)fd >= _fds.size())
       {
@@ -104,11 +97,11 @@ namespace zhuyh
     _fds[fd].reset(new FdInfo(fd));
     return _fds[fd];
   }
-
+  
   void FdManager::del(int fd)
   {
     ASSERT(fd >= 0);
-    WRLockGuard lg(_mx);
+    LockGuard lg(_mx);
     if((unsigned)fd >= _fds.size())
       throw std::out_of_range("fd doesn't exist");
     _fds[fd].reset();

@@ -154,7 +154,12 @@ static int do_io(int fd,const char* funcName,OriFunc oriFunc,
     int n = 0;
     do{
       int f = fcntl_f(fd,F_GETFL);
-      ASSERT2(f&O_NONBLOCK,std::to_string(fd)+" is Blocking");
+      if(!(f&O_NONBLOCK)) assert(0);
+      ASSERT2(f&O_NONBLOCK,std::to_string(fd)+" is Blocking stat : "+std::to_string(f)
+	      +" nonb : "+std::to_string(O_NONBLOCK)+" is Socket : "+
+	      std::to_string(fdInfo->isSocket())
+	      +" is Pipe : "+
+	      std::to_string(fdInfo->isPipe())+ zhuyh::Bt2Str(100,0,"    "));
       n = oriFunc(fd,std::forward<Args>(args)...);
     }while(n == -1 && errno == EINTR);
     if(n == -1 && errno != EAGAIN )
@@ -492,8 +497,8 @@ extern "C"
       {
 	auto scheduler = zhuyh::Scheduler::getThis();
 	scheduler->cancleAllEvent(fd);
-	fdmanager->del(fd);
       }
+    fdmanager->del(fd);
     LOG_ROOT_ERROR() << "closing fd : " << fd;
     return close_f(fd);
   }
