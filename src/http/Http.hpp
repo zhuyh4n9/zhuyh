@@ -362,7 +362,6 @@ namespace http
     }
     std::ostream& dump(std::ostream& os) const;
     std::string toString() const;
-    bool getForm(std::unordered_map<std::string,std::string>& kv);
     
     void init();
     void initParam();
@@ -374,6 +373,12 @@ namespace http
     uint8_t m_version = 11;
     bool m_close;
     bool m_webSocket;
+    /*
+      0x1 : query
+      0x2 : form
+      0x4 : Cookies
+     */
+    uint8_t m_contentType;
     HttpStatus  m_status = HttpStatus::INVALID_STATUS;
     
     std::string m_path;
@@ -485,12 +490,7 @@ namespace http
     HttpStatus m_status;
     uint8_t m_version;
     bool m_close;
-    /*
-      0x1 : query
-      0x2 : form
-      0x4 : Cookies
-     */
-    uint8_t m_contentType;
+    
     bool m_webSocket;
     std::string m_body;
     std::string m_reason;

@@ -14,5 +14,8 @@ namespace crypto{
   std::string md5(const char* buf,uint64_t buflen = 0);
   std::string base64Encode(const char* buf,uint64_t buflen);
   std::string base64Decode(const char* buf,uint64_t buflen);
+
+  std::string urlEncode(const std::string& str,bool spaceToPlus = true);
+  std::string urlDecode(const std::string& str,bool spaceToPlus = true);
 }
 }

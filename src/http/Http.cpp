@@ -2,6 +2,7 @@
 #include <vector>
 #include <sstream>
 #include "../logs.hpp"
+#include"../CryptoUtil.hpp"
 
 namespace zhuyh
 {
@@ -105,6 +106,7 @@ namespace http
      m_version(version),
      m_close(close),
      m_webSocket(false),
+     m_contentType(0),
      m_status(HttpStatus::OK),
      m_path("/")
   {
@@ -125,39 +127,7 @@ namespace http
     auto it = m_cookies.find(key);
     return it == m_cookies.end() ? dft : it->second;
   }
-
-  bool HttpRequest::getForm(std::unordered_map<std::string,std::string>& mp)
-  {
-#define KEY 0
-#define VALUE 1
-    if(m_body.empty()) return false;
-    std::string kv[2];
-    //type = 0 : key , type = 1 : value
-    int type = KEY;
-    for(size_t i=0;i<m_body.size();i++)
-      {
-	if(m_body[i] == '&')
-	  {
-	    mp[kv[KEY]] = kv[VALUE];
-	    kv[KEY].clear();
-	    kv[VALUE].clear();
-	    type = KEY;
-	  }
-	else if(m_body[i] == '=')
-	  {
-	    type = VALUE;
-	  }
-	else
-	  {
-	    kv[type]+=m_body[i];
-	  }
-      }
-    if(type != VALUE) return false;
-    mp[kv[KEY]] = kv[VALUE];
-    return true;
-#undef KEY
-#undef VALUE
-  }
+  
   void HttpRequest::setHeader(const std::string& key,const std::string& val)
   {
     m_headers[key] = val;
@@ -196,6 +166,7 @@ namespace http
       *val = it->second;
     return false;
   }
+  
   bool HttpRequest::hasParam(const std::string& key,std::string* val)
   {
     auto it = m_params.find(key);
@@ -270,6 +241,42 @@ namespace http
 	  m_close = true;
       }
   }
+
+  static bool kvParser(const std::string& data,
+		       MapType& mp,
+		       char delim){
+#define KEY 0
+#define VALUE 1
+    if(data.empty()) return false;
+    std::string kv[2];
+    //type = 0 : key , type = 1 : value
+    int type = KEY;
+    for(size_t i=0;i<data.size();i++)
+      {
+	if(std::isspace(data[i])) continue;
+	if(data[i] == delim)
+	  {
+	    mp[kv[KEY]] = crypto::urlDecode(kv[VALUE]);
+	    kv[KEY].clear();
+	    kv[VALUE].clear();
+	    type = KEY;
+	  }
+	else if(data[i] == '=')
+	  {
+	    type = VALUE;
+	  }
+	else
+	  {
+	    kv[type]+=data[i];
+	  }
+      }
+    if(type != VALUE) return false;
+    mp[kv[KEY]] = crypto::urlDecode(kv[VALUE]);
+    return true;
+#undef KEY
+#undef VALUE 
+}
+  
   void HttpRequest::initParam()
   {
     initQueryParam();
@@ -279,13 +286,33 @@ namespace http
   
   void HttpRequest::initQueryParam()
   {
-    //#define PARSE_PARAM(str,
+    if(m_contentType & 0x1) return;
+    kvParser(m_query,m_params,'&');
+    m_contentType |= 0x1;
   }
   void HttpRequest::initBodyParam()
   {
+    if(m_contentType & 0x2) {
+      return;
+    }
+    if(strcasecmp(getHeader("content-type").c_str(),"application/x-www-form-urlencoded") != 0){
+      //std::cout<<"Return"<<std::endl;
+      m_contentType |= 0x2;
+      return;
+    }
+    kvParser(m_body,m_params,'&');
+    m_contentType |= 0x2;
   }
   void HttpRequest::initCookies()
   {
+    if(m_contentType & 0x4) return;
+    std::string str = getHeader("cookie");
+    if(str.empty()){
+      m_contentType |= 0x4;
+      return;
+    }
+    kvParser(str,m_cookies,';');
+    m_contentType |= 0x4;
   }
 
   HttpResponse::HttpResponse(uint8_t version ,bool close )

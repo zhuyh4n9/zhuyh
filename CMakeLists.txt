@@ -62,6 +62,9 @@ add_library(libzhuyh STATIC  ${LIB_SRC})
 add_executable(Proxy ${PROXY_LIBS})
 target_link_libraries(Proxy ${LIBS})
 
+add_executable(test_httpparser test/test_httpparser.cpp)
+target_link_libraries(test_httpparser ${LIBS})
+
 add_executable(test_iomgr test/test_iomgr.cpp )
 target_link_libraries(test_iomgr zhuyh  ${LIBS})
 

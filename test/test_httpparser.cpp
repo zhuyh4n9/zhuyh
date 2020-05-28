@@ -51,10 +51,23 @@ void test_request()
 {
  http::HttpRequestParser::ptr parser(new http::HttpRequestParser());
  size_t rt = parser->execute(request_test3,strlen(request_test3));
+ http::HttpRequest::ptr req = parser->getData();
  LOG_ROOT_INFO() << "rt : " << rt << " has_error "<<parser->hasError()
 		 <<" isFinished : "<<parser->isFinished()
 		 <<" total : " <<strlen(request_test3);
- std::cout<<*(parser->getData())<<std::endl;
+
+ std::cout<<*req<<std::endl;
+ req->initParam();
+ const auto& params = req->getParams();
+ for(const auto& item : params){
+   std::cout<<item.first<<":"<<item.second<<std::endl;
+ }
+ std::cout<<std::endl<<"Cookies\n";
+ const auto& cookies = req->getCookies();
+ for(const auto& item : cookies){
+   std::cout<<item.first<<":"<<item.second<<std::endl;
+ }
+ //std::cout<<*(parser->getData())<<std::endl;
  std::cout<<"content-length : " << parser->getContentLength()<<std::endl;
  std::cout<<std::string(request_test3,parser->getContentLength())<<std::endl;
 }

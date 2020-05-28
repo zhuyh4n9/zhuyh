@@ -5,15 +5,6 @@ namespace zhuyh
 namespace proxy
 {
 
-  static bool hasValue(const std::string& key,
-		       std::unordered_map<std::string,std::string>& mp,
-		       std::string& value)
-  {
-    auto it = mp.find(key);
-    if(it == mp.end() ) return false;
-    value = it->second;
-    return true;
-  }
   int32_t IndexServlet::handle(http::HttpRequest::ptr req,
 			       http::HttpResponse::ptr& resp,
 			      http::HttpSession::ptr session)
@@ -127,11 +118,11 @@ namespace proxy
 			       http::HttpSession::ptr session)
   {
     std::unordered_map<std::string,std::string> form;
-    req->getForm(form);
-    std::string username,passwd;
-    //表单错误
-    if(hasValue("username",form,username)  == false
-       || hasValue("passwd",form,passwd) == false)
+    req->initParam();
+    std::string username = req->getParam("username");
+    std::string passwd = req->getParam("passwd");
+    //数据不对
+    if(username.empty() || passwd.empty())
       {
 	std::cout<<username << " pwd : " <<passwd<<std::endl;
 	resp->setStatus(http::HttpStatus::NOT_FOUND);
@@ -168,12 +159,13 @@ namespace proxy
 				  http::HttpSession::ptr session)
   {
     std::unordered_map<std::string,std::string> form;
-    req->getForm(form);
-    std::string username,passwd,email;
-    //表单错误
-    if(hasValue("username",form,username)  == false
-       || hasValue("passwd",form,passwd) == false
-       || hasValue("email",form,email) == false)
+    req->initParam();
+    //std::cout<<*req<<std::endl;
+    std::string username = req->getParam("username");
+    std::string passwd = req->getParam("passwd");
+    std::string email = req->getParam("email");
+    
+    if(username.empty() || passwd.empty() || email.empty())
       {
 	resp->setStatus(http::HttpStatus::NOT_FOUND);
 	std::string content = "<html><head><title>404 Not Found"
@@ -185,8 +177,7 @@ namespace proxy
     db::MySQLConn::ptr conn = db::MySQLConn::Create("root");
     db::MySQLStmtCommand::ptr cmd(new db::MySQLStmtCommand(m_stmt));
 
-    LOG_ROOT_INFO() << std::endl
-		    <<"username : "<<username<< std::endl
+    LOG_ROOT_INFO() <<"username : "<<username<< std::endl
 		    <<"passwd : "<<passwd<< std::endl
 		    <<"email : "<< email << std::endl;
     int rt = cmd->execute(username,email,passwd);
