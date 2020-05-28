@@ -8,11 +8,9 @@
 namespace zhuyh
 {
   static ConfigVar<int>::ptr __max_thread = Config::lookUp<int>("scheduler.maxthread",
-							   32,"scheduler max thread");
+							   64,"scheduler max thread");
   static ConfigVar<int>::ptr __min_thread = Config::lookUp<int>("scheduler.minthread",
 								32,"scheduler min thread");
-  static ConfigVar<int>::ptr __limit_payload = Config::lookUp<int>("scheduler.limitpayload",
-							      20,"scheduler limitpayload");
   
   static Logger::ptr sys_log = GET_LOGGER("system");
 
@@ -33,6 +31,8 @@ namespace zhuyh
     else
       _name = name;
     m_lgThread = SingletonPtr<LogThread>::getInstance();
+    // std::cout<<"use Count : "<<m_lgThread.use_count()<<" use count2 :" 
+    // 	     <<SingletonPtr<LogThread>::getInstance().use_count()<<std::endl;
     _pcsQue.resize(_minThread);
   }
   
@@ -42,8 +42,8 @@ namespace zhuyh
   {
     _minThread = __min_thread->getVar();
     _maxThread = __max_thread->getVar();
-    _limitPayLoad = __limit_payload->getVar();
     _pcsQue.resize(_minThread);
+    m_lgThread = SingletonPtr<LogThread>::getInstance();
     _name = "root";
     LOG_DEBUG(sys_log) << "Root Scheduler Created!";
   }
@@ -51,8 +51,10 @@ namespace zhuyh
   //TODO : to be fixed
   Scheduler::~Scheduler()
   {
+    //std::cout<<"Call ~Scheduler1\n"<<Bt2Str(100,0,"   ");
     if(_stopping == false)
       stop();
+    //std::cout<<"Call ~Scheduler2\n"<<Bt2Str(100,0,"   ");
     //LOG_INFO(sys_log) << "Scheduler : "<<_name<<" Destroyed";
   }
   int Scheduler::getHold()
@@ -60,33 +62,31 @@ namespace zhuyh
     if(_ioMgr == nullptr) return 0;
     return _ioMgr -> _holdCount;
   }
-  //由于进入Main函数之前,根调度器就已经创建并且运行,
+  
   void Scheduler::start(CbType cb)
   {
     if(_stop == false) return;
     ASSERT(_minThread > 0 && _maxThread > 0);
     ASSERT(_maxThread >= _minThread);
-    ASSERT(_limitPayLoad > 0 );
-    //设置为自己
     setThis(this);
-    //LOG_INFO(sys_log) << "HERE";
+    
     _ioMgr.reset(new IOManager(_name+"_schd",getThis()));
-    _currentThread = _minThread;
-    for(int i=0;i<_minThread;i++)
-      {
+    m_currentThread = _minThread;
+    for(int i=0;i<_minThread;i++){
 	std::stringstream ss;
 	ss<<_name<<"_processer_"<<i;
-	//LOG_INFO(sys_log) << shared_from_this() << std::endl;
 	_pcsQue[i].reset(new Processer(ss.str(),getThis()));
       }
-    for(int i = 0;i<_minThread-1;i++)
-      {
+    for(int i = 0;i<_minThread-1;i++){
 	_pcsQue[i]->start();
       }
-    if(cb)
+    if(cb){
       _pcsQue[_minThread-1]->start(cb);
-    else
+    }else{
       _pcsQue[_minThread-1]->start();
+    }
+    m_dispatcher.reset(new Thread(std::bind(&Scheduler::dispatcher,this),_name+"_notifier"));
+    
     LOG_DEBUG(sys_log) << "Scheduler Created!";
     _stop = false;
   }
@@ -97,17 +97,15 @@ namespace zhuyh
     if(_stopping == true ) return;
     ASSERT(_stopping == false);
     _stopping = true;
-    //先告诉IO管理器,使其不再接收新的连接
     _ioMgr->stop();
-    //LOG_INFO(sys_log) << _currentThread;
-    for(int i = 0;i<_currentThread;i++)
+    //LOG_INFO(sys_log) << m_currentThread;
+    for(size_t i = 0;i<_pcsQue.size();i++)
       {
 	_pcsQue[i]->stop();
 	_pcsQue[i]->join();
       }
     _ioMgr->join();
-    _currentThread = 0;
-    //LOG_DEBUG(sys_log)<<"Scheduler Stopped";
+    m_dispatcher->join();
     _stop = true;
   }
   
@@ -221,6 +219,7 @@ namespace zhuyh
     Processer::ptr _prc = nullptr;
     for(unsigned i=0;i < _pcsQue.size() ;i++)
       {
+	if(_pcsQue[i]->_payLoad == 0) return _pcsQue[i];
 	if(_prc == nullptr)
 	  _prc = _pcsQue[i];
 	else
@@ -271,5 +270,13 @@ namespace zhuyh
     return _ioMgr->cancleAll(fd);
   }
 
-  
+  void Scheduler::dispatcher(){
+    while(m_currentThread > 0){
+      for(auto& item : _pcsQue){
+	item->notify();
+      }
+      //LOG_WARN(sys_log) << "left : "<<m_currentThread;
+      usleep(100*1000);
+    }
+  }
 }

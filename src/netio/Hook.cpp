@@ -219,7 +219,8 @@ static int do_io(int fd,const char* funcName,OriFunc oriFunc,
     else
       {
 	LOG_ERROR(sys_log) << "Failed to add Event in function : "
-			   << funcName <<" rt = "<<rt << " error = "<< strerror(errno);
+			   << funcName <<" rt = "<<rt << " error = "<< strerror(errno)
+			   <<zhuyh::Bt2Str(100,0,"    ");
 	struct stat stat;
 	if(fstat(fd,&stat) != -1)
 	  {
@@ -499,7 +500,7 @@ extern "C"
 	scheduler->cancleAllEvent(fd);
       }
     fdmanager->del(fd);
-    LOG_ROOT_ERROR() << "closing fd : " << fd;
+    //LOG_ROOT_ERROR() << "closing fd : " << fd;
     return close_f(fd);
   }
 
@@ -538,8 +539,8 @@ extern "C"
 	    {
 	      return fcntl_f(fd,cmd,arg);
 	    }
-	  LOG_ROOT_ERROR() << "User Set Nonb fd : "<<fd<<" arg : "<<arg<<std::endl
-			   <<zhuyh::Bt2Str(100,0,"       ");
+	  // LOG_ROOT_ERROR() << "User Set Nonb fd : "<<fd<<" arg : "<<arg<<std::endl
+	  // 		   <<zhuyh::Bt2Str(100,0,"       ");
 	  fdInfo->setUserNonBlock(arg & O_NONBLOCK);
 	  if(fdInfo->isSysNonBlock())
 	    {

@@ -87,7 +87,7 @@ namespace zhuyh
   }
   void IOManager::notify()
   {
-    int rt = write(_notifyFd[1],"",1);
+    int rt = write_f(_notifyFd[1],"",1);
     if(rt < 0)
       {
 	LOG_ROOT_ERROR() << "rt : "<<rt << " error : "<<strerror(errno) << " errno : "<<errno;
@@ -345,7 +345,7 @@ namespace zhuyh
 		int rt = 0;
 		do
 		  {
-		    rt = read(_notifyFd[0],idleBuff.get(),1023);
+		    rt = read_f(_notifyFd[0],idleBuff.get(),1023);
 		    if(rt < 0)
 		      {
 			if(errno == EAGAIN || errno == EWOULDBLOCK) break;
@@ -396,10 +396,6 @@ namespace zhuyh
       }
   }
 
-  void IOManager::clearAllEvent()
-  {
-  }
-
   int IOManager::triggerEvent(FdEvent* epEv,EventType type)
   {
     //ASSERT2(0, "Trigger event");
@@ -424,4 +420,5 @@ namespace zhuyh
       }
     return 0;
   }
+
 };

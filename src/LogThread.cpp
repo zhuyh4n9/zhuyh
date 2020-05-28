@@ -143,6 +143,7 @@ namespace zhuyh
   }
   void LogThread::close()
   {
+    //std::cout<<"Call Closed\n"<<Bt2Str(100,0,"   ");
     if(m_close != true && m_thread.joinable())
       {
 	m_close = true;

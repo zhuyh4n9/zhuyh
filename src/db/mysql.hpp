@@ -480,7 +480,7 @@ namespace db
     m_row  = mysql_stmt_affected_rows(m_stmt->get());
     return std::dynamic_pointer_cast<MySQLStmtRes>(res);
   }
-
+  
   template<class... Args>
   int MySQLStmtCommand::execute(Args&&... args)
   {

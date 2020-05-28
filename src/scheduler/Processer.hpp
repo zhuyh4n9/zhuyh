@@ -32,7 +32,7 @@ namespace zhuyh
     {
       _thread->join();
     }
-    //是否正在退出
+    
     inline bool isStopping() const;
     //获取_stopping值
     inline bool getStopping() const;
@@ -41,20 +41,16 @@ namespace zhuyh
     static Fiber::ptr getMainFiber();
     static void setMainFiber(Fiber::ptr);
   private:
-    //偷取k个协程
     std::list<Task::ptr> steal(int k);
-    //放入k个协程
     bool store(std::list<Task::ptr>& tasks);
-    //将线程从epoll_wait中唤醒
+
     int notify();
+    int waitForNotify();
   private:
     //Fiber::ptr _idleFiber = nullptr;
     //Fiber::ptr _nxtTask = nullptr;
     std::string _name;
     Thread::ptr _thread;
-    //线程阻塞在epoll,而不是消息队列
-    int _epfd;
-    int _notifyFd[2];
     std::atomic<int> _payLoad{0};
     Deque _readyTask;
     //bool _forceStop = false;
@@ -64,7 +60,7 @@ namespace zhuyh
     std::atomic<bool> _stopping {false};
     mutable Mutex mx;
     Scheduler* _scheduler;
-
+    Semaphore m_sem;
     //DEBUG
     int worked{0};
   };

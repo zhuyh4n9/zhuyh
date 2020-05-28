@@ -69,6 +69,7 @@ namespace zhuyh
     void addTask(CbType cb);
     void addHold();
     void delHold();
+    void dispatcher();
   public:
     void addTask(Fiber::ptr fiber);
   private:
@@ -79,26 +80,19 @@ namespace zhuyh
     //放任务时使用
     std::shared_ptr<Processer> getMinPayLoad();
     //当前线程数
-    int _currentThread = 0;
-    int _activeThread = 0;
+    std::atomic<int> m_currentThread{0};
     //线程数上下限制
     int _minThread = 4;
     int _maxThread = 20;
-    //执行器平均任务大于次值则开启新线程
-    int _limitPayLoad = 20;
     std::atomic<int> totalTask{0};
-    //static Mutex _addTaskmx;
-    //static SpinLock _getThismx;
-    //用于协程信号量
-    TSQueue<Fiber::ptr> _holdQueue;
     std::shared_ptr<IOManager> _ioMgr = nullptr;
     std::vector<std::shared_ptr<Processer>> _pcsQue;
     std::atomic<bool> _stopping {false};
     std::atomic<bool> _stop {true};
     std::string _name = "Scheduler";
-
-    //
+    
     LogThread::ptr m_lgThread;
+    Thread::ptr m_dispatcher;
   };
   
 }

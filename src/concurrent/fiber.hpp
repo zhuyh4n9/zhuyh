@@ -70,16 +70,10 @@ namespace zhuyh
     static void YieldToReady();
     //当前协程切换至后台并且设置为SWITCH状态
     static void YieldToHold();
-    //获取总协程数
-    static uint64_t totalFibers();
     //执行函数
     static void run(int);
 
     static uint32_t getFid();
-
-    static uint32_t getTotalActive();
-
-    static uint32_t getLocalActive();
   private:
     Fiber();
     //切换到当前协程,不暴露给用户防止用户将主协程切换到前台导致系统崩溃
@@ -104,9 +98,9 @@ namespace zhuyh
     bool isMain = false;
     size_t _stackSize = 0;
     size_t _pagesProtect = 0;
-    static uint32_t& _fiber_local_not_term();    
-    static Fiber*& _this_fiber();
+    
     static Fiber::ptr& _main_fiber();
+    static Fiber*& _this_fiber();
   };
   
 }

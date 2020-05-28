@@ -311,7 +311,7 @@ namespace http
     {
       m_cookies = cookies;
     }
-    
+    void setWebSocket(bool v) { m_webSocket = v;}
     std::string getHeader(const std::string& key,const std::string& dft = "") const;
     std::string getParam(const std::string& key,const std::string& dft = "") const;
     std::string getCookie(const std::string& key,const std::string& dft = "") const;
@@ -362,7 +362,6 @@ namespace http
     }
     std::ostream& dump(std::ostream& os) const;
     std::string toString() const;
-
     bool getForm(std::unordered_map<std::string,std::string>& kv);
     
     void init();
@@ -374,6 +373,7 @@ namespace http
     HttpMethod m_method = HttpMethod::INVALID_METHOD;
     uint8_t m_version = 11;
     bool m_close;
+    bool m_webSocket;
     HttpStatus  m_status = HttpStatus::INVALID_STATUS;
     
     std::string m_path;
@@ -444,6 +444,10 @@ namespace http
       m_headers = headers;
     }
 
+    void setCookie(const std::string& key, const std::string& val,
+		   time_t expired = 0, const std::string& path="",
+		   const std::string& domain="", bool secure=false);
+    
     void setCookies(const std::vector<std::string>& cookies)
     {
       m_cookies = cookies;
@@ -457,7 +461,7 @@ namespace http
     {
       m_close = _close;
     }
-
+    void setWebSocket(bool v) { m_webSocket = v;}
     std::string getHeader(const std::string& key,const std::string& dft = "") const;
     void setHeader(const std::string& key,const std::string& val);
     void delHeader(const std::string& key);
@@ -481,7 +485,13 @@ namespace http
     HttpStatus m_status;
     uint8_t m_version;
     bool m_close;
-    
+    /*
+      0x1 : query
+      0x2 : form
+      0x4 : Cookies
+     */
+    uint8_t m_contentType;
+    bool m_webSocket;
     std::string m_body;
     std::string m_reason;
 

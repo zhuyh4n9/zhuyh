@@ -7,17 +7,12 @@
 namespace zhuyh
 {
   static Logger::ptr sys_log = GET_LOGGER("system");
-  static std::atomic<uint64_t> __fiber_count {0};
   static std::atomic<uint32_t> __fiber_id {0};
-  static std::atomic<uint32_t> __fiber_not_term {0};
   
-  //static thread_local uint32_t __fiber_local_not_term{0};
-  //static thread_local Fiber* __this_fiber = nullptr;
-  //static thread_local Fiber::ptr _threadFiber = nullptr;
   //默认协程栈大小
   static ConfigVar<size_t>::ptr __fiber_stack_size =
-    Config::lookUp<size_t>("fiber.stack_size",128*1024,"__stack_size");
-  class MallocAlloc
+    Config::lookUp<size_t>("fiber.stack_size",64*1024,"__stack_size");
+  class MMapcAlloc
   {
   public:
     static char* alloc(size_t size)
@@ -30,12 +25,18 @@ namespace zhuyh
       munmap(ptr,size);
     }
   };
-  
-  uint32_t& Fiber::_fiber_local_not_term()
+  class MallocAlloc
   {
-    static thread_local uint32_t __fiber_local_not_term{0};
-    return __fiber_local_not_term;
-  }
+  public:
+    static char* alloc(size_t size)
+    {
+      return (char*)malloc(size);
+    }
+    static void dealloc(void* ptr,size_t size)
+    {
+      free(ptr);
+    }
+  };
   
   Fiber*& Fiber::_this_fiber()
   {
@@ -49,7 +50,7 @@ namespace zhuyh
     return _threadFiber;
   }
   
-  using Allocator = MallocAlloc;
+  using Allocator = MMapcAlloc;
   //主协程
   Fiber::Fiber()
     :_state(EXEC),
@@ -58,9 +59,6 @@ namespace zhuyh
     setThis(this);
     _main_fiber();
     _this_fiber();
-    ++__fiber_count;
-    ++__fiber_not_term;
-    ++_fiber_local_not_term();
   }
   
   Fiber::Fiber(CbType cb,size_t size)
@@ -68,9 +66,6 @@ namespace zhuyh
      _fid(++__fiber_id),
      _state(INIT)
   {
-    ++__fiber_count;
-    ++__fiber_not_term;
-    ++_fiber_local_not_term();
     _stackSize = size ? size : __fiber_stack_size->getVar();
     //多申请pages_protect页
     size_t pages = StackTrait::getProtectStackPageSize();
@@ -78,9 +73,7 @@ namespace zhuyh
     _stack = Allocator::alloc(_stackSize);
     ASSERT2(_stack != nullptr,"Out of Memory");
     //std::cout<<_stackSize<<std::endl;
-    //LOG_ROOT_INFO() << "Creating Fiber";
     _ctx = make_fcontext((char*)_stack+_stackSize,_stackSize,Fiber::run);
-    //LOG_INFO(sys_log) << "Fiber ADDRESS : "<<_ctx;
     if(StackTrait::protectStack(_stack,_stackSize,pages) )
       {
 	_pagesProtect = pages;
@@ -90,12 +83,6 @@ namespace zhuyh
   Fiber::~Fiber()
   {
     //LOG_ROOT_INFO() << "Fiber ID : "<<_fid<<" Destroyed!";
-    --__fiber_count;
-    if(_state == INIT)
-      {
-	--__fiber_not_term;
-	--_fiber_local_not_term();
-      }
     if(_stack)
       {
 	ASSERT2(_state == TERM || _state == INIT
@@ -128,19 +115,6 @@ namespace zhuyh
     ASSERT(_stack);
     _cb = cb;
     _ctx = make_fcontext((char*)_stack+_stackSize,_stackSize,&Fiber::run);
-    //if(getcontext(&_ctx) )
-    // {
-    //	ASSERT2(false,"getcontext error");
-    // }
-    // _ctx.uc_link = nullptr;
-    //_ctx.uc_stack.ss_sp = _stack;
-    //_ctx.uc_stack.ss_size = _stackSize;
-    //makecontext(&_ctx,&Fiber::mainFunc,0);
-    if(_state == TERM)
-      {
-	++__fiber_not_term;
-	++_fiber_local_not_term();
-      }
     _state = INIT;
   }
   
@@ -152,10 +126,6 @@ namespace zhuyh
     if(_main_fiber() == nullptr)
       ASSERT(false);
     jump_fcontext(&(_main_fiber()->_ctx),_ctx,0);
-    //if( swapcontext(&_threadFiber->_ctx,&_ctx) )
-    // {
-    //	ASSERT2(false,"swapcontext error");
-    //}
   }
   
   void Fiber::swapOut()
@@ -215,11 +185,6 @@ namespace zhuyh
       }
   }
 
-  uint64_t Fiber::totalFibers()
-  {
-    return __fiber_count;
-  }
-
   //不可以使用日志,会产生递归!!!!!!!!!!!!!!
   uint32_t Fiber::getFid()
   {
@@ -238,8 +203,6 @@ namespace zhuyh
 	cur->_cb();
 	cur->_cb = nullptr;
 	cur->_state = TERM;
-	--__fiber_not_term;
-	--_fiber_local_not_term();
       }
     catch(std::exception& e)
       {
@@ -257,15 +220,5 @@ namespace zhuyh
     cur.reset();
     //LOG_ROOT_INFO() << "mainFunc ID:"<<getFid();
     raw_ptr->swapOut();
-  }
-
-  uint32_t Fiber::getTotalActive()
-  {
-    return __fiber_not_term;
-  }
-
-  uint32_t Fiber::getLocalActive()
-  {
-    return _fiber_local_not_term();
   }
 };
