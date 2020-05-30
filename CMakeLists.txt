@@ -50,17 +50,8 @@ set(LIBS
     ssl
     crypto)
 
-SET(PROXY_LIBS
-    src/httpProxy/LogInServlet.cpp
-    src/httpProxy/ProxyUser.cpp
-    src/httpProxy/HttpProxyServer.cpp
-    src/httpProxy/SecureHttpProxyServer.cpp
-    src/httpProxy/main.cpp)	
 add_library(zhuyh SHARED ${LIB_SRC})
 add_library(libzhuyh STATIC  ${LIB_SRC})
-
-add_executable(Proxy ${PROXY_LIBS})
-target_link_libraries(Proxy ${LIBS})
 
 add_executable(test_httpparser test/test_httpparser.cpp)
 target_link_libraries(test_httpparser ${LIBS})
@@ -86,8 +77,8 @@ target_link_libraries(test_mysql zhuyh ${LIBS})
 add_executable(test_stmt test/test_stmt.cpp)
 target_link_libraries(test_stmt ${LIBS})
 
-add_executable(test_proxy test/test_proxy.cpp)
-target_link_libraries(test_proxy ${LIBS})
+#add_executable(test_proxy test/test_proxy.cpp)
+#target_link_libraries(test_proxy ${LIBS})
 
 add_executable(test_co test/test_co.cpp)
 target_link_libraries(test_co ${LIBS})

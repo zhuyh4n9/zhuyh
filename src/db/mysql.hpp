@@ -383,14 +383,17 @@ namespace db
     using MutexType = Mutex;
     using Map = std::unordered_map<std::string,std::deque<MySQLConn::ptr> >;
 
-    MySQLConn::ptr getConn(const std::string& name,bool newName = true);
+    MySQLConn::ptr getConn(const std::string& name,
+			   bool newName = true);
     bool addConn(const std::string& name,MySQLConn::ptr conn,bool newName = true);
     
     IDBRes::ptr command(const std::string& name,const char* fmt,...);
     IDBRes::ptr command(const std::string& name,const char* fmt,va_list ap);
     IDBRes::ptr command(const std::string& name,const char* sql);
 
-    
+    void setDefine(const std::map<std::string,std::string>& def){
+      m_dbDefine = def;
+    }
   private:
     MySQLManager(const MySQLManager&) = delete;
     MySQLManager& operator=(const MySQLManager&) = delete;

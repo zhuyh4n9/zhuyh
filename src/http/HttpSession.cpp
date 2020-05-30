@@ -85,7 +85,10 @@ namespace http
 	  }
 	parser->getData()->setBody(body);
       }
-    return parser->getData();
+    auto req = parser->getData();
+    req->init();
+    req->initParam();
+    return req;
   }
   
   int HttpSession::sendResponse(HttpResponse::ptr resp)

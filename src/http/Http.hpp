@@ -190,7 +190,7 @@ namespace http
   std::string httpStatusToString(HttpStatus status);
   HttpStatus  stringToHttpStatus(const std::string& status);
 
-  
+  class HttpResponse;
   class HttpRequest
   {
   public:
@@ -327,6 +327,8 @@ namespace http
     bool hasHeader(const std::string& key,std::string* val = nullptr);
     bool hasParam(const std::string& key,std::string* val = nullptr);
     bool hasCookie(const std::string& key,std::string* val = nullptr);
+
+    std::shared_ptr<HttpResponse> getResponse();
   public:
     template<class T>
     bool checkGetHeaderAs(const std::string& key,T& val,const T& dft = T())

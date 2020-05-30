@@ -111,7 +111,9 @@ namespace http
      m_path("/")
   {
   }
-  
+  std::shared_ptr<HttpResponse> HttpRequest::getResponse(){
+      return std::make_shared<HttpResponse>(m_version,m_close);
+    }
   std::string HttpRequest::getHeader(const std::string& key,const std::string& dft) const
   {
     auto it = m_headers.find(key);

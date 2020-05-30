@@ -835,7 +835,8 @@ namespace db
     if(m_maxConns == 0) m_maxConns = 30;
   }
 
-  MySQLConn::ptr MySQLManager::getConn(const std::string& name,bool newName)
+  MySQLConn::ptr MySQLManager::getConn(const std::string& name,
+				       bool newName)
   {
 
     MySQLConn::ptr conn;
