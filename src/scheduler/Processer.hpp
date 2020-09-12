@@ -22,7 +22,6 @@ public:
     //构造函数提供最大空闲协程数和负载因子,maxIdle = 0 采用配置文件中个数
     Processer(const std::string name = "",Scheduler* schd = nullptr);
     ~Processer();
-
     uint64_t getBlockTime() const;
     //向该processer添加一个任务
     bool addTask(Task::ptr task);
@@ -72,7 +71,6 @@ private:
     //record last moment we this processor had nothing to do
     std::atomic<time_t> m_lastIdleMS {0};
     //mutable Mutex m_mx;
-
     Scheduler* m_sched;
     Semaphore m_sem;
 #ifdef ZHUYH_PROCESSOR_PROFILING
