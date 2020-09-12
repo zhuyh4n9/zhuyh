@@ -4,6 +4,8 @@ project(zhuyh)
 set(CMAKE_CXX_FLAGS
   "$ENV{CXXFLAGS} -rdynamic -O2 -g  -std=c++1z -Wall -Werror -Wno-unused-function -fstack-protector-all")
 
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
+
 set(LIB_SRC
   src/log.cpp
   src/logUtil.cpp
