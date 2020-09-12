@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include<mysql/mysql.h>
 #include<functional>
 #include"db.hpp"
@@ -11,6 +12,7 @@
 #include<deque>
 #include"../macro.hpp"
 #include"../logs.hpp"
+
 namespace zhuyh
 {
 namespace db
@@ -466,7 +468,7 @@ namespace db
     auto conn = std::dynamic_pointer_cast<MySQLConn>(m_conn);
     ASSERT(conn != nullptr);
     auto stmt = MySQLStmt::Create(conn,str);
-    if(stmt == nullptr) return nullptr;
+    if(stmt == nullptr) return -1;
     
     (stmt->bind(idx++,args),...);
     int rt = stmt->execute();

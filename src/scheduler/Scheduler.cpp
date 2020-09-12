@@ -7,25 +7,23 @@
 
 namespace zhuyh
 {
-  static ConfigVar<int>::ptr __max_thread = Config::lookUp<int>("scheduler.maxthread",
+static ConfigVar<int>::ptr __max_thread = Config::lookUp<int>("scheduler.maxthread",
 							   64,"scheduler max thread");
-  static ConfigVar<int>::ptr __min_thread = Config::lookUp<int>("scheduler.minthread",
+static ConfigVar<int>::ptr __min_thread = Config::lookUp<int>("scheduler.minthread",
 								32,"scheduler min thread");
   
-  static Logger::ptr sys_log = GET_LOGGER("system");
+static Logger::ptr sys_log = GET_LOGGER("system");
 
-  static thread_local Scheduler* s_schd;
-  Scheduler* Scheduler::getThis()
-  {
+static thread_local Scheduler* s_schd;
+Scheduler* Scheduler::getThis() {
     return s_schd;
-  }
-  void Scheduler::setThis(Scheduler* schd)
-  {
+}
+
+void Scheduler::setThis(Scheduler* schd) {
     s_schd = schd;
-  }
-  Scheduler::Scheduler(const std::string& name,int threads)
-    :_minThread(threads),_maxThread(threads)
-  {
+}
+Scheduler::Scheduler(const std::string& name,int threads)
+    :_minThread(threads),_maxThread(threads) {
     if(name == "")
       _name = "root";
     else
@@ -34,7 +32,7 @@ namespace zhuyh
     // std::cout<<"use Count : "<<m_lgThread.use_count()<<" use count2 :" 
     // 	     <<SingletonPtr<LogThread>::getInstance().use_count()<<std::endl;
     _pcsQue.resize(_minThread);
-  }
+}
   
   //默认构造函数为私有,用于创建根调度器
   Scheduler::Scheduler()
@@ -156,10 +154,10 @@ namespace zhuyh
   {
     if(_minThread == 1) return 0;
     Processer::ptr _prc = getMaxPayLoad();
-    if(_prc->_thread.get() == Thread::getThis() ) return 0;
+    if(_prc->m_thread.get() == Thread::getThis() ) return 0;
     std::list<Task::ptr> tasks;
     //偷取协程
-    tasks = _prc->steal(_prc->_payLoad / 2);
+    tasks = _prc->steal(_prc->m_payLoad / 2);
     int sz = tasks.size();
     prc->store(tasks);
     return sz;
@@ -208,7 +206,7 @@ namespace zhuyh
 	if(_prc == nullptr)
 	  _prc = _pcsQue[i];
 	else
-	  _prc = _prc->_payLoad > _pcsQue[i]->_payLoad ? _prc : _pcsQue[i];
+	  _prc = _prc->m_payLoad > _pcsQue[i]->m_payLoad ? _prc : _pcsQue[i];
       }
     return _prc;
   }
@@ -219,11 +217,11 @@ namespace zhuyh
     Processer::ptr _prc = nullptr;
     for(unsigned i=0;i < _pcsQue.size() ;i++)
       {
-	if(_pcsQue[i]->_payLoad == 0) return _pcsQue[i];
+	if(_pcsQue[i]->m_payLoad == 0) return _pcsQue[i];
 	if(_prc == nullptr)
 	  _prc = _pcsQue[i];
 	else
-	  _prc = _prc->_payLoad < _pcsQue[i]->_payLoad ? _prc : _pcsQue[i];
+	  _prc = _prc->m_payLoad < _pcsQue[i]->m_payLoad ? _prc : _pcsQue[i];
       }
     return _prc;
   }
