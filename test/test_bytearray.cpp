@@ -1,5 +1,6 @@
 #include<bits/stdc++.h>
-#include"../zhuyh.hpp"
+#include"all.hpp"
+
 using namespace zhuyh;
 
 void test_byteArray()

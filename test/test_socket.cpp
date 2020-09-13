@@ -1,4 +1,4 @@
-#include "../zhuyh.hpp"
+#include "all.hpp"
 #include <bits/stdc++.h>
 
 using namespace zhuyh;
@@ -90,7 +90,7 @@ int main(int argc,char* argv[])
       LOG_ROOT_ERROR() << "Port : "<< str << " is not Valid";
       exit(1);
     }
-  co std::bind(doServerLoop,port));
+  co std::bind(doServerLoop,port);
   
   while(1) sleep(1);
   return 0;

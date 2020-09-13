@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 #include <unordered_map>
-#include "../zhuyh.hpp"
+#include "all.hpp"
 
 using namespace zhuyh;
 

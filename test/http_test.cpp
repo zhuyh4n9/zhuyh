@@ -1,4 +1,4 @@
-#include"../zhuyh.hpp"
+#include "all.hpp"
 #include<bits/stdc++.h>
 
 using namespace zhuyh;

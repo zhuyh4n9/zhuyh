@@ -1,16 +1,18 @@
-#include "Hook.hpp"
-#include <dlfcn.h>
-#include "../scheduler/IOManager.hpp"
-#include "../scheduler/Scheduler.hpp"
-#include "../macro.hpp"
-#include "../logUtil.hpp"
-#include "../scheduler/TimerManager.hpp"
-#include "FdManager.hpp"
-#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdarg.h>
 #include <sys/ioctl.h>
+
+#include <dlfcn.h>
+#include <stdlib.h>
+
+#include "Hook.hpp"
+#include "scheduler/Reactor.hpp"
+#include "scheduler/Scheduler.hpp"
+#include "macro.hpp"
+#include "logUtil.hpp"
+#include "scheduler/TimerManager.hpp"
+#include "FdManager.hpp"
 
 static auto sys_log = GET_LOGGER("system");
 
@@ -120,7 +122,7 @@ struct TimerInfo
 
 template<typename OriFunc,typename...Args>
 static int do_io(int fd,const char* funcName,OriFunc oriFunc,
-		 zhuyh::IOManager::EventType event,int timeout_so,
+		 zhuyh::Reactor::EventType event,int timeout_so,
 		 Args&&... args)
 {
   if(zhuyh::Hook::isHookEnable() == false)
@@ -185,19 +187,19 @@ static int do_io(int fd,const char* funcName,OriFunc oriFunc,
 	    if(!t || t->cancled )
 	      return;
 	    t->cancled = ETIMEDOUT;
-	    if(event == zhuyh::IOManager::READ)
-	      scheduler->cancleReadEvent(fd);
-	    else if(event == zhuyh::IOManager::WRITE)
-	      scheduler->cancleWriteEvent(fd);
+	    if(event == zhuyh::Reactor::READ)
+	      scheduler->cancelReadEvent(fd);
+	    else if(event == zhuyh::Reactor::WRITE)
+	      scheduler->cancelWriteEvent(fd);
 	  });
       }
     int rt = 0;
-    if(event == zhuyh::IOManager::READ)
+    if(event == zhuyh::Reactor::READ)
       {
 	rt = scheduler->addReadEvent(fd);
 	//LOG_ROOT_ERROR() << "add Read Event fd : " << fd;
       }
-    else if(event == zhuyh::IOManager::WRITE)
+    else if(event == zhuyh::Reactor::WRITE)
       {
 	rt = scheduler->addWriteEvent(fd);
 	//LOG_ROOT_ERROR() << "add Write Event fd : " << fd;
@@ -208,7 +210,7 @@ static int do_io(int fd,const char* funcName,OriFunc oriFunc,
       {
 	zhuyh::Fiber::YieldToHold();
 	if(timer)
-	  timer->cancle();
+	  timer->cancel();
 	if(tinfo->cancled)
 	  {
 	    //LOG_ROOT_ERROR() << "errno = " <<errno<< " error = "<<strerror(errno);
@@ -234,7 +236,7 @@ static int do_io(int fd,const char* funcName,OriFunc oriFunc,
 	      }
 	  } 
 	if(timer)
-	  timer->cancle();
+	  timer->cancel();
 	return -1;
       }
   } while(1);
@@ -355,7 +357,7 @@ extern "C"
 	      }
 	    t->cancled = ETIMEDOUT;
 	    //LOG_ROOT_INFO() << "cancled";
-	    scheduler->cancleWriteEvent(sockfd);
+	    scheduler->cancelWriteEvent(sockfd);
 	  });
       }
     rt = scheduler->addWriteEvent(sockfd);
@@ -367,7 +369,7 @@ extern "C"
 	if(timer)
 	  {
 	    //  LOG_ROOT_INFO() << sockfd;
-	    timer->cancle();
+	    timer->cancel();
 	  }
 	if(tinfo->cancled)
 	  {
@@ -379,7 +381,7 @@ extern "C"
       {
 	if(timer)
 	  {
-	    timer->cancle();
+	    timer->cancel();
 	  }
 	LOG_ERROR(sys_log) << "Failed to add Event";
 	return -1;
@@ -403,7 +405,7 @@ extern "C"
   int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen)
   {
     do_init();
-    int fd = do_io(sockfd,"accept",accept_f,zhuyh::IOManager::READ,
+    int fd = do_io(sockfd,"accept",accept_f,zhuyh::Reactor::READ,
 		 SO_RCVTIMEO,addr,addrlen);
     if(fd >= 0)
       {
@@ -416,21 +418,21 @@ extern "C"
   ssize_t read(int fd, void *buf, size_t count)
   {
     do_init();
-    return do_io(fd,"read",read_f,zhuyh::IOManager::READ,
+    return do_io(fd,"read",read_f,zhuyh::Reactor::READ,
 		 SO_RCVTIMEO,buf,count);
   }
   
   ssize_t readv(int fd, const struct iovec *iov, int iovcnt)
   {
     do_init();
-    return do_io(fd,"readv",readv_f,zhuyh::IOManager::READ,
+    return do_io(fd,"readv",readv_f,zhuyh::Reactor::READ,
 		 SO_RCVTIMEO,iov,iovcnt);
   }
   
   ssize_t recv(int sockfd, void *buf, size_t len, int flags)
   {
     do_init();
-    return do_io(sockfd,"recv",recv_f,zhuyh::IOManager::READ,
+    return do_io(sockfd,"recv",recv_f,zhuyh::Reactor::READ,
 		 SO_RCVTIMEO,buf,len,flags);
   }
 
@@ -438,35 +440,35 @@ extern "C"
 		   struct sockaddr *src_addr, socklen_t* addrlen)
   {
     do_init();
-    return do_io(sockfd,"recvfrom",recvfrom_f,zhuyh::IOManager::READ,
+    return do_io(sockfd,"recvfrom",recvfrom_f,zhuyh::Reactor::READ,
 		 SO_RCVTIMEO,buf,len,flags,src_addr,addrlen);
   }
 
   ssize_t recvmsg(int sockfd, struct msghdr *msg, int flags)
   {
     do_init();
-    return do_io(sockfd,"recvfrom",recvmsg_f,zhuyh::IOManager::READ,
+    return do_io(sockfd,"recvfrom",recvmsg_f,zhuyh::Reactor::READ,
 		 SO_RCVTIMEO,msg,flags);
   }
   
   ssize_t write(int fd, const void *buf, size_t count)
   {
     do_init();
-    return do_io(fd,"write",write_f,zhuyh::IOManager::WRITE,
+    return do_io(fd,"write",write_f,zhuyh::Reactor::WRITE,
 		 SO_SNDTIMEO,buf,count);
   }
 
   ssize_t writev(int fd, const struct iovec *iov, int iovcnt)
   {
     do_init();
-    return do_io(fd,"writev",writev_f,zhuyh::IOManager::WRITE,
+    return do_io(fd,"writev",writev_f,zhuyh::Reactor::WRITE,
 		 SO_SNDTIMEO,iov,iovcnt);
   }
   
   ssize_t send(int sockfd, const void *buf, size_t len, int flags)
   {
     do_init();
-    return do_io(sockfd,"send",send_f,zhuyh::IOManager::WRITE,
+    return do_io(sockfd,"send",send_f,zhuyh::Reactor::WRITE,
 		 SO_SNDTIMEO,buf,len,flags);
   }
 
@@ -474,14 +476,14 @@ extern "C"
 		 const struct sockaddr *dest_addr, socklen_t addrlen)
   {
     do_init();
-    return do_io(sockfd,"sendto",sendto_f,zhuyh::IOManager::WRITE,
+    return do_io(sockfd,"sendto",sendto_f,zhuyh::Reactor::WRITE,
 		 SO_SNDTIMEO,buf,len,flags,dest_addr,addrlen);
   }
 
   ssize_t sendmsg(int sockfd, const struct msghdr *msg, int flags)
   {
     do_init();
-    return do_io(sockfd,"sendmsg",sendmsg_f,zhuyh::IOManager::WRITE,
+    return do_io(sockfd,"sendmsg",sendmsg_f,zhuyh::Reactor::WRITE,
 		 SO_SNDTIMEO,msg,flags);
   }
 
@@ -497,7 +499,7 @@ extern "C"
     if(fdInfo)
       {
 	auto scheduler = zhuyh::Scheduler::getThis();
-	scheduler->cancleAllEvent(fd);
+	scheduler->cancelAllEvent(fd);
       }
     fdmanager->del(fd);
     //LOG_ROOT_ERROR() << "closing fd : " << fd;
@@ -516,7 +518,7 @@ extern "C"
     if(fdInfo)
       {
 	auto scheduler = zhuyh::Scheduler::getThis();
-	scheduler->cancleAllEvent(fd);
+	scheduler->cancelAllEvent(fd);
 	fdmanager->del(fd);
       }
     LOG_ROOT_ERROR() << "__closing fd : " << fd;

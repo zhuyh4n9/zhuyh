@@ -19,7 +19,7 @@ set(LIB_SRC
   src/asm/jump_x86_64_sysv_elf_gas.S
   src/concurrent/stackTrait.cpp
   src/scheduler/Processer.cpp
-  src/scheduler/IOManager.cpp
+  src/scheduler/Reactor.cpp
   src/scheduler/Scheduler.cpp
   src/co.cpp
   src/scheduler/TimerManager.cpp

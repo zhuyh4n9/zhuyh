@@ -1,5 +1,5 @@
-#include"../zhuyh.hpp"
-#include"../src/netio/Hook.hpp"
+#include"all.hpp"
+#include"netio/Hook.hpp"
 
 #include<bits/stdc++.h>
 using namespace zhuyh;

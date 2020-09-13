@@ -1,4 +1,4 @@
-#include "../zhuyh.hpp"
+#include "all.hpp"
 
 using namespace zhuyh;
 

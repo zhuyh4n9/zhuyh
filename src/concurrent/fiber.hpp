@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "../latch/latchUtil.hpp"
+#include "latch/latchUtil.hpp"
 #include <memory>
 #include <atomic>
 #include <ucontext.h>
@@ -30,7 +30,7 @@ namespace zhuyh
   public:
     friend class Processer;
     friend class Scheduler;
-    friend class IOManager;
+    friend class Reactor;
     friend class CoSemaphore;
     typedef std::function<void()> CbType;
     typedef std::shared_ptr<Fiber> ptr;

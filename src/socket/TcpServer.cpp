@@ -174,7 +174,7 @@ namespace zhuyh
          auto schd = Scheduler::getThis();
          for(auto& sock : m_socks)
 	   {
-	     schd->cancleAllEvent(sock->getSockFd());
+	     schd->cancelAllEvent(sock->getSockFd());
 	     sock->close();
 	   }
     });

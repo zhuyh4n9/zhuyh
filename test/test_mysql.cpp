@@ -1,4 +1,4 @@
-#include "../zhuyh.hpp"
+#include "all.hpp"
 #include <iostream>
 #include <mysql/mysql.h>
 #include <exception>

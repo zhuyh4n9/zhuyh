@@ -1,6 +1,6 @@
 #include "TimerManager.hpp"
-#include "../macro.hpp"
-#include "../logUtil.hpp"
+#include "macro.hpp"
+#include "logUtil.hpp"
 #include "Task.hpp"
 #include <list>
 #include <vector>
@@ -12,7 +12,7 @@ namespace zhuyh
   Timer::Timer(time_t sec,time_t msec ,time_t usec ,time_t nsec)
   {
     //_id = ++__id__;
-    _cancled = false;
+    m_cancelled = false;
     ASSERT(sec >= 0 && msec >= 0 && usec >= 0 && nsec >= 0);
     usec += nsec/1000;
     msec += usec/1000;
@@ -42,14 +42,14 @@ namespace zhuyh
     _manager = manager;
   }
   
-  bool Timer::cancle()
+  bool Timer::cancel()
   {
     //ASSERT(0); 
     LockGuard lg(_manager->_mx);
-    if(_cancled) return false;
+    if(m_cancelled) return false;
     if(_task)
       {
-	_cancled = true;
+	m_cancelled = true;
 	auto self = shared_from_this();
 	auto it = _manager->_timers.find(self);
 	//LOG_ROOT_INFO() << (unsigned long long)self.get();
@@ -62,7 +62,7 @@ namespace zhuyh
   }
   void Timer::setTask(CbType cb)
   {
-    ASSERT(_cancled == false);
+    ASSERT(m_cancelled == false);
     ASSERT(_start == false);
     if(cb == nullptr)
       {
@@ -144,7 +144,7 @@ namespace zhuyh
     //如果是循环定时器更改定时器类型
     if(type == Timer::TimerType::LOOP) timer->setLoop();
     //设置本Manager为定时器Manager
-    timer->_cancled = false;
+    timer->m_cancelled = false;
     timer->setManager(this);
     //设置任务
     timer->setTask(cb);

@@ -1,9 +1,9 @@
-#include "IOManager.hpp"
 #include <list>
-#include "../config.hpp"
-#include "Scheduler.hpp"
 #include <algorithm>
-#include "../netio/Hook.hpp"
+#include "config.hpp"
+#include "Reactor.hpp"
+#include "Scheduler.hpp"
+#include "netio/Hook.hpp"
 
 namespace zhuyh
 { 
@@ -23,7 +23,7 @@ namespace zhuyh
       return -1;
     return fcntl_f(fd,F_SETFL,flags & ~O_NONBLOCK);
   }
-  IOManager::IOManager(const std::string& name,Scheduler* schd)
+  Reactor::Reactor(const std::string& name,Scheduler* schd)
   {
     _epfd = epoll_create(1);
     if(_epfd < 0 )
@@ -35,7 +35,7 @@ namespace zhuyh
     else
       _scheduler = schd;
     if(name == "")
-      _name = "IOManager";
+      _name = "Reactor";
     else
       _name = name;
     int rt = pipe(_notifyFd);
@@ -50,14 +50,14 @@ namespace zhuyh
     rt = epoll_ctl(_epfd,EPOLL_CTL_ADD,_notifyFd[0],&ev);
     resizeMap((uint32_t)4096);
     ASSERT(rt >= 0);
-    _thread.reset(new Thread(std::bind(&IOManager::run,this),_name));
-    //LOG_INFO(sys_log) << "IOManager : "<< _name <<" Created!";
+    _thread.reset(new Thread(std::bind(&Reactor::run,this),_name));
+    //LOG_INFO(sys_log) << "Reactor : "<< _name <<" Created!";
   }
-  IOManager::~IOManager()
+  Reactor::~Reactor()
   {
     if(!_stopping)
       stop();
-    //LOG_INFO(sys_log) << "IOManager Destroyed";
+    //LOG_INFO(sys_log) << "Reactor Destroyed";
     if(_epfd >= 0)
       {
 	close(_epfd);
@@ -85,7 +85,7 @@ namespace zhuyh
     delete _notifyEvent;
     _eventMap.clear();
   }
-  void IOManager::notify()
+  void Reactor::notify()
   {
     int rt = write_f(_notifyFd[1],"",1);
     if(rt < 0)
@@ -93,7 +93,7 @@ namespace zhuyh
 	LOG_ROOT_ERROR() << "rt : "<<rt << " error : "<<strerror(errno) << " errno : "<<errno;
       }
   }
-  void IOManager::resizeMap(uint32_t size)
+  void Reactor::resizeMap(uint32_t size)
   {
     _eventMap.resize(size);
     for(size_t i=0;i<_eventMap.size();i++)
@@ -104,7 +104,7 @@ namespace zhuyh
 	  }
       }
   }
-  int IOManager::addEvent(int fd,Task::ptr task,EventType type)
+  int Reactor::addEvent(int fd,Task::ptr task,EventType type)
   {
     
     ASSERT( type == READ  || type == WRITE);
@@ -171,7 +171,7 @@ namespace zhuyh
     return 0;
   }
 
-  int IOManager::delEvent(int fd,EventType type)
+  int Reactor::delEvent(int fd,EventType type)
   {
     ASSERT( !((type & READ) && (type & WRITE))  );
     ASSERT( type != NONE);
@@ -217,7 +217,7 @@ namespace zhuyh
     return 0;
   }
 
-  int IOManager::cancleEvent(int fd,EventType type)
+  int Reactor::cancelEvent(int fd,EventType type)
   {
     ASSERT( !((type & READ) && (type & WRITE))  );
     ASSERT( type != NONE);
@@ -231,7 +231,7 @@ namespace zhuyh
       }
     FdEvent* epEv = _eventMap[fd];
     lg.unlock();
-    //LOG_ROOT_ERROR() << "cancle Event,  fd : "<<fd<< " type : "
+    //LOG_ROOT_ERROR() << "cancel Event,  fd : "<<fd<< " type : "
     //               <<(type == READ ? "READ" : "WRITE");
     LockGuard lg2(epEv->lk);
     if( (EventType)(epEv->event & type) == NONE )
@@ -254,7 +254,7 @@ namespace zhuyh
     return 0;
   }
 
-  int IOManager::cancleAll(int fd)
+  int Reactor::cancelAll(int fd)
   {
     RDLockGuard lg(_lk);
     if((size_t)fd >= _eventMap.size())
@@ -287,18 +287,18 @@ namespace zhuyh
     return 0;
   }
 
-  bool IOManager::isStopping() const
+  bool Reactor::isStopping() const
   {
-    return _holdCount == 0 && _stopping && _scheduler->totalTask == 0;
+    return _holdCount == 0 && _stopping && _scheduler->m_totalTask == 0;
   }
   
-  void IOManager::stop()
+  void Reactor::stop()
   {
     _stopping = true;
     notify();
   }
   
-  void IOManager::run()
+  void Reactor::run()
   {
     Scheduler::setThis(_scheduler);
     Hook::setHookState(true);
@@ -310,10 +310,10 @@ namespace zhuyh
     const int MaxTimeOut = 1000;
     while(1)
       {
-	//LOG_WARN(sys_log) << "Holding : " << _holdCount << " Total  : " << _scheduler->totalTask;
+	//LOG_WARN(sys_log) << "Holding : " << _holdCount << " Total  : " << _scheduler->m_totalTask;
 	if(isStopping())
 	  {
-	    LOG_INFO(sys_log) << "IOManager : " << _name << " stopped!";
+	    LOG_INFO(sys_log) << "Reactor : " << _name << " stopped!";
 	    delete [] events;
 	    break;
 	  }
@@ -396,7 +396,7 @@ namespace zhuyh
       }
   }
 
-  int IOManager::triggerEvent(FdEvent* epEv,EventType type)
+  int Reactor::triggerEvent(FdEvent* epEv,EventType type)
   {
     //ASSERT2(0, "Trigger event");
     ASSERT( type == READ  || type == WRITE);

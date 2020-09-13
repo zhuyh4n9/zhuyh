@@ -53,7 +53,7 @@ bool Processer::addTask(Task::ptr task) {
     if (task->cb || task -> fiber) {
         if (task->cb) {
             ASSERT(task -> fiber == nullptr);
-            ++(m_sched->totalTask);
+            ++(m_sched->m_totalTask);
         }
         ASSERT2(task != nullptr, "unexpected ");
         m_readyTasks.push_front(task);
@@ -178,7 +178,7 @@ void Processer::run() {
             } else if(fiber->getState() == Fiber::TERM
                      || fiber->getState() == Fiber::EXCEPT) {
                 --m_payLoad;
-                --(m_sched->totalTask);
+                --(m_sched->m_totalTask);
                 fiber.reset();
             } else {
                 ASSERT2(false,Fiber::getState(fiber->getState()));
@@ -191,7 +191,7 @@ void Processer::run() {
         }
         //Failed to steal fiber, check whether we're stopping
         if (m_stopping) {
-            if (m_sched->totalTask <= 0
+            if (m_sched->m_totalTask <= 0
                 && m_readyTasks.empty()
                 && m_sched->getHold() <= 0) {
                     m_stop = true;
@@ -203,7 +203,7 @@ void Processer::run() {
         waitForNotify();
         if(m_stopping) {
             //TODO:改为调度器holdCount
-            if (m_sched->totalTask <= 0
+            if (m_sched->m_totalTask <= 0
                 && m_readyTasks.empty()
                 && m_sched->getHold() <= 0) {
                     m_stop = true;

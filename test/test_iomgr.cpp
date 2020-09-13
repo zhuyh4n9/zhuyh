@@ -1,10 +1,10 @@
-#include "../zhuyh.hpp"
+#include "all.hpp"
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
-#include "../src/netio/Hook.hpp"
+#include "netio/Hook.hpp"
 
 using namespace zhuyh;
 struct TEST

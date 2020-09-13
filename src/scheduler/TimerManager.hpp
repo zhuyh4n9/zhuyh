@@ -2,7 +2,7 @@
 
 #include <set>
 #include <vector>
-#include "../latch/lock.hpp"
+#include "latch/lock.hpp"
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -31,7 +31,7 @@ namespace zhuyh
     
     Timer(uint64_t* msec)
     {
-      _cancled = false;
+      m_cancelled = false;
       _nxtExpireTime = *msec;
     }
     void setManager(TimerManager* manager);
@@ -50,10 +50,10 @@ namespace zhuyh
       if(_start) return;
       _type = LOOP;
     }
-    bool cancle();
-    bool isCancled() const
+    bool cancel();
+    bool isCancelled() const
     {
-      return _cancled;
+      return m_cancelled;
     }
     //nullptr表示使用当前协程,否则表示回调函数
     void setTask(CbType cb = nullptr);
@@ -70,7 +70,7 @@ namespace zhuyh
   private:
     std::shared_ptr<Task> _task = nullptr;
     bool _start = false;
-    bool _cancled = false;
+    bool m_cancelled = false;
     TimerType _type = SINGLE;
     uint64_t _interval = 0;
     uint64_t _nxtExpireTime = 0;
