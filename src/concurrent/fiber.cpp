@@ -6,7 +6,7 @@
 
 namespace zhuyh
 {
-  static Logger::ptr sys_log = GET_LOGGER("system");
+  static Logger::ptr s_syslog = GET_LOGGER("system");
   static std::atomic<uint32_t> __fiber_id {0};
   
   //默认协程栈大小
@@ -207,12 +207,12 @@ namespace zhuyh
     catch(std::exception& e)
       {
 	cur->_state = EXCEPT;
-	LOG_ERROR(sys_log) << "Fiber Except : "<<e.what();
+	LOG_ERROR(s_syslog) << "Fiber Except : "<<e.what();
       }
     catch(...)
       {
 	cur->_state = EXCEPT;
-	LOG_ERROR(sys_log) << "Fiber Except : UNKNOWN";
+	LOG_ERROR(s_syslog) << "Fiber Except : UNKNOWN";
       }
     //获取裸指针,防止智能指针一直停留在协程栈上导致无法析构
     auto raw_ptr = cur.get();

@@ -64,7 +64,7 @@ namespace zhuyh
     int rt = setsockopt(m_sockfd,level,optname,optval,optlen);
     if(rt)
       {
-	LOG_ERROR(sys_log) << "setsockopt failed , error : "
+	LOG_ERROR(s_syslog) << "setsockopt failed , error : "
 			   <<strerror(errno) << " errno : "<<errno;
 	return false;
       }
@@ -77,7 +77,7 @@ namespace zhuyh
     int rt = getsockopt(m_sockfd,level,optname,res,optlen);
     if(rt)
       {
-	LOG_ERROR(sys_log) << "setsockopt failed , error : "
+	LOG_ERROR(s_syslog) << "setsockopt failed , error : "
 			   <<strerror(errno) << " errno : "<<errno;
 	return false;
       }
@@ -123,7 +123,7 @@ namespace zhuyh
     m_sockfd = socket(m_family,m_type,m_protocol);
     if(m_sockfd == -1)
       {
-	LOG_ERROR(sys_log) << "socket error : " << strerror(errno) << " errno : "<<errno;
+	LOG_ERROR(s_syslog) << "socket error : " << strerror(errno) << " errno : "<<errno;
 	return false;
       }
     initSock();
@@ -138,7 +138,7 @@ namespace zhuyh
       }
     if(addr->getFamily() != m_family)
       {
-	LOG_ERROR(sys_log) << "family type Substitute error , "
+	LOG_ERROR(s_syslog) << "family type Substitute error , "
 	  "required : "<<getFamilyType(m_family) << " actual : "
 			   <<getFamilyType(addr->getFamily());
 	return false;
@@ -146,7 +146,7 @@ namespace zhuyh
 
     if(::bind(m_sockfd,addr->getAddr(),addr->getAddrLen()) != 0)
       {
-	LOG_ERROR(sys_log) << "bind error : " << strerror(errno)
+	LOG_ERROR(s_syslog) << "bind error : " << strerror(errno)
 			   << " errno : " << errno;
 	return false;
       }
@@ -158,13 +158,13 @@ namespace zhuyh
   {
     if(m_sockfd < 0)
       {
-	LOG_ERROR(sys_log) << "failed to listen sockfd : sockfd = -1";
+	LOG_ERROR(s_syslog) << "failed to listen sockfd : sockfd = -1";
 	return false;
       }
     int rt = ::listen(m_sockfd,backlog);
     if(rt)
       {
-	LOG_ERROR(sys_log) << "listen error : "<<strerror(errno)
+	LOG_ERROR(s_syslog) << "listen error : "<<strerror(errno)
 			   << " errno : "<<errno;
 	return false;
       }
@@ -184,7 +184,7 @@ namespace zhuyh
 	int rt = ::close(m_sockfd);
 	if(rt < 0)
 	  {
-	    LOG_ERROR(sys_log) << "close("<<m_sockfd<<") error : "<<strerror(errno)
+	    LOG_ERROR(s_syslog) << "close("<<m_sockfd<<") error : "<<strerror(errno)
 			       << " errno : " << errno;
 	    return false;
 	  }
@@ -200,7 +200,7 @@ namespace zhuyh
     if(fd < 0)
       {
 	if(errno !=ETIMEDOUT)
-	  LOG_ERROR(sys_log) << "accept failed, error : "<<strerror(errno)
+	  LOG_ERROR(s_syslog) << "accept failed, error : "<<strerror(errno)
 			     << " errno = "<<errno;
 	return nullptr;
       }
@@ -221,14 +221,14 @@ namespace zhuyh
       }
     if(addr->getFamily() != m_family)
       {
-	LOG_ERROR(sys_log) << "family type Substitute error , "
+	LOG_ERROR(s_syslog) << "family type Substitute error , "
 	  "required : "<<getFamilyType(m_family) << " actual : "
 			   <<getFamilyType(addr->getFamily());
 	return false;
       }
     if(::connect(m_sockfd,addr->getAddr(),addr->getAddrLen()) != 0)
       {
-	LOG_ERROR(sys_log) << "connect failed,error : "<< strerror(errno)
+	LOG_ERROR(s_syslog) << "connect failed,error : "<< strerror(errno)
 			   << " errno = "<<errno;
 	close();
 	return false;
@@ -243,7 +243,7 @@ namespace zhuyh
   {
     if(!m_remoteAddr)
       {
-	LOG_ERROR(sys_log) << "remote Address is null";
+	LOG_ERROR(s_syslog) << "remote Address is null";
 	return false;
       }
     m_localAddr.reset();
@@ -401,7 +401,7 @@ namespace zhuyh
     int rt = getpeername(m_sockfd,addr->getAddr(),&addrlen);
     if(rt < 0)
       {
-	LOG_ERROR(sys_log) << "getpeername error : "<<strerror(errno)
+	LOG_ERROR(s_syslog) << "getpeername error : "<<strerror(errno)
 			   << " errno : "<<errno;
 	return nullptr;
       }
@@ -445,7 +445,7 @@ namespace zhuyh
     int rt = getsockname(m_sockfd,addr->getAddr(),&addrlen);
     if(rt < 0)
       {
-	LOG_ERROR(sys_log) << "getsockname error : "<<strerror(errno)
+	LOG_ERROR(s_syslog) << "getsockname error : "<<strerror(errno)
 			   << " errno : "<<errno;
 	return nullptr;
       }

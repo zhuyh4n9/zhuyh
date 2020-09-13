@@ -465,8 +465,8 @@ namespace zhuyh
   private:
     static SpinLock& lk()
     {
-      static SpinLock _lk;
-      return _lk;
+      static SpinLock m_lk;
+      return m_lk;
     }
     static ConfigVarMap& getVarMap()
     {

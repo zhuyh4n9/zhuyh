@@ -18,7 +18,7 @@ namespace zhuyh
     void join();
     const std::string& getThreadName() const
     {
-      return _name;
+      return m_name;
     }
     pid_t getId() const
     {
@@ -31,9 +31,9 @@ namespace zhuyh
     static void* run(void* arg);
   private:
     pid_t _id = -1;
-    pthread_t _thread = 0;
+    pthread_t m_thread = 0;
     std::function<void()> _cb;
-    std::string _name;
+    std::string m_name;
     Semaphore s_sm;
   };
 }

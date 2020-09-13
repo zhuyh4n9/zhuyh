@@ -55,14 +55,14 @@ public:
     int cancelAll(int fd);
     void stop();
     void join() {
-      _thread->join();
+      m_thread->join();
     }
     void notify() override;
     bool isStopping() const;
     void run();
     void clearAllEvent();
     bool getStopping() const {
-      return _stopping;
+      return m_stopping;
     }
     //设置/获取调度器
     //Scheduler* getScheduler();
@@ -73,17 +73,17 @@ private:
     void resizeMap(uint32_t size);
 private:
     //epoll句柄
-    int _epfd = -1;
-    Scheduler* _scheduler;
+    int m_epfd = -1;
+    Scheduler* m_sched;
     // fd --> event
-    std::vector<FdEvent*> _eventMap;
-    mutable RWLock _lk;
-    int _notifyFd[2];
-    Thread::ptr _thread = nullptr;
-    std::string _name;
-    std::atomic<bool> _stopping{false};
-    std::atomic<int> _holdCount{0};
-    FdEvent* _notifyEvent;
+    std::vector<FdEvent*> m_eventMap;
+    mutable RWLock m_lk;
+    int m_notifyFd[2];
+    Thread::ptr m_thread = nullptr;
+    std::string m_name;
+    std::atomic<bool> m_stopping{false};
+    std::atomic<int> m_holdCount{0};
+    FdEvent* m_notifyEvent;
 };
 
 }

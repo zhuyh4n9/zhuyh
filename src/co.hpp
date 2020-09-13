@@ -16,8 +16,8 @@ namespace zhuyh
       {
 	Fiber::getThis();
 	//Thread::setName("Main");
-	Scheduler* _scheduler = Scheduler::Schd::getInstance();
-	_scheduler->start();
+	Scheduler* m_sched = Scheduler::Schd::getInstance();
+	m_sched->start();
       }
     };
   }

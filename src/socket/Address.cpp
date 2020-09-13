@@ -11,7 +11,7 @@
 
 namespace zhuyh
 {
-  static Logger::ptr sys_log = GET_LOGGER("system");
+  static Logger::ptr s_syslog = GET_LOGGER("system");
   
   template<class T>
   typename std::enable_if< sizeof(T) == 1,T>::type
@@ -199,7 +199,7 @@ namespace zhuyh
 	int error = getaddrinfo(node.c_str(),service,&hints,&addrRes);
 	if(error)
 	  {
-	    LOG_ERROR(sys_log) << "newAddressByHost("<<host<<","
+	    LOG_ERROR(s_syslog) << "newAddressByHost("<<host<<","
 			       <<family<<","
 			       <<sockType<<","<<protocol<<") error = "<<gai_strerror(error)
 			       <<"errno = "<<errno;
@@ -226,7 +226,7 @@ namespace zhuyh
     nxt = res = nullptr;
     if(getifaddrs(&res) != 0)
       {
-	LOG_ERROR(sys_log) << "getInterfaceAddress getifaddrs error = "
+	LOG_ERROR(s_syslog) << "getInterfaceAddress getifaddrs error = "
 			   <<strerror(errno) << " errno = "<<errno;
 	return false;
       }
@@ -299,12 +299,12 @@ namespace zhuyh
     int error = getaddrinfo(addr.c_str(),NULL,&hints,&res);
     if(error == EAI_NONAME)
       {
-	LOG_WARN(sys_log) << "no such address : "<<addr;
+	LOG_WARN(s_syslog) << "no such address : "<<addr;
 	return nullptr;
       }
     else if(error)
       {
-	LOG_ERROR(sys_log) << "IPAddress::newAddress("<<addr<<","<<port
+	LOG_ERROR(s_syslog) << "IPAddress::newAddress("<<addr<<","<<port
 			   <<") errno = "<<errno<<" error = "
 			   <<gai_strerror(error);
 	return nullptr;
@@ -328,7 +328,7 @@ namespace zhuyh
     newAddr.sin_port =  byteSwapOnLittleEndian(port);
     if(inet_pton(AF_INET,addr.c_str(),&newAddr.sin_addr) != 1)
       {
-	LOG_ERROR(sys_log) << "failed to create a new IPv4 Address : "<<addr
+	LOG_ERROR(s_syslog) << "failed to create a new IPv4 Address : "<<addr
 			   <<" is not valid , error = " << strerror(errno);
 	return nullptr;
       }
@@ -409,7 +409,7 @@ namespace zhuyh
     newAddr.sin6_port = byteSwapOnLittleEndian(port);
     if(inet_pton(AF_INET6,addr.c_str(),&newAddr.sin6_addr) != 1)
       {
-	LOG_ERROR(sys_log) << "failed to create a new IPv6 Address : "<<addr
+	LOG_ERROR(s_syslog) << "failed to create a new IPv6 Address : "<<addr
 			   <<" is not valid";
 	return nullptr;
       }

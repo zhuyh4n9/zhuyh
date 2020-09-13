@@ -11,7 +11,7 @@ namespace zhuyh
   //默认保护的页面数量
   static ConfigVar<size_t>::ptr __n_protect_page =
     Config::lookUp<size_t>("fiber.protect_page",1,"fiber stack protect page count");
-  static Logger::ptr sys_log = GET_LOGGER("system");
+  static Logger::ptr s_syslog = GET_LOGGER("system");
 
   //获取要保护的大小
   size_t& StackTrait::getProtectStackPageSize()
@@ -33,7 +33,7 @@ namespace zhuyh
     if(!pages_protect) return false;
     if(size <= (pages_protect + 1)*getpagesize() )
       {
-	LOG_WARN(sys_log) << "Fiber Stack is Smaller than (pages_protect + 1)*getpagesize()"
+	LOG_WARN(s_syslog) << "Fiber Stack is Smaller than (pages_protect + 1)*getpagesize()"
 	  " Stack Protect Failed";
 	return false;
       }
@@ -44,23 +44,23 @@ namespace zhuyh
       {
 	if(errno == EACCES)
 	  {
-	    LOG_WARN(sys_log) << "EACCES : " << strerror(errno);
+	    LOG_WARN(s_syslog) << "EACCES : " << strerror(errno);
 	  }
 	else if(errno == EINVAL )
 	  {
-	    LOG_WARN(sys_log) << "EINVAL : " << strerror(errno);
+	    LOG_WARN(s_syslog) << "EINVAL : " << strerror(errno);
 	  }
         else if(errno == ENOMEM)
 	  {
-	    LOG_WARN(sys_log) << "ENOMEM : " << strerror(errno);
+	    LOG_WARN(s_syslog) << "ENOMEM : " << strerror(errno);
 	  }
 	else
 	  {
-	    LOG_WARN(sys_log) << "UNKNOWN";
+	    LOG_WARN(s_syslog) << "UNKNOWN";
 	  }
         return false;
       }
-    //    LOG_DEBUG(sys_log) << "Successfully Protect the Fiber Stack, addr : "
+    //    LOG_DEBUG(s_syslog) << "Successfully Protect the Fiber Stack, addr : "
     //		       <<start_addr <<" origin addr : "<<stack;
     return true;
   }
@@ -79,7 +79,7 @@ namespace zhuyh
 	//如果出问题,可能问题比较严重因此在这里使用断言
 	ASSERT2(false,strerror(errno));
       }
-    //    LOG_DEBUG(sys_log) << "Successfully Unprotect the Fiber Stack, addr : "
+    //    LOG_DEBUG(s_syslog) << "Successfully Unprotect the Fiber Stack, addr : "
     //		       <<start_addr <<" origin addr : "<<stack;
   }
   

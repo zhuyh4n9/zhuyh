@@ -17,7 +17,7 @@
 #include "../macro.hpp"
 namespace zhuyh
 {
-  static Logger::ptr sys_log = GET_LOGGER("system");
+  static Logger::ptr s_syslog = GET_LOGGER("system");
   class Socket : public std::enable_shared_from_this<Socket>
   {
   public:

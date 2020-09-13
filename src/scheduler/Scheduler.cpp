@@ -49,12 +49,12 @@ Scheduler::~Scheduler() {
     if(m_stopping == false)
       stop();
     //std::cout<<"Call ~Scheduler2\n"<<Bt2Str(100,0,"   ");
-    //LOG_INFO(sys_log) << "Scheduler : "<<_name<<" Destroyed";
+    //LOG_INFO(s_syslog) << "Scheduler : "<<m_name<<" Destroyed";
 }
 
 int Scheduler::getHold() {
     if(m_reactor == nullptr) return 0;
-    return m_reactor -> _holdCount;
+    return m_reactor -> m_holdCount;
 }
   
 void Scheduler::start(CbType cb) {
@@ -92,7 +92,7 @@ void Scheduler::stop() {
     ASSERT(m_stopping == false);
     m_stopping = true;
     m_reactor->stop();
-    //LOG_INFO(sys_log) << m_currentThread;
+    //LOG_INFO(s_syslog) << m_currentThread;
     for (size_t i = 0; i < m_pcsQue.size(); i++) {
         m_pcsQue[i]->stop();
         m_pcsQue[i]->join();
@@ -120,7 +120,7 @@ void Scheduler::addNewTask(Fiber::ptr fiber) {
 }
   
 int Scheduler::addReadEvent(int fd,std::function<void()> cb) {
-    //(_stopping == true) ASSERT(0);
+    //(m_stopping == true) ASSERT(0);
     Task::ptr task = nullptr;
     if(cb == nullptr)
       task.reset(new Task(Fiber::getThis()));
@@ -130,7 +130,7 @@ int Scheduler::addReadEvent(int fd,std::function<void()> cb) {
 }
 
 int Scheduler::addWriteEvent(int fd,std::function<void()> cb) {
-    //(_stopping == true) ASSERT(false);
+    //(m_stopping == true) ASSERT(false);
     Task::ptr task = nullptr;
     if(cb == nullptr)
       task.reset(new Task(Fiber::getThis()));
@@ -155,11 +155,11 @@ int Scheduler::balance(Processer::ptr prc) {
 }
 
 void Scheduler::addHold() {
-    ++(m_reactor->_holdCount);
+    ++(m_reactor->m_holdCount);
 }
 
 void Scheduler::delHold(){
-    --(m_reactor->_holdCount);
+    --(m_reactor->m_holdCount);
 }
 
 void Scheduler::addTask(std::shared_ptr<Task> task){
@@ -191,7 +191,7 @@ void Scheduler::addTask(std::shared_ptr<Task>* task) {
 Processer::ptr Scheduler::getMaxPayLoad() {
     Processer::ptr prc = nullptr;
     for (unsigned i=0; i < m_pcsQue.size() ;i++) {
-	//LOG_INFO(sys_log) << "HERE";
+	//LOG_INFO(s_syslog) << "HERE";
         if (prc == nullptr) {
             prc = m_pcsQue[i];
         } else {
@@ -237,7 +237,7 @@ int Scheduler::addTimer(Timer::ptr timer,std::function<void()> cb,
             return rt;
         }
     }
-    return -1;								
+    return -1;							
 }
 
 int Scheduler::cancelReadEvent(int fd) {
@@ -257,7 +257,7 @@ void Scheduler::dispatcher() {
         for(auto& item : m_pcsQue){
             item->notify();
         }
-        //LOG_WARN(sys_log) << "left : "<<m_currentThread;
+        //LOG_WARN(s_syslog) << "left : "<<m_currentThread;
         usleep(100*1000);
     }
 }

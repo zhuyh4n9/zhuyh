@@ -14,7 +14,7 @@
 #include "scheduler/TimerManager.hpp"
 #include "FdManager.hpp"
 
-static auto sys_log = GET_LOGGER("system");
+static auto s_syslog = GET_LOGGER("system");
 
 namespace zhuyh
 {
@@ -220,7 +220,7 @@ static int do_io(int fd,const char* funcName,OriFunc oriFunc,
       }
     else
       {
-	LOG_ERROR(sys_log) << "Failed to add Event in function : "
+	LOG_ERROR(s_syslog) << "Failed to add Event in function : "
 			   << funcName <<" rt = "<<rt << " error = "<< strerror(errno)
 			   <<zhuyh::Bt2Str(100,0,"    ");
 	struct stat stat;
@@ -383,7 +383,7 @@ extern "C"
 	  {
 	    timer->cancel();
 	  }
-	LOG_ERROR(sys_log) << "Failed to add Event";
+	LOG_ERROR(s_syslog) << "Failed to add Event";
 	return -1;
       }
     int error = 0;

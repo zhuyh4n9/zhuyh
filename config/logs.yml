@@ -3,11 +3,11 @@ logs:
     level: INFO
     appenders: 
       - type: FileLogAppender
-        file: /home/zhuyh/Code/GraduationDesign/zhuyh/logs/LogRoot.txt
+        file: /home/zhuyh/workspace/zhuyh/logs/LogRoot.txt
       - type: StdoutAppender
   - name: system
     level: INFO
     appenders: 
       - type: FileLogAppender
-        file: /home/zhuyh/Code/GraduationDesign/zhuyh/logs/LogSystem.txt
+        file: /home/zhuyh/workspace/zhuyh/logs/LogSystem.txt
       - type: StdoutAppender

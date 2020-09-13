@@ -6,7 +6,7 @@
 
 namespace zhuyh {
 
-static auto sys_log = GET_LOGGER("system");
+static auto s_syslog = GET_LOGGER("system");
 
 pid_t getThreadId(){
     return syscall(SYS_gettid);
@@ -80,7 +80,7 @@ void BackTrace(std::vector<std::string>& bt,int size,int skip) {
     size_t s = backtrace(addr,size);
     char** strings = backtrace_symbols(addr,s);
     if(strings == NULL ) {
-        LOG_ERROR(sys_log) << "backtrace_symbols error";
+        LOG_ERROR(s_syslog) << "backtrace_symbols error";
         return;
     }
     for(size_t i=skip;i<s;i++) {

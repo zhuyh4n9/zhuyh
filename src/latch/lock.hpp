@@ -155,7 +155,7 @@ namespace zhuyh
   //TODO:去出调试选项
 #define XX(Name,LockBase,lockName1)			\
   Name(LockBase& lk)					\
-    :_lk(lk)						\
+    :m_lk(lk)						\
   {							\
     lockName1();					\
   }							\
@@ -166,14 +166,14 @@ namespace zhuyh
   void lockName1()					\
   {							\
     isLocked = true;					\
-    _lk.lockName1();					\
+    m_lk.lockName1();					\
   }							\
   void unlock()						\
   {							\
     if(isLocked == true)				\
       {							\
 	isLocked = false;				\
-	_lk.unlock();					\
+	m_lk.unlock();					\
       }							\
   }
 
@@ -183,7 +183,7 @@ namespace zhuyh
     XX(LockGuard,ILock,lock);
   private:
     bool isLocked = false;
-    ILock& _lk;
+    ILock& m_lk;
   };
   
   class RDLockGuard : private UnCopyable
@@ -192,7 +192,7 @@ namespace zhuyh
     XX(RDLockGuard,IRWLock,rdLock);
   private:
     bool isLocked = false;
-    IRWLock& _lk;
+    IRWLock& m_lk;
   };
   class WRLockGuard : private UnCopyable
   {
@@ -200,7 +200,7 @@ namespace zhuyh
     XX(WRLockGuard,IRWLock,wrLock);
   private:
     bool isLocked = false;
-    IRWLock& _lk;
+    IRWLock& m_lk;
   };
 #undef XX
   

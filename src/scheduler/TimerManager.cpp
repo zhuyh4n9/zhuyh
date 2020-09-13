@@ -8,7 +8,7 @@
 namespace zhuyh
 {
   //std::atomic<uint64_t> Timer::__id__{0};
-  static Logger::ptr sys_log = GET_LOGGER("system");
+  static Logger::ptr s_syslog = GET_LOGGER("system");
   Timer::Timer(time_t sec,time_t msec ,time_t usec ,time_t nsec)
   {
     //_id = ++__id__;
