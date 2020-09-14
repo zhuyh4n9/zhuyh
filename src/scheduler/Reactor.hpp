@@ -41,13 +41,13 @@ public:
         Mutex lk;
         int fd;
         EventType event = NONE;
-        std::shared_ptr<Task> rdtask = nullptr;
-        std::shared_ptr<Task> wrtask = nullptr;
+        Fiber::ptr rdtask = nullptr;
+        Fiber::ptr wrtask = nullptr;
     };
     typedef std::shared_ptr<Reactor> ptr;
     Reactor(const std::string& name = "",Scheduler* schd = nullptr);
     ~Reactor();
-    int addEvent(int fd,std::shared_ptr<Task> task,EventType type);
+    int addEvent(int fd,Fiber::ptr fiber, EventType type);
     int delEvent(int fd, EventType type);
     //取消应该事件,事件存在则触发事件
     int cancelEvent(int fd,EventType type);

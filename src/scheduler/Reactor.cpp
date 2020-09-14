@@ -57,7 +57,7 @@ Reactor::Reactor(const std::string& name,Scheduler* schd) {
 
 Reactor::~Reactor() {
     if (!m_stopping)
-      stop();
+        stop();
     //LOG_INFO(s_syslog) << "Reactor Destroyed";
     if (m_epfd >= 0) {
         close(m_epfd);
@@ -98,7 +98,7 @@ void Reactor::resizeMap(uint32_t size) {
     }
 }
 
-int Reactor::addEvent(int fd,Task::ptr task,EventType type) {
+int Reactor::addEvent(int fd, Fiber::ptr fiber, EventType type) {
     ASSERT( type == READ  || type == WRITE);
     RDLockGuard lg(m_lk);
     struct epoll_event ev;
@@ -143,11 +143,11 @@ int Reactor::addEvent(int fd,Task::ptr task,EventType type) {
     }
     if(type & EventType::READ) {
         ASSERT(epEv->rdtask == nullptr);
-        epEv->rdtask = task;
+        epEv->rdtask = fiber;
         epEv->event = (EventType)(epEv->event | EventType::READ);
     } else if(type & EventType::WRITE) {
         ASSERT(epEv->wrtask == nullptr);
-        epEv->wrtask = task;
+        epEv->wrtask = fiber;
         epEv->event = (EventType)(epEv->event | EventType::WRITE);
     }
     ++m_holdCount;
@@ -255,7 +255,7 @@ int Reactor::cancelAll(int fd) {
 }
 
 bool Reactor::isStopping() const {
-    return m_holdCount == 0 && m_stopping && m_sched->m_totalTask == 0;
+    return m_holdCount == 0 && m_stopping && m_sched->m_totalFibers == 0;
 }
   
 void Reactor::stop() {
@@ -273,7 +273,7 @@ void Reactor::run() {
     //毫秒
     const int MaxTimeOut = 1000;
     while(1) {
-	//LOG_WARN(s_syslog) << "Holding : " << m_holdCount << " Total  : " << m_sched->m_totalTask;
+	//LOG_WARN(s_syslog) << "Holding : " << m_holdCount << " Total  : " << m_sched->m_totalFibers;
         if(isStopping()) {
             LOG_INFO(s_syslog) << "Reactor : " << m_name << " stopped!";
             delete [] events;
@@ -289,11 +289,13 @@ void Reactor::run() {
                 break;
             }
 	    } while(1);
-        std::list<Task::ptr> tasks = getExpiredTasks();
-        for(Task::ptr& item : tasks) {
-            m_sched->addTask(item);
+        //dealing with timers
+        std::list<Fiber::ptr> fibers = getExpiredTasks();
+        for(Fiber::ptr& fiber : fibers) {
+            m_sched->addFiber(fiber);
         }
-	    for(int i=0;i<rt;i++) {
+        // dealing with event
+        for(int i=0;i<rt;i++) {
             struct epoll_event& ev = events[i];
             FdEvent* epEv = (FdEvent*)ev.data.ptr;
             if(epEv->fd == m_notifyFd[0]) {
@@ -353,16 +355,16 @@ int Reactor::triggerEvent(FdEvent* epEv,EventType type) {
     if(type & READ) {
         //LOG_ROOT_INFO() << "Triggle READ Event : "<<epEv->fd;
         ASSERT(epEv->rdtask != nullptr);
-        Task::ptr task = nullptr;
-        task.swap(epEv->rdtask);
-        m_sched->addTask(task);
+        Fiber::ptr fiber = nullptr;
+        fiber.swap(epEv->rdtask);
+        m_sched->addFiber(fiber);
     }
     else if(type & WRITE) {
         //LOG_ROOT_INFO() << "Triggle WRITE Event : " << epEv->fd;
-        Task::ptr task = nullptr;
-        task.swap(epEv->wrtask);
+        Fiber::ptr fiber = nullptr;
+        fiber.swap(epEv->wrtask);
         //LOG_ROOT_INFO() << "added task"<<(unsigned long long)task.get();
-        m_sched->addTask(task);
+        m_sched->addFiber(fiber);
     }
     return 0;
 }

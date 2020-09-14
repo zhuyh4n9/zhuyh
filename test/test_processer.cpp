@@ -16,8 +16,8 @@ int main()
   //Thread::setName("Main");
   //Fiber::getThis();
   //Processer::ptr p(new Processer("processer"));
-  //p->addTask(Task::ptr(new Task(func)));
-  //p->addTask(Task::ptr(new Task(func)));
+  //p->addFiber(Task::ptr(new Task(func)));
+  //p->addFiber(Task::ptr(new Task(func)));
   co(func);
   co(func);
   //sleep(1);

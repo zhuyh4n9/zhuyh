@@ -34,7 +34,7 @@ Scheduler::Scheduler(const std::string& name,int threads)
   
   //默认构造函数为私有,用于创建根调度器
 Scheduler::Scheduler()
-    :m_totalTask{0} {
+    :m_totalFibers{0} {
     m_minThread = s_minThreadCfg->getVar();
     m_maxThread = s_maxThreadCfg->getVar();
     m_pcsQue.resize(m_minThread);
@@ -102,55 +102,55 @@ void Scheduler::stop() {
     m_stop = true;
 }
   
-void Scheduler::addNewTask(std::shared_ptr<Task> task){
+void Scheduler::addNewFiber(Fiber::ptr fiber){
     ASSERT2(m_stop == false, "Scheduler should start first");
-    addTask(task);
+    addFiber(fiber);
 }
 
-void Scheduler::addNewTask(CbType cb) {
+void Scheduler::addNewFiber(CbType cb) {
     ASSERT2(m_stop == false, "Scheduler should start first");
-    Task::ptr task(new Task(cb));
-    addTask(task);
+    addFiber(cb);
 }
 
-void Scheduler::addNewTask(Fiber::ptr fiber) {
+void Scheduler::addNewFiber(Fiber::ptr *fiber) {
     ASSERT2(m_stop == false,"Scheduler should start first");
-    Task::ptr task(new Task(fiber));
-    addTask(task);
+    addFiber(fiber);
 }
-  
+
 int Scheduler::addReadEvent(int fd,std::function<void()> cb) {
     //(m_stopping == true) ASSERT(0);
-    Task::ptr task = nullptr;
-    if(cb == nullptr)
-      task.reset(new Task(Fiber::getThis()));
-    else
-      task.reset(new Task(cb));
-    return m_reactor -> addEvent(fd,task,Reactor::READ);
+    Fiber::ptr fiber = nullptr;
+    if(cb == nullptr) {
+        fiber = Fiber::getThis();
+    } else {
+        fiber.reset(new Fiber(cb));
+    }
+    return m_reactor -> addEvent(fd, fiber, Reactor::READ);
 }
 
-int Scheduler::addWriteEvent(int fd,std::function<void()> cb) {
+int Scheduler::addWriteEvent(int fd, CbType cb) {
     //(m_stopping == true) ASSERT(false);
-    Task::ptr task = nullptr;
+    Fiber::ptr fiber = nullptr;
     if(cb == nullptr)
-      task.reset(new Task(Fiber::getThis()));
+      fiber = Fiber::getThis() ;
     else
-      task.reset(new Task(cb));
-    return m_reactor -> addEvent(fd,task,Reactor::WRITE);
+      fiber.reset(new Fiber(cb));
+    return m_reactor -> addEvent(fd, fiber, Reactor::WRITE);
 }
 
   //优化 &　可能有bug
 int Scheduler::balance(Processer::ptr prc) {
     if (m_minThread == 1)
         return 0;
-    Processer::ptr _prc = getMaxPayLoad();
-    if (_prc->m_thread.get() == Thread::getThis()) 
+    Processer::ptr maxPrc = getMaxPayLoad();
+    //self
+    if (maxPrc->m_thread.get() == Thread::getThis()) 
         return 0;
-    std::list<Task::ptr> tasks;
+    std::list<Fiber::ptr> fibers;
     //偷取协程
-    tasks = _prc->steal(_prc->m_payLoad / 2);
-    int sz = tasks.size();
-    prc->store(tasks);
+    fibers = prc->steal(maxPrc->m_payLoad / 2);
+    int sz = fibers.size();
+    prc->store(fibers);
     return sz;
 }
 
@@ -162,25 +162,24 @@ void Scheduler::delHold(){
     --(m_reactor->m_holdCount);
 }
 
-void Scheduler::addTask(std::shared_ptr<Task> task){
+void Scheduler::addFiber(Fiber::ptr fiber){
     Processer::ptr p = getMinPayLoad();
     //Processer::ptr p = _pcsQue[rand()%_currentThread];
-    p->addTask(task);
+    p->addFiber(fiber);
 }
 
-void Scheduler::addTask(CbType cb) {
-    addTask(std::shared_ptr<Task>(new Task(cb)));
+void Scheduler::addFiber(CbType cb) {
+    Processer::ptr p = getMinPayLoad();
+    //Processer::ptr p = _pcsQue[rand()%_currentThread];
+    p->addFiber(cb);
 }
 
-void Scheduler::addTask(Fiber::ptr fiber) {
-    addTask(std::shared_ptr<Task>(new Task(fiber)));
+void Scheduler::addFiber(Fiber::ptr *fiber) {
+    Processer::ptr p = getMinPayLoad();
+    //Processer::ptr p = _pcsQue[rand()%_currentThread];
+    p->addFiber(fiber);
 }
 
-void Scheduler::addTask(std::shared_ptr<Task>* task) {
-    Task::ptr t = nullptr;
-    t.swap(*task);
-    addTask(t);
-}
 // Scheduler* Scheduler::getThis()
 // {
 //   static Scheduler::ptr _scheduler(new Scheduler());

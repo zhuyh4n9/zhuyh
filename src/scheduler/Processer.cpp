@@ -31,59 +31,77 @@ Processer::~Processer() {
 void Processer::start(CbType cb)
 {
     if (cb == nullptr) { 
-	    try{
-	        m_thread.reset(new Thread(std::bind(&Processer::run,shared_from_this()), m_name));
-	    } catch (std::exception& e) {
-	        LOG_ERROR(g_syslog) << e.what();
-	    }
+        try{
+            m_thread.reset(new Thread(std::bind(&Processer::run,shared_from_this()), m_name));
+        } catch (std::exception& e) {
+            LOG_ERROR(g_syslog) << e.what();
+        }
     } else {
         // use main thread
 	    Thread::setName(m_name);
-	    addTask(Task::ptr(new Task(cb)));
+	    addFiber(Fiber::ptr(new Fiber(cb)));
 	    run();
     }
     m_stop = false;
 	//LOG_INFO(g_syslog) << "Processer Started!";
 }
 
-bool Processer::addTask(Task::ptr task) {
+bool Processer::addFiber(Fiber::ptr fiber) {
     //LOG_ROOT_ERROR() << "ADD NEW TASK1";
     ASSERT2(m_sched != nullptr, "no scheduler is setted");
-    if (task == nullptr) return false;
-    if (task->cb || task -> fiber) {
-        if (task->cb) {
-            ASSERT(task -> fiber == nullptr);
-            ++(m_sched->m_totalTask);
-        }
-        ASSERT2(task != nullptr, "unexpected ");
-        m_readyTasks.push_front(task);
-        ++m_payLoad;
-        notify();
-        //LOG_ROOT_ERROR() << "ADD NEW TASK2";
-        return true;
-    }
-    return false;
+    if (fiber == nullptr)
+        return false;
+    m_readyFibers.push_front(fiber);
+    ++m_payLoad;
+    notify();
+    //LOG_ROOT_ERROR() << "ADD NEW TASK2";
+    return true;
 }
 
 //swap操作将会使得*t变为空
-bool Processer::addTask(Task::ptr* t) {
-    if( t == nullptr) 
+bool Processer::addFiber(Fiber::ptr* fiber) {
+    if (fiber == nullptr) {
         return false;
-    Task::ptr task;
-    task.swap(*t);
-    return addTask(task);
+    }
+    Fiber::ptr f;
+    f.swap(*fiber);
+    return addFiber(f);
 }
 
-std::list<Task::ptr> Processer::steal(int k) {
-    std::list<Task::ptr> tasks;
-    if(m_readyTasks.try_popk_front(k,tasks) == true)
+bool Processer::addFiber(CbType cb) {
+    ASSERT2(m_sched != nullptr, "no scheduler is setted");
+    if (nullptr == cb) {
+        return false;
+    }
+    Fiber::ptr fiber(new Fiber(cb));
+    //must be a new fiber
+    ++(m_sched->m_totalFibers);
+    m_readyFibers.push_front(fiber);
+    ++m_payLoad;
+    notify();
+    //LOG_ROOT_ERROR() << "ADD NEW TASK2";
+    return true;
+}
+
+bool Processer::addFiber(CbType *cb) {
+    if (nullptr == cb) {
+        return false;
+    }
+    CbType c;
+    c.swap(*cb);
+    return addFiber(c);
+}
+
+std::list<Fiber::ptr> Processer::steal(int k) {
+    std::list<Fiber::ptr> tasks;
+    if(m_readyFibers.try_popk_front(k,tasks) == true)
         m_payLoad -= tasks.size();
     return tasks;
 }
 
 //put fiber or callback to 
-bool Processer::store(std::list<Task::ptr>& tasks) {
-    m_readyTasks.pushk_front(tasks);
+bool Processer::store(std::list<Fiber::ptr>& tasks) {
+    m_readyFibers.pushk_front(tasks);
     m_payLoad += tasks.size();
     return true;
 }
@@ -115,7 +133,7 @@ int Processer::waitForNotify(){
 
 bool Processer::isStopping() const {
     ASSERT(getMainFiber() != nullptr);
-    return (m_readyTasks.empty()  && m_stopping );
+    return (m_readyFibers.empty()  && m_stopping );
 }
 
 bool Processer::getStopping() const {
@@ -128,38 +146,34 @@ void Processer::run() {
     setMainFiber(Fiber::getThis());
     //ASSERT(m_readyTasks.empty());
     while(1) {
-        Task::ptr task;
+        Fiber::ptr fiber;
         m_idle = true;
         //LOG_INFO(g_syslog) << " totalTask : "<<m_readyTasks.size();
-	    while(m_readyTasks.try_pop_back(task)) {
+	    while(m_readyFibers.try_pop_back(fiber)) {
             m_idle = false;
             m_lastIdleMS = getCurrentTimeMS();
 	        //LOG_ROOT_ERROR() << "Get New Task";
-            ASSERT(task != nullptr);
+            ASSERT(fiber != nullptr);
+
 #ifdef ZHUYH_PROCESSOR_PROFILING
             m_worked++;
 #endif
-            if (task->fiber) {
-                if(task -> fiber->getState() != Fiber::HOLD &&
-                task -> fiber->getState() != Fiber::READY) {
+
+            if (fiber) {
+                if(fiber->getState() != Fiber::HOLD &&
+                    fiber->getState() != Fiber::READY) {
                     // ASSERT2(task -> fiber->getState() == Fiber::EXEC,
                     // 	  Fiber::getState(task->fiber->getState()));
                     // We 说明未完全切换HOLD态
-                    if(task -> fiber->getState() == Fiber::EXEC)
-                    {
-                        m_readyTasks.push_front(task);
-                        continue;
-                    }
+                        if(fiber->getState() == Fiber::EXEC) {
+                            m_readyFibers.push_front(fiber);
+                            continue;
+                        }
                 }
-                task->fiber -> setState(Fiber::READY);
-            } else if (task->cb) {
-                task->fiber.reset(new Fiber(task->cb));
-                task->fiber->setState(Fiber::READY);
-                task->cb = nullptr;
+                fiber -> setState(Fiber::READY);
             } else {
-                ASSERT(false);
+                ASSERT2(false, "unexpect get a null fiber");
             }
-            Fiber::ptr& fiber = task->fiber;
             //task.reset();
             ASSERT(fiber != nullptr);
             ASSERT(fiber->_stack != nullptr);
@@ -169,7 +183,7 @@ void Processer::run() {
             //LOG_ROOT_ERROR() << "Swapped Out";
             ASSERT(fiber->getState() != Fiber::INIT);
             if (fiber->getState() == Fiber::READY) {  // swap out by co_yield
-                m_readyTasks.push_front(task);
+                m_readyFibers.push_front(fiber);
             } else if(fiber->getState() == Fiber::EXEC) { //swap out by using block method
                 fiber->_state = Fiber::HOLD;
                 --m_payLoad;
@@ -178,7 +192,7 @@ void Processer::run() {
             } else if(fiber->getState() == Fiber::TERM
                      || fiber->getState() == Fiber::EXCEPT) {
                 --m_payLoad;
-                --(m_sched->m_totalTask);
+                --(m_sched->m_totalFibers);
                 fiber.reset();
             } else {
                 ASSERT2(false,Fiber::getState(fiber->getState()));
@@ -191,20 +205,21 @@ void Processer::run() {
         }
         //Failed to steal fiber, check whether we're stopping
         if (m_stopping) {
-            if (m_sched->m_totalTask <= 0
-                && m_readyTasks.empty()
+            if (m_sched->m_totalFibers <= 0
+                && m_readyFibers.empty()
                 && m_sched->getHold() <= 0) {
-                    m_stop = true;
-                    //LOG_INFO(g_syslog) << "EXIT PROCESSOR1";
-                    return;
+
+                m_stop = true;
+                //LOG_INFO(g_syslog) << "EXIT PROCESSOR1";
+                return;
             }
         }
         //nothing to do, so we wait for event
         waitForNotify();
         if(m_stopping) {
             //TODO:改为调度器holdCount
-            if (m_sched->m_totalTask <= 0
-                && m_readyTasks.empty()
+            if (m_sched->m_totalFibers <= 0
+                && m_readyFibers.empty()
                 && m_sched->getHold() <= 0) {
                     m_stop = true;
                     //LOG_INFO(g_syslog) << "EXIT PROCESSOR";

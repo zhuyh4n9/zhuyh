@@ -141,7 +141,7 @@ namespace zhuyh
 	    //LOG_ROOT_ERROR() << client;
 	    client->setRecvTimeout(m_recvTimeout);
 	    //shared_from_this防止TcpServer再处理时被释放
-	    m_schd->addNewTask(std::bind(&TcpServer::handleClient,
+	    m_schd->addNewFiber(std::bind(&TcpServer::handleClient,
 					 shared_from_this(),client));
 	  }
 	else if(errno != ETIMEDOUT)
@@ -162,7 +162,7 @@ namespace zhuyh
     if(!m_stop) return true;
     m_stop = false;
     for(auto& sock:m_socks)
-      m_acceptSchd->addNewTask(std::bind(&TcpServer::startAccept,
+      m_acceptSchd->addNewFiber(std::bind(&TcpServer::startAccept,
 					 shared_from_this(),sock));
     return true;
   }
@@ -170,7 +170,7 @@ namespace zhuyh
   {
     m_stop = true;
     auto self = shared_from_this();
-    m_acceptSchd->addNewTask([this,self](){
+    m_acceptSchd->addNewFiber([this,self](){
          auto schd = Scheduler::getThis();
          for(auto& sock : m_socks)
 	   {

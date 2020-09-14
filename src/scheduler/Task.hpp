@@ -1,10 +1,15 @@
+/* 
+ *TODO: avoid using Task, use fiber directly in Scheduler, Reactor and Processor
+ */
+
 #pragma once
 
-#include "concurrent/fiber.hpp"
 #include <memory>
+#include "concurrent/fiber.hpp"
+
 namespace zhuyh
 {
-  struct Task
+struct Task
   {    
     typedef std::shared_ptr<Task> ptr;
     Fiber::ptr fiber = nullptr;

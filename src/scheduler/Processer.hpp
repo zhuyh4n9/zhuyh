@@ -18,14 +18,19 @@ public:
     friend class Scheduler;
     typedef std::function<void()> CbType;
     typedef std::shared_ptr<Processer> ptr;
-    using Deque = NonbTSQueue<Task::ptr>;
+    using Deque = NonbTSQueue<Fiber::ptr>;
     //构造函数提供最大空闲协程数和负载因子,maxIdle = 0 采用配置文件中个数
     Processer(const std::string name = "",Scheduler* schd = nullptr);
     ~Processer();
     uint64_t getBlockTime() const;
-    //向该processer添加一个任务
-    bool addTask(Task::ptr task);
-    bool addTask(Task::ptr* task);
+    //向该processer添加一个协程
+    bool addFiber(Fiber::ptr fiber);
+    bool addFiber(Fiber::ptr* fiber);
+    //add a cb and make it a fiber
+    bool addFiber(CbType cb);
+    bool addFiber(CbType* cb);
+    //size_t addFibers(std::vector<Fiber::ptr>&& fibers);
+
     void start(CbType cb = nullptr);
     void stop();
     //get the time(in ms) of running a fiber
@@ -50,8 +55,8 @@ public:
     static Fiber::ptr getMainFiber();
     static void setMainFiber(Fiber::ptr);
 private:
-    std::list<Task::ptr> steal(int k);
-    bool store(std::list<Task::ptr>& tasks);
+    std::list<Fiber::ptr> steal(int k);
+    bool store(std::list<Fiber::ptr>& fibers);
 
     int notify();
     int waitForNotify();
@@ -61,7 +66,7 @@ private:
     std::string m_name;
     Thread::ptr m_thread;
     std::atomic<int> m_payLoad{0};
-    Deque m_readyTasks;
+    Deque m_readyFibers;
     //bool _forceStop = false;
     //准备就绪,可以停止了
     std::atomic<bool> m_stop {true};
