@@ -5,13 +5,11 @@
 #include "concurrent/Thread.hpp"
 #include "latch/lock.hpp"
 #include "TSQueue.hpp"
-#include "Task.hpp"
 #include "TimerManager.hpp"
 #include "util.hpp"
 
 namespace zhuyh {
 class Scheduler;
-
 //must be a shared_ptr
 class Processer : public std::enable_shared_from_this<Processer> {
 public:
@@ -20,16 +18,15 @@ public:
     typedef std::shared_ptr<Processer> ptr;
     using Deque = NonbTSQueue<Fiber::ptr>;
     //构造函数提供最大空闲协程数和负载因子,maxIdle = 0 采用配置文件中个数
-    Processer(const std::string name = "",Scheduler* schd = nullptr);
+    Processer(const std::string name = "", Scheduler* schd = nullptr);
     ~Processer();
     uint64_t getBlockTime() const;
     //向该processer添加一个协程
     bool addFiber(Fiber::ptr fiber);
-    bool addFiber(Fiber::ptr* fiber);
+    bool addFiber(Fiber::ptr *fiber);
     //add a cb and make it a fiber
     bool addFiber(CbType cb);
-    bool addFiber(CbType* cb);
-    //size_t addFibers(std::vector<Fiber::ptr>&& fibers);
+    bool addFiber(CbType *cb);
 
     void start(CbType cb = nullptr);
     void stop();

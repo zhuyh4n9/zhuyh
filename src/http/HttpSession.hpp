@@ -1,8 +1,8 @@
 #pragma once
 
 #include <memory>
-#include "../stream/SocketStream.hpp"
-#include "../http/Http.hpp"
+#include "stream/SocketStream.hpp"
+#include "http/Http.hpp"
 
 namespace zhuyh
 {

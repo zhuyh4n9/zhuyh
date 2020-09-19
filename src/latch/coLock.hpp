@@ -26,7 +26,7 @@ namespace zhuyh
     void wait();
     void notify();
   private:
-    Mutex _mx;
+    Mutex m_mx;
     std::deque<Fiber::ptr> _holdQue;
     int _value;
   };

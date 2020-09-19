@@ -25,11 +25,11 @@ public:
         SINGLE, //单次计时
         LOOP //循环计时
     };
-    Timer(time_t sec = 0,time_t msec = 0,time_t usec = 0,time_t nsec = 0);
+    Timer(time_t sec = 0, time_t msec = 0, time_t usec = 0, time_t nsec = 0);
 
     Timer(uint64_t* msec) {
         m_cancelled = false;
-        _nxtExpireTime = *msec;
+        m_nxtExpireTime = *msec;
     }
 
     void setManager(TimerManager* manager);
@@ -38,12 +38,12 @@ public:
     }
     static uint64_t getCurrentTime();
     TimerType getTimerType() const {
-        return _type;
+        return m_type;
     }
     void start();
     void setLoop() {
-        if(_start) return;
-            _type = LOOP;
+        if(m_started) return;
+            m_type = LOOP;
     }
     bool cancel();
     bool isCancelled() const {
@@ -56,31 +56,31 @@ public:
     }
 private:
     void setNextExpireTime() {
-        if(_type == SINGLE)
+        if(m_type == SINGLE)
             return;
-        _nxtExpireTime += _interval;
+        m_nxtExpireTime += m_interval;
     }
 private:
     Fiber::ptr m_fiber = nullptr;
-    bool _start = false;
+    bool m_started = false;
     bool m_cancelled = false;
-    TimerType _type = SINGLE;
-    uint64_t _interval = 0;
-    uint64_t _nxtExpireTime = 0;
-    TimerManager* _manager = nullptr;
+    TimerType m_type = SINGLE;
+    uint64_t m_interval = 0;
+    uint64_t m_nxtExpireTime = 0;
+    TimerManager* m_manager = nullptr;
 };
 
 class TimerManager  {
 public:
     typedef std::shared_ptr<TimerManager> ptr;
     friend class Timer;
-    int addTimer(Timer::ptr* timer,
-		 std::function<void()> cb = nullptr,
-		 Timer::TimerType type = Timer::SINGLE);
-    int addTimer(Timer::ptr timer,
-            std::function<void()> cb = nullptr,
-            Timer::TimerType type = Timer::SINGLE);
     virtual ~TimerManager() {}
+    int addTimer(Timer::ptr* timer,
+                std::function<void()> cb = nullptr,
+                Timer::TimerType type = Timer::SINGLE);
+    int addTimer(Timer::ptr timer,
+                std::function<void()> cb = nullptr,
+                Timer::TimerType type = Timer::SINGLE);
     //获取下一次超时时间
     uint64_t getNextExpireTime();
     //获取距离下一次超时的间隔时间
@@ -94,8 +94,8 @@ public:
         bool operator() (const Timer::ptr& o1,const Timer::ptr& o2) const;
     };
 private:
-    std::set<Timer::ptr,Comparator> _timers;
-    mutable Mutex _mx;
+    std::set<Timer::ptr,Comparator> m_timers;
+    mutable Mutex m_mx;
 };
   
 }

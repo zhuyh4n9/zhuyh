@@ -9,21 +9,17 @@
 #include "TSQueue.hpp"
 #include "latch/lock.hpp"
 #include "concurrent/Thread.hpp"
-#include "Task.hpp"
 #include "TimerManager.hpp"
 #include "Singleton.hpp"
 #include "LogThread.hpp"
+#include "WorkQueue.hpp"
 
 namespace zhuyh {
-  //协程调度器本质是一个线程池
-  // Scheduler -1---N-> Processer(Thread) -1----M-> Fiber
-  // 最后再次对Fiber进行封装,变为Coroutine,创建后即加入调度器
-  // Fiber::YieldToReady() --宏定义--> co_yield
-  // Fiber::YieldToHold() --宏定义---> co_yield_to_hold
+
 class Reactor;
 class Processer;
 class Timer;
-class Scheduler final : public std::enable_shared_from_this<Scheduler>{
+class Scheduler final {
 public:
     friend class Singleton<Scheduler>;
     friend class Reactor;
@@ -33,7 +29,7 @@ public:
     typedef std::function<void()> CbType;
     typedef Singleton<Scheduler> Schd;
     //用户创建调度器
-    Scheduler(const std::string& name,int threads);
+    Scheduler(const std::string& name, int threads);
     ~Scheduler();
     void stop();
     //设置回调则复用主线程
@@ -44,16 +40,16 @@ public:
     void addNewFiber(CbType cb);
     void addNewFiber(Fiber::ptr fiber);
     void addNewFiber(Fiber::ptr *fiber);
-    int addReadEvent(int fd,std::function<void()> cb = nullptr);
-    int addWriteEvent(int fd,std::function<void()> cb = nullptr);
+    int addReadEvent(int fd, std::function<void()> cb = nullptr);
+    int addWriteEvent(int fd, std::function<void()> cb = nullptr);
     //static Scheduler* getThis();
     int getHold();
-    int addTimer(std::shared_ptr<Timer> timer,std::function<void()> cb = nullptr,
-		        Timer::TimerType type = Timer::TimerType::SINGLE);
+    int addTimer(std::shared_ptr<Timer> timer, std::function<void()> cb = nullptr,
+                 Timer::TimerType type = Timer::TimerType::SINGLE);
     int cancelReadEvent(int fd);
     int cancelWriteEvent(int fd);
     int cancelAllEvent(int fd);
-    
+
 private:
     int balance(std::shared_ptr<Processer> prc);
     //需要线程安全,供Reactor使用

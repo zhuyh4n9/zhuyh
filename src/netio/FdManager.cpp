@@ -2,10 +2,10 @@
 #include "Hook.hpp"
 #include <sys/stat.h>
 #include <sys/types.h>
-#include "../latch/lock.hpp"
+#include "latch/lock.hpp"
 #include <fcntl.h>
-#include "../macro.hpp"
-#include "../logUtil.hpp"
+#include "macro.hpp"
+#include "logUtil.hpp"
 
 namespace zhuyh
 {
@@ -78,7 +78,7 @@ namespace zhuyh
   FdInfo::ptr FdManager::lookUp(int fd,bool create)
   {
     if(fd < 0 ) return nullptr;
-    LockGuard lg(_mx);
+    LockGuard lg(m_mx);
     if((unsigned)fd >= _fds.size())
       {
 	if(!create) return nullptr;	
@@ -101,7 +101,7 @@ namespace zhuyh
   void FdManager::del(int fd)
   {
     ASSERT(fd >= 0);
-    LockGuard lg(_mx);
+    LockGuard lg(m_mx);
     if((unsigned)fd >= _fds.size())
       throw std::out_of_range("fd doesn't exist");
     _fds[fd].reset();

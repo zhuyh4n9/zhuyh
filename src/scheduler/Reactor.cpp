@@ -10,15 +10,17 @@ static Logger::ptr s_syslog = GET_LOGGER("system");
 
 static int setNonb(int fd) {
     int flags = fcntl_f(fd,F_GETFL);
-    if(flags < 0 )
+    if (flags < 0 ) {
         return -1;
+    }
     return fcntl_f(fd,F_SETFL,flags | O_NONBLOCK);
 }
   
 static int clearNonb(int fd) {
     int flags = fcntl_f(fd,F_GETFL);
-    if(flags < 0 )
+    if (flags < 0 ) {
         return -1;
+    }
     return fcntl_f(fd,F_SETFL,flags & ~O_NONBLOCK);
 }
 
@@ -72,7 +74,7 @@ Reactor::~Reactor() {
         m_notifyFd[1] = -1;
     }
     m_thread->join();
-    for(auto  p : m_eventMap) {
+    for (auto  p : m_eventMap) {
         if(p){
             delete p;
             p = nullptr;
@@ -85,14 +87,14 @@ Reactor::~Reactor() {
 void Reactor::notify() {
     int rt = write_f(m_notifyFd[1],"",1);
     if(rt < 0) {
-	    LOG_ROOT_ERROR() << "rt : "<< rt << " error : "<<strerror(errno) << " errno : "<< errno;
+	    LOG_ROOT_ERROR() << "rt : " << rt << " error : "<<strerror(errno) << " errno : "<< errno;
     }
 }
 
 void Reactor::resizeMap(uint32_t size) {
     m_eventMap.resize(size);
-    for(size_t i=0;i<m_eventMap.size();i++) {
-	    if(m_eventMap[i] == nullptr) {
+    for (size_t i=0; i<m_eventMap.size(); i++) {
+	    if (m_eventMap[i] == nullptr) {
 	        m_eventMap[i] = new FdEvent(i,NONE);
 	    }
     }
@@ -106,7 +108,7 @@ int Reactor::addEvent(int fd, Fiber::ptr fiber, EventType type) {
     FdEvent* epEv = nullptr;
     ASSERT2(fd >= 0,"fd cannot be smaller than 0");
     //LOG_INFO(s_syslog) << "fd = "<<fd;
-    if((size_t)fd < m_eventMap.size()) {
+    if ((size_t)fd < m_eventMap.size()) {
         epEv = m_eventMap[fd];
         lg.unlock();
     } else {
@@ -119,13 +121,13 @@ int Reactor::addEvent(int fd, Fiber::ptr fiber, EventType type) {
     //                 <<(type == READ ? "READ" : "WRITE");
     LockGuard lg2(epEv->lk);
     int rt = setNonb(fd);
-    if(rt < 0) {
+    if (rt < 0) {
 	    //ASSERT(0);
 	    LOG_ERROR(s_syslog) << "Failed to setNonb";
 	    return -1;
     }
     auto op = epEv->event == NONE ? EPOLL_CTL_ADD : EPOLL_CTL_MOD;
-    if(type & epEv->event) {
+    if (type & epEv->event) {
 	    LOG_ERROR(s_syslog) << "type : " << type << " Exist"
 		    	            << "current : " << epEv->event
 			                <<" fd = " <<fd;
@@ -136,12 +138,12 @@ int Reactor::addEvent(int fd, Fiber::ptr fiber, EventType type) {
     ev.data.ptr = epEv;
     rt = 0;
     rt = epoll_ctl(m_epfd,op,fd,&ev);
-    if(rt) {
+    if (rt) {
         LOG_ERROR(s_syslog) << "epoll_ctl errro : " << strerror(errno);
         //ASSERT2(false,strerror(errno));
         return -1;
     }
-    if(type & EventType::READ) {
+    if (type & EventType::READ) {
         ASSERT(epEv->rdtask == nullptr);
         epEv->rdtask = fiber;
         epEv->event = (EventType)(epEv->event | EventType::READ);
@@ -149,18 +151,21 @@ int Reactor::addEvent(int fd, Fiber::ptr fiber, EventType type) {
         ASSERT(epEv->wrtask == nullptr);
         epEv->wrtask = fiber;
         epEv->event = (EventType)(epEv->event | EventType::WRITE);
+    } else {
+        ASSERT2(false, "Unexpected type");
     }
     ++m_holdCount;
+
     return 0;
 }
 
 int Reactor::delEvent(int fd,EventType type) {
-    ASSERT( !((type & READ) && (type & WRITE)));
-    ASSERT( type != NONE);
+    ASSERT(!((type & READ) && (type & WRITE)));
+    ASSERT(type != NONE);
     ASSERT(type == READ || type == WRITE);
     struct epoll_event ev;
     RDLockGuard lg(m_lk);
-    if((size_t)fd >= m_eventMap.size()) {
+    if ((size_t)fd >= m_eventMap.size()) {
         LOG_ERROR(s_syslog) << "fd<"<<fd<<"> is bigger than m_eventMap.size()<"<<m_eventMap.size()<<">";
         return -1;
     }
@@ -170,7 +175,7 @@ int Reactor::delEvent(int fd,EventType type) {
     LockGuard lg2(epEv->lk);
     //LOG_ROOT_ERROR() << "deleting Event,  fd : "<<fd<< " type : "
     //		     <<(type == READ ? "READ" : "WRITE");
-    if( (EventType)(type & epEv->event) == NONE ) {
+    if ((EventType)(type & epEv->event) == NONE ) {
 	    LOG_ERROR(s_syslog) << "type : " << type << " Not Exist";
 	    return -1;
     }
@@ -179,12 +184,12 @@ int Reactor::delEvent(int fd,EventType type) {
     ev.events = tevent | EPOLLET;
     ev.data.ptr = epEv;
     int rt = epoll_ctl(m_epfd,op,fd,&ev);
-    if(rt) {
+    if (rt) {
         LOG_ERROR(s_syslog) << "epoll_ctl error";
         return -1;
     }
     epEv->event = (EventType)tevent;
-    if(type & READ) {
+    if (type & READ) {
 	    epEv->rdtask.reset();
     } else if(type & WRITE) {
 	    epEv->wrtask.reset();
@@ -199,7 +204,7 @@ int Reactor::cancelEvent(int fd,EventType type) {
     ASSERT(type == READ || type == WRITE);
     struct epoll_event ev;
     RDLockGuard lg(m_lk);
-    if((size_t)fd >= m_eventMap.size()) {
+    if ((size_t)fd >= m_eventMap.size()) {
         LOG_WARN(s_syslog) << "fd<"<<fd<<"> is bigger than m_eventMap.size()<"<<m_eventMap.size()<<">";
         return -1;
     }
@@ -228,7 +233,7 @@ int Reactor::cancelEvent(int fd,EventType type) {
 
 int Reactor::cancelAll(int fd) {
     RDLockGuard lg(m_lk);
-    if((size_t)fd >= m_eventMap.size()) {
+    if ((size_t)fd >= m_eventMap.size()) {
         LOG_WARN(s_syslog) << "fd<"<<fd<<"> is bigger than m_eventMap.size()<"<<m_eventMap.size()<<">";
         return -1;
     }
@@ -236,18 +241,20 @@ int Reactor::cancelAll(int fd) {
     lg.unlock();
     //LOG_ROOT_ERROR() << "deleting Event,  fd : "<<fd<< " type : ALL";
     LockGuard lg2(epEv->lk);
-    if(epEv->event == NONE) return false;
-    int rt = epoll_ctl(m_epfd,EPOLL_CTL_DEL,fd,nullptr);
-    if(rt) {
-	    LOG_ERROR(s_syslog) << "epoll_ctl error";
-	    return -1;
+    if (epEv->event == NONE) {
+        return false;
     }
-    
+    int rt = epoll_ctl(m_epfd,EPOLL_CTL_DEL,fd,nullptr);
+    if (rt) {
+        LOG_ERROR(s_syslog) << "epoll_ctl error";
+        return -1;
+    }
+
     if (epEv->event & READ) {
         triggerEvent(epEv,READ);
         --m_holdCount;
     }
-    if(epEv->event & WRITE) {
+    if (epEv->event & WRITE) {
         triggerEvent(epEv,WRITE);
 	    --m_holdCount;
     }
@@ -274,7 +281,7 @@ void Reactor::run() {
     const int MaxTimeOut = 1000;
     while(1) {
 	//LOG_WARN(s_syslog) << "Holding : " << m_holdCount << " Total  : " << m_sched->m_totalFibers;
-        if(isStopping()) {
+        if (isStopping()) {
             LOG_INFO(s_syslog) << "Reactor : " << m_name << " stopped!";
             delete [] events;
             break;
@@ -283,7 +290,7 @@ void Reactor::run() {
         int nxtTimeOut = (int)std::min(getNextExpireInterval(),(uint64_t)MaxTimeOut);
 	    do{
             rt = epoll_wait(m_epfd,events,MaxEvent,nxtTimeOut);
-            if(rt<0 && errno == EINTR){
+            if (rt<0 && errno == EINTR) {
                 LOG_INFO(s_syslog) <<"Reactor Receive EINTR";
             } else {
                 break;
@@ -295,15 +302,15 @@ void Reactor::run() {
             m_sched->addFiber(fiber);
         }
         // dealing with event
-        for(int i=0;i<rt;i++) {
+        for (int i=0;i<rt;i++) {
             struct epoll_event& ev = events[i];
             FdEvent* epEv = (FdEvent*)ev.data.ptr;
-            if(epEv->fd == m_notifyFd[0]) {
+            if (epEv->fd == m_notifyFd[0]) {
                 int rt = 0;
                 do {
                     rt = read_f(m_notifyFd[0],idleBuff.get(),1023);
-                    if(rt < 0) {
-                        if(errno == EAGAIN || errno == EWOULDBLOCK)
+                    if (rt < 0) {
+                        if (errno == EAGAIN || errno == EWOULDBLOCK)
                             break;
                         LOG_ERROR(s_syslog) << "read notifyFd failed,rt : "<<rt
                                 << " error : "<<strerror(errno)
@@ -314,16 +321,16 @@ void Reactor::run() {
             }
             int real_event = NONE;
             LockGuard lg(epEv->lk);
-            if(ev.events & (EPOLLERR | EPOLLHUP)) {
+            if (ev.events & (EPOLLERR | EPOLLHUP)) {
                 ev.events |= (EPOLLIN | EPOLLOUT) & (epEv->event);
             }
-            if(ev.events & READ ) {
+            if (ev.events & READ ) {
                 real_event |= READ;
             }
-            if(ev.events & WRITE) {
+            if (ev.events & WRITE) {
                 real_event |= WRITE;
             }
-            if((real_event & epEv->event) == NONE) 
+            if ((real_event & epEv->event) == NONE) 
                 continue;
 
             EventType tevent = (EventType)(~real_event & epEv->event);
@@ -331,15 +338,15 @@ void Reactor::run() {
             int op = (tevent == NONE) ? EPOLL_CTL_DEL : EPOLL_CTL_MOD;
             ev.events = tevent | EPOLLET;
             int rt2 = epoll_ctl(m_epfd,op,epEv->fd,&ev);
-            if(rt2) {
+            if (rt2) {
                 LOG_ERROR(s_syslog) << "epoll_ctl error";
                 continue;
             }
-            if(real_event & READ) {
+            if (real_event & READ) {
                 triggerEvent(epEv,READ);
                 --m_holdCount;
             }
-            if(real_event & WRITE) {
+            if (real_event & WRITE) {
                 triggerEvent(epEv,WRITE);
                 --m_holdCount;
             }
@@ -352,19 +359,20 @@ int Reactor::triggerEvent(FdEvent* epEv,EventType type) {
     ASSERT( type == READ  || type == WRITE);
     ASSERT(type & epEv->event);
     epEv->event =(EventType)(epEv-> event & ~type);
-    if(type & READ) {
+    if (type & READ) {
         //LOG_ROOT_INFO() << "Triggle READ Event : "<<epEv->fd;
         ASSERT(epEv->rdtask != nullptr);
         Fiber::ptr fiber = nullptr;
         fiber.swap(epEv->rdtask);
         m_sched->addFiber(fiber);
-    }
-    else if(type & WRITE) {
+    } else if (type & WRITE) {
         //LOG_ROOT_INFO() << "Triggle WRITE Event : " << epEv->fd;
         Fiber::ptr fiber = nullptr;
         fiber.swap(epEv->wrtask);
         //LOG_ROOT_INFO() << "added task"<<(unsigned long long)task.get();
         m_sched->addFiber(fiber);
+    } else {
+        ASSERT2(false, "Unexpected Type");
     }
     return 0;
 }

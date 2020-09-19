@@ -1,5 +1,5 @@
 #include "HttpServer.hpp"
-#include "../logs.hpp"
+#include "logs.hpp"
 
 namespace zhuyh
 {

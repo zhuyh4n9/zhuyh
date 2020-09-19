@@ -25,5 +25,5 @@
    if(!(x))							\
      {								\
        LOG_ROOT_FATAL()<<"ASSERTION: " #x			\
-		       <<"\n"<< w  <<"\n";			\
+		       <<"\n"<< (w)  <<"\n";			\
     }

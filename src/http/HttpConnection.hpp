@@ -3,8 +3,8 @@
 #include <memory>
 #include "HttpParser.hpp"
 #include "Http.hpp"
-#include "../socket/Socket.hpp"
-#include "../stream/SocketStream.hpp"
+#include "socket/Socket.hpp"
+#include "stream/SocketStream.hpp"
 
 namespace zhuyh
 {

@@ -21,7 +21,6 @@
 namespace zhuyh {
 
 class Scheduler;
-struct Task;
 class Reactor final : public TimerManager {
 public:
     friend class Scheduler;
@@ -45,7 +44,7 @@ public:
         Fiber::ptr wrtask = nullptr;
     };
     typedef std::shared_ptr<Reactor> ptr;
-    Reactor(const std::string& name = "",Scheduler* schd = nullptr);
+    Reactor(const std::string& name = "", Scheduler* schd = nullptr);
     ~Reactor();
     int addEvent(int fd,Fiber::ptr fiber, EventType type);
     int delEvent(int fd, EventType type);
@@ -68,7 +67,7 @@ public:
     //Scheduler* getScheduler();
     //void setScheduler(Scheduler* scheduler);
     //触发一个事件
-    int triggerEvent(FdEvent* epEv,EventType type);
+    int triggerEvent(FdEvent* epEv, EventType type);
 private:
     void resizeMap(uint32_t size);
 private:

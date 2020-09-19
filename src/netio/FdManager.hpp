@@ -3,11 +3,11 @@
 #include <stdint.h>
 #include <set>
 #include <memory>
-#include "../latch/lock.hpp"
+#include "latch/lock.hpp"
 #include <unistd.h>
 #include <sys/socket.h>
 #include <vector>
-#include "../Singleton.hpp"
+#include "Singleton.hpp"
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -136,7 +136,7 @@ namespace zhuyh
     //static FdManager::ptr getThis();
   private:
     std::vector<FdInfo::ptr> _fds;
-    Mutex _mx;
+    Mutex m_mx;
   };
   
 }

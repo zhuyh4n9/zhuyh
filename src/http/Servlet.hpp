@@ -7,7 +7,7 @@
 #include "HttpSession.hpp"
 #include <vector>
 #include <unordered_map>
-#include "../latch/lock.hpp"
+#include "latch/lock.hpp"
 
 namespace zhuyh
 {

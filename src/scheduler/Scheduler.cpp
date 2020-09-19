@@ -20,7 +20,7 @@ Scheduler* Scheduler::getThis() {
 void Scheduler::setThis(Scheduler* sched) {
     s_sched = sched;
 }
-Scheduler::Scheduler(const std::string& name,int threads)
+Scheduler::Scheduler(const std::string& name, int threads)
     :m_minThread(threads),m_maxThread(threads) {
     if(name == "")
         m_name = "root";
@@ -117,7 +117,7 @@ void Scheduler::addNewFiber(Fiber::ptr *fiber) {
     addFiber(fiber);
 }
 
-int Scheduler::addReadEvent(int fd,std::function<void()> cb) {
+int Scheduler::addReadEvent(int fd, std::function<void()> cb) {
     //(m_stopping == true) ASSERT(0);
     Fiber::ptr fiber = nullptr;
     if(cb == nullptr) {
@@ -216,7 +216,7 @@ Processer::ptr Scheduler::getMinPayLoad() {
     return prc;
 }
   
-int Scheduler::addTimer(Timer::ptr timer,std::function<void()> cb,
+int Scheduler::addTimer(Timer::ptr timer, std::function<void()> cb,
 			  Timer::TimerType type) {
     if(m_reactor != nullptr) {
         int rt = 0;

@@ -1,9 +1,9 @@
 #pragma once
 
-#include"../socket/TcpServer.hpp"
+#include"socket/TcpServer.hpp"
 #include"HttpSession.hpp"
 #include<memory>
-#include"../scheduler/Scheduler.hpp"
+#include"scheduler/Scheduler.hpp"
 #include"Servlet.hpp"
 
 namespace zhuyh
