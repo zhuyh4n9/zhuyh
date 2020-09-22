@@ -42,6 +42,14 @@ public:
     void addNewFiber(Fiber::ptr *fiber);
     int addReadEvent(int fd, std::function<void()> cb = nullptr);
     int addWriteEvent(int fd, std::function<void()> cb = nullptr);
+    void activateFiber(Fiber::ptr fiber) {
+        addNewFiber(fiber);
+        delHold();
+    }
+    void activateFiber(Fiber::ptr *fiber) {
+        addNewFiber(fiber);
+        delHold();
+    }
     //static Scheduler* getThis();
     int getHold();
     int addTimer(std::shared_ptr<Timer> timer, std::function<void()> cb = nullptr,

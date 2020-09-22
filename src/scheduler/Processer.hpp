@@ -7,6 +7,7 @@
 #include "TSQueue.hpp"
 #include "TimerManager.hpp"
 #include "util.hpp"
+#include "WorkQueue.hpp"
 
 namespace zhuyh {
 class Scheduler;
@@ -63,7 +64,7 @@ private:
     std::string m_name;
     Thread::ptr m_thread;
     std::atomic<int> m_payLoad{0};
-    Deque m_readyFibers;
+    typename WorkQueue<>::ptr m_que;
     //bool _forceStop = false;
     //准备就绪,可以停止了
     std::atomic<bool> m_stop {true};

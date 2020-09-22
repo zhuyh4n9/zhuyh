@@ -11,7 +11,9 @@ static Logger::ptr g_syslog  = GET_LOGGER("system");
 static thread_local Fiber::ptr g_main_fiber = nullptr;
 
 Processer::Processer(const std::string name, Scheduler* sched)
-    :m_name(name), m_lastIdleMS(0){
+    :m_name(name), 
+     m_que(new WorkQueue<>()),
+     m_lastIdleMS(0){
     //if not sched is setted, then we use default root sched
     if (sched == nullptr) {
         m_sched = Scheduler::Schd::getInstance();
@@ -52,7 +54,7 @@ bool Processer::addFiber(Fiber::ptr fiber) {
     if (fiber == nullptr) {
         return false;
     }
-    m_readyFibers.push_front(fiber);
+    m_que->addFiber(fiber);
     ++m_payLoad;
     notify();
     //LOG_ROOT_ERROR() << "ADD NEW TASK2";
@@ -77,7 +79,7 @@ bool Processer::addFiber(CbType cb) {
     Fiber::ptr fiber(new Fiber(cb));
     //must be a new fiber
     ++(m_sched->m_totalFibers);
-    m_readyFibers.push_front(fiber);
+    m_que->addFiber(fiber);
     ++m_payLoad;
     notify();
     //LOG_ROOT_ERROR() << "ADD NEW TASK2";
@@ -95,7 +97,7 @@ bool Processer::addFiber(CbType *cb) {
 
 std::list<Fiber::ptr> Processer::steal(int k) {
     std::list<Fiber::ptr> fibers;
-    if (m_readyFibers.try_popk_front(k, fibers) == true) {
+    if (m_que->fetchFibers(k, fibers) != 0) {
         m_payLoad -= fibers.size();
     }
     return fibers;
@@ -103,8 +105,15 @@ std::list<Fiber::ptr> Processer::steal(int k) {
 
 //put fiber or callback to 
 bool Processer::store(std::list<Fiber::ptr>& fibers) {
-    m_readyFibers.pushk_front(fibers);
-    m_payLoad += fibers.size();
+    /**
+     * TODO : This is not used yet. But in following update, 
+     *        the size of the queue would be a fixed size
+     */
+    std::list<Fiber::ptr> left;
+    size_t nr = 0;
+
+    nr = m_que->addFibers(fibers, left);
+    m_payLoad += nr;
     return true;
 }
 
@@ -116,7 +125,7 @@ void Processer::stop() {
 int Processer::notify() {
     try {
         m_sem.notify();
-    } catch(std::exception& e) {
+    } catch (std::exception& e) {
         LOG_WARN(g_syslog) << "notify failed : "<< e.what();
         return -1;
     }
@@ -133,9 +142,10 @@ int Processer::waitForNotify() {
     return 0;
 }
 
+//TODO : looks not pretty, need modification
 bool Processer::isStopping() const {
     ASSERT(getMainFiber() != nullptr);
-    return (m_readyFibers.empty()  && m_stopping );
+    return (m_que->emptyStrong()  && m_stopping );
 }
 
 bool Processer::getStopping() const {
@@ -151,7 +161,7 @@ void Processer::run() {
         Fiber::ptr fiber;
         m_idle = true;
         //LOG_INFO(g_syslog) << " totalTask : "<<m_readyTasks.size();
-	    while(m_readyFibers.try_pop_back(fiber)) {
+	    while(m_que->fetchFiber(fiber) != WorkQueue<>::Priority::NONE) {
             m_idle = false;
             m_lastIdleMS = getCurrentTimeMS();
 	        //LOG_ROOT_ERROR() << "Get New Task";
@@ -168,7 +178,7 @@ void Processer::run() {
                         // Fiber::getState(task->fiber->getState()));
                         // We 说明未完全切换HOLD态
                         if(fiber->getState() == Fiber::EXEC) {
-                            m_readyFibers.push_front(fiber);
+                            m_que->addFiber(fiber);
                             continue;
                         }
                 }
@@ -184,7 +194,7 @@ void Processer::run() {
             //LOG_ROOT_ERROR() << "Swapped Out";
             ASSERT(fiber->getState() != Fiber::INIT);
             if (fiber->getState() == Fiber::READY) {  // swap out by co_yield
-                m_readyFibers.push_front(fiber);
+                m_que->addFiber(fiber);
             } else if(fiber->getState() == Fiber::EXEC) { //swap out by using block method
                 fiber->_state = Fiber::HOLD;
                 --m_payLoad;
@@ -207,7 +217,7 @@ void Processer::run() {
         //Failed to steal fiber, check whether we're stopping
         if (m_stopping) {
             if (m_sched->m_totalFibers <= 0
-                && m_readyFibers.empty()
+                && m_que->emptyRelax()
                 && m_sched->getHold() <= 0) {
 
                 m_stop = true;
@@ -220,7 +230,7 @@ void Processer::run() {
         if (m_stopping) {
             //TODO:改为调度器holdCount
             if (m_sched->m_totalFibers <= 0
-                && m_readyFibers.empty()
+                && m_que->emptyRelax()
                 && m_sched->getHold() <= 0) {
                     m_stop = true;
                     //LOG_INFO(g_syslog) << "EXIT PROCESSOR";

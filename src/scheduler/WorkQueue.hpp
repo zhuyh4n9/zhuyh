@@ -26,14 +26,12 @@ public:
     };
 
     WorkQueue(size_t limit = NO_LIMIT)
-    : m_stop{true}, 
-      m_limit(limit) {
+    :  m_limit(limit) {
     }
 
     ~WorkQueue() {
-        m_stop = true;
         for (size_t i = 0; i < LEVEL; i++) {
-            ASSERT2(m_queue.empty(), getPriorityName(i)+ " queue is not empty now!");
+            ASSERT2(m_queue[i].empty(), getPriorityName((Priority)i)+ " queue is not empty now!");
         }
     }
     static std::string getPriorityName(Priority prio) {
@@ -49,17 +47,37 @@ public:
         return "NONE";
     }
 
-    bool start() {
-        return (m_stop = false);
+    size_t sizeStrong(Priority prio = Priority::NORMAL) const {
+        LockGuard lg(m_mx);
+        return sizeRelax(prio);
     }
-    bool stop() {
-        return (m_stop = true);
+
+    size_t sizeRelax(Priority prio = Priority::NORMAL) const {
+        if (prio >= LEVEL) {
+            return NO_LIMIT;
+        }
+        return m_queue[prio].size();
     }
+
+    bool emptyStrong() const {
+        LockGuard lg(m_mx);
+        return emptyRelax();
+    }
+
+    bool emptyRelax() const {
+        for (size_t i = 0; i < LEVEL; i++) {
+            if (!m_queue[i].empty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * @brief add a fiber with a specific priority, default Priority::NORMAL
      */
     bool addFiber(Fiber::ptr fiber, Priority prio = Priority::NORMAL) {
-        if (m_stop || prio >= Priority::NONE || fiber == nullptr) {
+        if (prio >= Priority::NONE || fiber == nullptr) {
             return false;
         }
         LockGuard lg(m_mx);
@@ -81,9 +99,9 @@ public:
                    Priority prio = Priority::NORMAL) {
         size_t nFiber = fibers.size();
         size_t res = 0;
-        typename std::list<Fiber::ptr>::iterator iter = fibers.begin();
+        typename std::list<Fiber::ptr>::const_iterator iter = fibers.begin();
 
-        if (m_stop || prio >= Priority::NONE || fibers.empty()) {
+        if (prio >= Priority::NONE || fibers.empty()) {
             return 0;
         }
 
@@ -124,7 +142,7 @@ public:
             if (!m_queue[i].empty()) {
                 fiber = m_queue[i].front();
                 m_queue[i].pop();
-                return i;
+                return (Priority)i;
             }
         }
 
@@ -135,7 +153,7 @@ public:
      * @param[out] fiber fiber fetched will be stored here
      * @return return true for success and false for failure
      */
-    bool fetchFiber(Fiber::ptr &fiber, Priority prio = Priority::NORMAL) {
+    bool fetchFiberPrio(Fiber::ptr &fiber, Priority prio = Priority::NORMAL) {
         if (prio >= Priority::NONE) {
             return false;
         }
@@ -162,8 +180,8 @@ public:
         }
         LockGuard lg(m_mx);
         while (!m_queue[prio].empty() && nr--) {
-            fibers.push_back(m_queue.front());
-            m_queue.pop();
+            fibers.push_back(m_queue[prio].front());
+            m_queue[prio].pop();
             res++;
         }
 
@@ -193,10 +211,9 @@ public:
         return m_limit;
     }
 private:
-    std::atomic<bool> m_stop{true};
     size_t m_limit;
     std::queue<Fiber::ptr> m_queue[LEVEL];
-    Mutex m_mx;
+    mutable Mutex m_mx;
 };
 
 } // end of namespace zhuyh

@@ -14,16 +14,16 @@
 #define co zhuyh::__co()=
 #endif
 
-#define ASSERT(x)						\
-  if(!(x))							\
-    {								\
+#define ASSERT(x)					                  	\
+  if(!(x))					                      		\
+    {								                          \
       LOG_ROOT_FATAL()<<"ASSERTION: "<<#x			\
-		  <<"\n";					\
+		  <<"\n";				                        	\
     }
 
-#define ASSERT2(x,w)						\
-   if(!(x))							\
-     {								\
+#define ASSERT2(x,w)					                \
+   if(!(x))							                      \
+     {								                        \
        LOG_ROOT_FATAL()<<"ASSERTION: " #x			\
-		       <<"\n"<< (w)  <<"\n";			\
+		       <<"\n"<< (w)  <<"\n";			        \
     }
