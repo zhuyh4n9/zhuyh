@@ -5,9 +5,9 @@
 #include "util.hpp"
 #include "concurrent/fiber.hpp"
 
-#ifndef co_yield
-#define co_yield zhuyh::Fiber::YieldToReady()
-#define co_yield_to_hold zhuyh::Fiber::YieldToSwitch()
+#ifndef yield_co
+#define yield_co zhuyh::Fiber::YieldToReady()
+#define yield_co_to_hold zhuyh::Fiber::YieldToSwitch()
 #endif
 
 #ifndef co

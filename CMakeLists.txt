@@ -4,12 +4,13 @@ project(zhuyh)
 set(CMAKE_CXX_FLAGS
   "$ENV{CXXFLAGS} -rdynamic -O2 -g  -std=c++1z -Wall -Werror -Wno-unused-function -fstack-protector-all")
 
-INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src
+${PROJECT_SOURCE_DIR}/src/config)
 
 set(LIB_SRC
   src/log.cpp
   src/logUtil.cpp
-  src/config.cpp
+  src/config/Config.cpp
   src/concurrent/Thread.cpp
   src/latch/lock.cpp
   src/util.cpp
@@ -41,7 +42,7 @@ set(LIB_SRC
   src/stream/Stream.cpp
   src/stream/SocketStream.cpp
   src/db/mysql.cpp
-  src/CryptoUtil.cpp)
+  src/crypto/CryptoUtil.cpp)
 
 set(LIBS 
     zhuyh  
