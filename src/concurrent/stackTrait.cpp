@@ -1,9 +1,9 @@
 #include "stackTrait.hpp"
 #include <unistd.h>
 #include <sys/mman.h>
-#include "../log.hpp"
-#include "../logUtil.hpp"
-#include "../config.hpp"
+#include "log.hpp"
+#include "logUtil.hpp"
+#include "config/config.hpp"
 #include <cstring>
 
 namespace zhuyh

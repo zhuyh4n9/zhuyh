@@ -17,51 +17,6 @@ namespace crypto{
     }
     return res;
   }
-  //为0认为是纯文本
-  std::string sha1(const char* buf,uint64_t buflen){
-    if(buf == nullptr) throw std::logic_error("buf is nullptr");
-    if(buflen == 0){
-      buflen = std::strlen(buf);
-    }
-    std::stringstream ss;
-    unsigned char out[20] = {0};
-    SHA1((unsigned char*)buf,buflen,out);
-    size_t len = 20 - suffixZero(out,20);
-    ss<<std::hex<<std::setw(2);
-    for(size_t i = 0 ;i<len;i++)
-      ss<<std::hex<<(uint32_t)out[i]<<std::setfill('0');
-    return ss.str();
-  }
-  
-  std::string md5(const char* buf,uint64_t buflen){
-    if(buf == nullptr) throw std::logic_error("buf is nullptr");
-    if(buflen == 0){
-      buflen = std::strlen(buf);
-    }
-    unsigned char out[32] = {0};
-    MD5((unsigned char*)buf,buflen,out);
-    std::stringstream ss;
-    ss<<std::hex<<std::setw(2);
-    size_t len = 32 - suffixZero(out,32);
-    for(size_t i = 0 ;i<len;i++)
-      ss<<std::hex<<(uint32_t)out[i]<<std::setfill('0');
-    return ss.str();
-  }
-
-  std::string sha256(const char* buf,uint64_t buflen){
-    if(buf == nullptr) throw std::logic_error("buf is nullptr");
-    if(buflen == 0){
-      buflen = strlen(buf);
-    }
-    std::stringstream ss;
-    unsigned char out[32] = {0};
-    SHA256((unsigned char*)buf,buflen,out);
-    size_t len = 32 - suffixZero(out,32);
-    ss<<std::hex<<std::setw(2);
-    for(size_t i = 0 ;i<len;i++)
-      ss<<std::hex<<(uint32_t)out[i]<<std::setfill('0');
-    return ss.str();
-  }
   
   std::string base64Encode(const char* buf,uint64_t buflen){
     if(buf == nullptr) throw std::logic_error("buf is nullptr");
@@ -73,8 +28,8 @@ namespace crypto{
     std::stringstream ss;
     try {
       std::copy(Base64EncodeIterator(buf),
-		Base64EncodeIterator(buf+buflen),
-		std::ostream_iterator<char>(ss));
+        Base64EncodeIterator(buf+buflen),
+        std::ostream_iterator<char>(ss));
     } catch (...) {
       return "";
   }
@@ -95,8 +50,8 @@ namespace crypto{
     std::stringstream ss;
     try {
       std::copy(Base64DecodeIterator(buf),
-		Base64DecodeIterator(buf+buflen),
-		std::ostream_iterator<char>(ss));
+        Base64DecodeIterator(buf+buflen),
+        std::ostream_iterator<char>(ss));
     } catch(...) {
       return "";
     }
@@ -107,19 +62,19 @@ namespace crypto{
   namespace {
     struct UrlCodeIniter{
       UrlCodeIniter(){
-	for(char i='a';i<'z';i++) uri_valid[(size_t)i] = 1;
-	for(char i='A';i<'Z';i++) uri_valid[(size_t)i] = 1;
-	for(char i='0';i<'9';i++) uri_valid[(size_t)i] = 1;
-	uri_valid[(uint32_t)'$']=1;
-	uri_valid[(uint32_t)'-']=1;
-	uri_valid[(uint32_t)'_']=1;
-	uri_valid[(uint32_t)'.']=1;	
-	uri_valid[(uint32_t)'+']=1;
-	uri_valid[(uint32_t)'!']=1;
-	uri_valid[(uint32_t)'*']=1;
-	uri_valid[(uint32_t)'\'']=1;
-	uri_valid[(uint32_t)'(']=1;
-	uri_valid[(uint32_t)')']=1;
+    for(char i='a';i<'z';i++) uri_valid[(size_t)i] = 1;
+    for(char i='A';i<'Z';i++) uri_valid[(size_t)i] = 1;
+    for(char i='0';i<'9';i++) uri_valid[(size_t)i] = 1;
+    uri_valid[(uint32_t)'$']=1;
+    uri_valid[(uint32_t)'-']=1;
+    uri_valid[(uint32_t)'_']=1;
+    uri_valid[(uint32_t)'.']=1;	
+    uri_valid[(uint32_t)'+']=1;
+    uri_valid[(uint32_t)'!']=1;
+    uri_valid[(uint32_t)'*']=1;
+    uri_valid[(uint32_t)'\'']=1;
+    uri_valid[(uint32_t)'(']=1;
+    uri_valid[(uint32_t)')']=1;
       }
     };
     static UrlCodeIniter s_url_initer;
@@ -131,11 +86,11 @@ namespace crypto{
     for(size_t i=0;i<str.size();i++){
       char c = str[i];
       if(c==' ' && spaceToPlus){
-	ss<<'+';
+    ss<<'+';
       }else if(!uri_valid[(size_t)c]){
-	ss<<'%'<<hexStr[(size_t)(c>>4)] << hexStr[(size_t)(c & 0xf)];
+    ss<<'%'<<hexStr[(size_t)(c>>4)] << hexStr[(size_t)(c & 0xf)];
       }else{
-	ss<<c;
+    ss<<c;
       } 
     }
     return ss.str();
@@ -156,14 +111,14 @@ namespace crypto{
     for(size_t i = 0;i<str.size();i++){
       char c = str[i];
       if(c == '%' && i+2 < str.size()
-	 && isHex(str[i+1])
-	 && isHex(str[i+2])){
-	ss<<(char)((hexToDec(str[i+1]) << 4) | hexToDec(str[i+2]));
-	i+=2;
+     && isHex(str[i+1])
+     && isHex(str[i+2])){
+    ss<<(char)((hexToDec(str[i+1]) << 4) | hexToDec(str[i+2]));
+    i+=2;
       } else if(c == ' ' && spaceToPlus){
-	ss<<'+';
+    ss<<'+';
       } else {
-	ss<<c;
+    ss<<c;
       }
     }
     return ss.str();

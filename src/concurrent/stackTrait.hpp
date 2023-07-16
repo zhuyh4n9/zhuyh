@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../macro.hpp"
+#include "config/config.hpp"
 
 namespace zhuyh
 {

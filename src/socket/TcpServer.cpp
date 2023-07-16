@@ -1,6 +1,6 @@
 #include "TcpServer.hpp"
-#include "../config.hpp"
-#include "../logs.hpp"
+#include "config/config.hpp"
+#include "logs.hpp"
 #include <string.h>
 #include <errno.h>
 

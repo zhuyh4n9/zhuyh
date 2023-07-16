@@ -1,0 +1,17 @@
+{
+    "project_name" : "libco",
+    "project_version" : "1.0",
+    "cpp_version" : "c++2a",
+    "library_out" : "/out/lib",
+    "binary_out" : "/out/bin",
+    "third_party" : {
+        "yaml" : {
+            "enable" : true,
+            "src_path" : "third_party/yaml/",
+            "build_script" : "build.sh",
+            "interpreter" : "/usr/bin/bash",
+            "out_path" : "out/yaml",
+            "install_path" : "out/lib"
+        }
+    }
+}

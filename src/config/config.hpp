@@ -14,7 +14,7 @@
 #include <vector>
 #include <yaml-cpp/yaml.h>
 
-#include "Config/Lexical_Cast.hpp"
+#include "config/Lexical_Cast.hpp"
 #include "latch/lock.hpp"
 
 namespace zhuyh

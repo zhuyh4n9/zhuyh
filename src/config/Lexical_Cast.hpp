@@ -7,6 +7,7 @@
 #include <type_traits>
 #include <cstdlib>
 #include <sstream>
+namespace zhuyh {
 
 template<class F, class T>
 class Lexical_Cast {
@@ -61,3 +62,5 @@ public:
         return ss.str();
     }
 };
+
+}

@@ -1,7 +1,8 @@
-#include "../logUtil.hpp"
+#include "logUtil.hpp"
 #include "fiber.hpp"
-#include "../log.hpp"
+#include "log.hpp"
 #include "stackTrait.hpp"
+#include "macro.hpp"
 #include <sys/mman.h>
 
 namespace zhuyh {
